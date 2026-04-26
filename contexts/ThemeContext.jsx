@@ -8,19 +8,24 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("dark");
-
-  // LocalStorage se theme persist karna
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      setTheme(savedTheme);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "dark";
+    try {
+      const savedTheme = localStorage.getItem("theme");
+      return savedTheme === "light" ? "light" : "dark";
+    } catch (error) {
+      return "dark";
     }
-  }, []);
+  });
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
-    document.body.className = theme;
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (error) {
+      // Ignore storage errors and still apply theme class.
+    }
+    document.body.classList.remove("light", "dark");
+    document.body.classList.add(theme);
   }, [theme]);
 
   const toggleTheme = () => {
