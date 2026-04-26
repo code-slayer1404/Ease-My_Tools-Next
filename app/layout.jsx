@@ -14,16 +14,10 @@ export default function RootLayout({ children }) {
       try {
         var savedTheme = localStorage.getItem("theme");
         var theme = savedTheme === "light" ? "light" : "dark";
-        var root = document.documentElement;
         var body = document.body;
-
-        root.classList.remove("light", "dark");
-        root.classList.add(theme);
-
-        if (body) {
-          body.classList.remove("light", "dark");
-          body.classList.add(theme);
-        }
+        if (!body) return;
+        body.classList.remove("light", "dark");
+        body.classList.add(theme);
       } catch (error) {
         // Ignore localStorage and DOM access issues to keep hydration safe.
       }
@@ -32,8 +26,10 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
+      <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
+      </head>
+      <body suppressHydrationWarning>
         <Providers>
           <div className="App">
             <Navbar />
