@@ -9,9 +9,27 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const themeInitializerScript = `
+    (function () {
+      try {
+        var savedTheme = localStorage.getItem("theme");
+        var theme = savedTheme === "light" ? "light" : "dark";
+        var body = document.body;
+        if (!body) return;
+        body.classList.remove("light", "dark");
+        body.classList.add(theme);
+      } catch (error) {
+        // Ignore localStorage and DOM access issues to keep hydration safe.
+      }
+    })();
+  `;
+
   return (
     <html lang="en">
-      <body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
+      </head>
+      <body suppressHydrationWarning>
         <Providers>
           <div className="App">
             <Navbar />
