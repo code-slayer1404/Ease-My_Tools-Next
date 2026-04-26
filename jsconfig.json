@@ -1,22 +1,14 @@
-// {
-//   "compilerOptions": {
-//     "jsx": "react-jsx",
-//     "baseUrl": ".",
-//     "checkJs": true
-//   },
-//   "include": ["src/**/*"],
-//   "exclude": ["node_modules", "build"]
-// }
-
-
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "jsx": "react-jsx",
     "checkJs": true,
     "target": "es6",
-    "module": "commonjs"
+    "module": "esnext"
   },
-  "include": ["src","*.d.ts"],
+  "include": ["app", "components", "contexts", "data", "*.d.ts", "next-env.d.ts"],
   "exclude": ["node_modules", "build"]
 }
