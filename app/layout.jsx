@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Providers from "./providers";
@@ -9,27 +10,23 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
-  const themeInitializerScript = `
-    (function () {
-      try {
-        var savedTheme = localStorage.getItem("theme");
-        var theme = savedTheme === "light" ? "light" : "dark";
-        var body = document.body;
-        if (!body) return;
-        body.classList.remove("light", "dark");
-        body.classList.add(theme);
-      } catch (error) {
-        // Ignore localStorage and DOM access issues to keep hydration safe.
-      }
-    })();
-  `;
-
   return (
     <html lang="en">
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
-      </head>
       <body suppressHydrationWarning>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`
+(function () {
+  try {
+    var theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  } catch (e) {}
+})();
+`}
+        </Script>
         <Providers>
           <div className="App">
             <Navbar />

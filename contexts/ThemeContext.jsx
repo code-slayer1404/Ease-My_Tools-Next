@@ -1,21 +1,23 @@
 "use client";
 
-
-
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    if (typeof window === "undefined") return "dark";
+    if (typeof window === "undefined") return "light";
+
     try {
       const savedTheme = localStorage.getItem("theme");
-      return savedTheme === "light" ? "light" : "dark";
+      if (savedTheme === "dark" || savedTheme === "light") {
+        return savedTheme;
+      }
     } catch (error) {
-      return "dark";
+      // Ignore storage access errors and fall back to current document class.
     }
+
+    return document.documentElement.classList.contains("dark") ? "dark" : "light";
   });
 
   useEffect(() => {
@@ -24,8 +26,8 @@ export const ThemeProvider = ({ children }) => {
     } catch (error) {
       // Ignore storage errors and still apply theme class.
     }
-    document.body.classList.remove("light", "dark");
-    document.body.classList.add(theme);
+
+    document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
   const toggleTheme = () => {
