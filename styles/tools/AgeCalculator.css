@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.age-calculator.light {
+body.light .age-calculator {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.age-calculator.dark {
+body.dark .age-calculator {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.age-calculator.dark .calculator-container {
+body.dark .age-calculator .calculator-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -70,7 +70,7 @@
     text-align: center;
 }
 
-.age-calculator.dark .date-input {
+body.dark .age-calculator .date-input {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -166,7 +166,7 @@
     text-align: left;
 }
 
-.age-calculator.dark .additional-stats {
+body.dark .age-calculator .additional-stats {
     background: #1f2937;
 }
 
@@ -178,7 +178,7 @@
     border-bottom: 1px solid #e2e8f0;
 }
 
-.age-calculator.dark .stat {
+body.dark .age-calculator .stat {
     border-bottom-color: #4b5563;
 }
 
@@ -202,7 +202,7 @@
     border-left: 4px solid #667eea;
 }
 
-.age-calculator.dark .fun-facts {
+body.dark .age-calculator .fun-facts {
     background: #1f2937;
 }
 

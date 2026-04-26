@@ -236,7 +236,7 @@
 //   };
 
 //   return (
-//     <div className={`pdf-image-extractor ${theme}`}>
+//     <div className="pdf-image-extractor">
 //       <div className="tool-header">
 //         <h1>{"PDF Image Extractor"}</h1>
 //         <p>{"Extract images, diagrams, and graphics from your PDF documents"}</p>
@@ -705,7 +705,7 @@
 //   };
 
 //   return (
-//     <div className={`pdf-image-extractor ${theme}`}>
+//     <div className="pdf-image-extractor">
 //       <div className="tool-header">
 //         <h1>{"PDF Image Extractor"}</h1>
 //         <p>{"Extract images, diagrams, and graphics from your PDF documents"}</p>
@@ -1063,7 +1063,7 @@
 //   };
 
 //   return (
-//     <div className={`pdf-image-extractor ${theme}`}>
+//     <div className="pdf-image-extractor">
 //       <div className="tool-header">
 //         <h1>{"PDF Image Extractor"}</h1>
 //         <p>{"Extract images, diagrams, and graphics from your PDF documents"}</p>
@@ -1711,7 +1711,7 @@ const PDFImageExtractor = () => {
   const summary = calculateSummary();
 
   return (
-    <div className={`pdf-image-extractor ${theme}`}>
+    <div className="pdf-image-extractor">
       <div className="tool-header">
         <h1>{"PDF Image Extractor"}</h1>
         <p>{"Extract images, diagrams, and graphics from your PDF documents"}</p>

@@ -81,7 +81,7 @@ const Security = () => {
   ];
 
   return (
-    <div className={`security-page ${theme}`}>
+    <div className="security-page">
       <div className="security-container">
         <header className="security-header">
           <div className="header-content">

@@ -4,12 +4,12 @@
     margin: 0 auto;
 }
 
-.mp4-to-gif.light {
+body.light .mp4-to-gif {
     background: var(--bg-light);
     color: var(--text-light);
 }
 
-.mp4-to-gif.dark {
+body.dark .mp4-to-gif {
     background: var(--bg-dark);
     color: var(--text-dark);
 }

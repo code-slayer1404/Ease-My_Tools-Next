@@ -118,7 +118,7 @@ ${"This example shows how to automate image processing for a folder of images."}
   ];
 
   return (
-    <div className={`documentation-page ${theme}`}>
+    <div className="documentation-page">
       <div className="docs-container">
         <header className="docs-header">
           <h1>{"Documentation"}</h1>

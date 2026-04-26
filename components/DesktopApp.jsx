@@ -58,7 +58,7 @@ const DesktopApp = () => {
   ];
 
   return (
-    <div className={`desktop-app-page ${theme}`}>
+    <div className="desktop-app-page">
       <div className="desktop-container">
         <header className="desktop-header">
           <div className="header-content">

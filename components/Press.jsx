@@ -79,7 +79,7 @@ const Press = () => {
   ];
 
   return (
-    <div className={`press-page ${theme}`}>
+    <div className="press-page">
       <div className="press-container">
         <header className="press-header">
           <h1>{"Press & Media"}</h1>

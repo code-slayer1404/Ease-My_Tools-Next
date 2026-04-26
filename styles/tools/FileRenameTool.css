@@ -612,7 +612,7 @@
 }
 
 /* Dark mode variables */
-.file-rename-tool.dark {
+body.dark .file-rename-tool {
   --primary-color: #3b82f6;
   --primary-light: #1e3a8a;
   --background-primary: #1a1a1a;
@@ -626,7 +626,7 @@
   --error-color: #ef4444;
 }
 
-.file-rename-tool.light {
+body.light .file-rename-tool {
   --primary-color: #2563eb;
   --primary-light: #dbeafe;
   --background-primary: #ffffff;

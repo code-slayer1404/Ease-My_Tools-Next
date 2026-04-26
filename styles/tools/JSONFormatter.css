@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.json-formatter.light {
+body.light .json-formatter {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.json-formatter.dark {
+body.dark .json-formatter {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.json-formatter.dark .formatter-container {
+body.dark .json-formatter .formatter-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -72,8 +72,8 @@
     line-height: 1.5;
 }
 
-.json-formatter.dark .json-input, 
-.json-formatter.dark .json-output {
+body.dark .json-formatter .json-input, 
+body.dark .json-formatter .json-output {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -97,7 +97,7 @@
     overflow-y: auto;
 }
 
-.json-formatter.dark .json-output {
+body.dark .json-formatter .json-output {
     background: #374151;
 }
 
@@ -163,7 +163,7 @@
     border: 1px solid #feb2b2;
 }
 
-.json-formatter.dark .error-message.invalid {
+body.dark .json-formatter .error-message.invalid {
     background: #742a2a;
     color: #fc8181;
     border-color: #c53030;
@@ -175,7 +175,7 @@
     border: 1px solid #9ae6b4;
 }
 
-.json-formatter.dark .error-message.valid {
+body.dark .json-formatter .error-message.valid {
     background: #22543d;
     color: #68d391;
     border-color: #38a169;

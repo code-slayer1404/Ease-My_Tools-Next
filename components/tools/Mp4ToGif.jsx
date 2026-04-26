@@ -137,7 +137,7 @@
 // // //     };
 
 // // //     return (
-// // //         <div className={`mp4-to-gif ${theme}`}>
+// // //         <div className="mp4-to-gif">
 // // //             <div className="tool-header">
 // // //                 <h1>{"MP4 to GIF Converter"}</h1>
 // // //                 <p>{"Convert MP4 videos to animated GIFs"}</p>
@@ -477,7 +477,7 @@
 // // //   };
 
 // // //   return (
-// // //     <div className={`mp4-to-gif ${theme}`}>
+// // //     <div className="mp4-to-gif">
 // // //       <div className="tool-header">
 // // //         <h1>{"MP4 to GIF Converter"}</h1>
 // // //         <p>{"Convert MP4 videos to animated GIFs"}</p>
@@ -785,7 +785,7 @@
 //   };
 
 //   return (
-//     <div className={`mp4-to-gif ${theme}`}>
+//     <div className="mp4-to-gif">
 //       <h2>{"MP4 to GIF Converter"}</h2>
 
 //       <div

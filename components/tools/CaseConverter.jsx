@@ -43,7 +43,7 @@ const CaseConverter = () => { // <-- i18next
     };
 
     return (
-        <div className={`case-converter ${theme}`}>
+        <div className="case-converter">
             <div className="converter-header">
                 <h1>{"Text Case Converter"}</h1>
                 <p>{"Convert text between different cases instantly"}</p>

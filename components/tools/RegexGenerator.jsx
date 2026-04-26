@@ -177,7 +177,7 @@ const RegexGenerator = () => {
     }, []);
 
     return (
-        <div className={`regex-generator ${theme}`}>
+        <div className="regex-generator">
             <div className="tool-header">
                 <h1>{"Regex Generator"}</h1>
                 <p>{"Generate regular expressions from natural language descriptions"}</p>
@@ -805,7 +805,7 @@ export default RegexGenerator;
 //     };
 
 //     return (
-//         <div className={`regex-generator enhanced ${theme}`}>
+//         <div className="regex-generator enhanced">
 //             <div className="tool-header">
 //                 <h1>{"Regex Generator"}</h1>
 //                 <p>{"Generate regular expressions from natural language descriptions"}</p>

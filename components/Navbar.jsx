@@ -62,7 +62,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className={`navbar navbar-${theme}`}>
+    <header className="navbar">
       <div className="navbar-container">
         {/* Logo */}
         <Link href="/" className="navbar-logo" style={{ textDecoration: "None" }}>
@@ -154,8 +154,7 @@ const Navbar = () => {
               <div className="mobile-menu-content">
                 {menus.map((menu, index) => (
                   <div
-                    className={`mobile-menu-item ${activeDropdown === index ? "active" : ""
-                      }`}
+                    className={`mobile-menu-item ${activeDropdown === index ? "active" : "" }`}
                     key={index}
                   >
                     <button

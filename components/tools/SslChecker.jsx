@@ -95,7 +95,7 @@ const SslChecker = () => {
     };
 
     return (
-        <div className={`ssl-checker ${theme}`}>
+        <div className="ssl-checker">
             <div className="tool-header">
                 <h1>{"SSL Certificate Checker"}</h1>
                 <p>{"Check SSL certificate information for any domain"}</p>

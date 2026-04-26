@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.base64-tool.light {
+body.light .base64-tool {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.base64-tool.dark {
+body.dark .base64-tool {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.base64-tool.dark .tool-container {
+body.dark .base64-tool .tool-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -67,7 +67,7 @@
     min-width: 120px;
 }
 
-.base64-tool.dark .op-btn {
+body.dark .base64-tool .op-btn {
     border-color: #4b5563;
 }
 
@@ -105,7 +105,7 @@
     line-height: 1.5;
 }
 
-.base64-tool.dark .text-input {
+body.dark .base64-tool .text-input {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -184,7 +184,7 @@
     min-height: 100px;
 }
 
-.base64-tool.dark .output-container {
+body.dark .base64-tool .output-container {
     background: #1f2937;
     border-color: #4b5563;
 }
@@ -213,7 +213,7 @@
     border-left: 4px solid #667eea;
 }
 
-.base64-tool.dark .info-section {
+body.dark .base64-tool .info-section {
     background: #1f2937;
 }
 

@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.qr-generator.light {
+body.light .qr-generator {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.qr-generator.dark {
+body.dark .qr-generator {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.qr-generator.dark .generator-container {
+body.dark .qr-generator .generator-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -72,7 +72,7 @@
     margin-bottom: 1.5rem;
 }
 
-.qr-generator.dark .text-input {
+body.dark .qr-generator .text-input {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -102,7 +102,7 @@
     -webkit-appearance: none;
 }
 
-.qr-generator.dark .size-slider {
+body.dark .qr-generator .size-slider {
     background: #4b5563;
 }
 
@@ -189,7 +189,7 @@
     margin-bottom: 1.5rem;
 }
 
-.qr-generator.dark .qr-code-container {
+body.dark .qr-generator .qr-code-container {
     background: #1f2937;
 }
 
@@ -231,7 +231,7 @@
     border-left: 4px solid #667eea;
 }
 
-.qr-generator.dark .tips-section {
+body.dark .qr-generator .tips-section {
     background: #1f2937;
 }
 

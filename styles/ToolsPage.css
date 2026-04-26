@@ -5,12 +5,12 @@
   transition: all 0.3s ease;
 }
 
-.tools-page.light {
+body.light .tools-page {
   background-color: var(--bg-light);
   color: var(--text-light);
 }
 
-.tools-page.dark {
+body.dark .tools-page {
   background-color: var(--bg-dark);
   color: var(--text-dark);
 }
@@ -35,7 +35,7 @@
   border-radius: 150px !important;
 }
 
-.tools-page.dark .search-bar input {
+body.dark .tools-page .search-bar input {
   background-color: var(--card-dark);
   color: var(--text-dark);
   border-color: #374151;
@@ -58,7 +58,7 @@
   animation: slideDown 0.2s ease-out;
 }
 
-.tools-page.dark .search-container .tool-dropdown {
+body.dark .tools-page .search-container .tool-dropdown {
   background-color: var(--card-dark);
   border-color: #374151;
 }
@@ -82,7 +82,7 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.tools-page.dark .tool-link:hover {
+body.dark .tools-page .tool-link:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 

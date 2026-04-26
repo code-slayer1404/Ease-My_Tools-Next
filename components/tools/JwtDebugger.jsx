@@ -75,7 +75,7 @@ const JwtDebugger = () => {
     };
 
     return (
-        <div className={`jwt-debugger ${theme}`}>
+        <div className="jwt-debugger">
             <div className="tool-header">
                 <h1>{"JWT Debugger"}</h1>
                 <p>{"Decode and verify JSON Web Tokens"}</p>

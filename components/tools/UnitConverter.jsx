@@ -102,7 +102,7 @@ const UnitConverter = () => { // <-- i18next
     const units = getUnits();
 
     return (
-        <div className={`unit-converter ${theme}`}>
+        <div className="unit-converter">
             <div className="converter-header">
                 <h1>{"Unit Converter"}</h1>
                 <p>{"Convert between different units instantly"}</p>

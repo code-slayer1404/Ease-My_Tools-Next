@@ -91,7 +91,7 @@ const PasswordGenerator = () => {
     }, []);
 
     return (
-        <div className={`password-generator ${theme}`}>
+        <div className="password-generator">
             <div className="tool-header">
                 <h1>{"Password Generator"}</h1>
                 <p>{"Generate strong and secure passwords"}</p>

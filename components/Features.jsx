@@ -51,7 +51,7 @@ const Features = () => {
   ];
 
   return (
-    <div className={`features-page ${theme}`}>
+    <div className="features-page">
       <div className="features-container">
         <header className="features-header">
           <h1>{"Powerful Features"}</h1>

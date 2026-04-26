@@ -108,7 +108,7 @@ print(response.json())`
   ];
 
   return (
-    <div className={`api-page ${theme}`}>
+    <div className="api-page">
       <div className="api-container">
         <header className="api-header">
           <h1>{"EaseMyTools API"}</h1>

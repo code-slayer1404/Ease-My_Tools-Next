@@ -7,7 +7,7 @@
 //   const { theme } = useTheme();
 
 //   return (
-//     <footer className={`footer ${theme}`}>
+//     <footer className="footer">
 //       <div className="footer-container">
 //         <div className="footer-column">
 //           <h4>PRODUCT</h4>
@@ -87,7 +87,7 @@
 //   const { theme } = useTheme();
 
 //   return (
-//     <footer className={`footer ${theme}`}>
+//     <footer className="footer">
 //       <div className="footer-container">
 //         <div className="footer-column">
 //           <h4>PRODUCT</h4>
@@ -170,7 +170,7 @@ const Footer = () => {
   const { theme } = useTheme();
 
   return (
-    <footer className={`footer ${theme}`}>
+    <footer className="footer">
       <div className="footer-container">
         <div className="footer-column">
           <h4>PRODUCT</h4>

@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
   const { theme } = useTheme();
 
   return (
-    <div className={`privacy-policy ${theme}`}>
+    <div className="privacy-policy">
       <div className="privacy-container">
         <header className="privacy-header">
           <h1>{"Privacy Policy"}</h1>

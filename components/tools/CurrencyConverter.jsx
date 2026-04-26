@@ -229,7 +229,7 @@
 //     const filteredCurrencies = getFilteredCurrencies();
 
 //     return (
-//         <div className={`currency-converter ${theme}`}>
+//         <div className="currency-converter">
 //             <div className="tool-header">
 //                 <h1>{"Currency Converter"}</h1>
 //                 <p>{"Real-time exchange rates with historical data"}</p>
@@ -682,7 +682,7 @@ const CurrencyConverter = () => {
     const trendText = getTrendText();
 
     return (
-        <div className={`currency-converter ${theme}`}>
+        <div className="currency-converter">
             <div className="tool-header">
                 <h1>{"Currency Converter"}</h1>
                 <p>{"Real-time exchange rates with historical data"}</p>

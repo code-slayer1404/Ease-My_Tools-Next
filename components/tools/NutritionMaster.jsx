@@ -1516,7 +1516,7 @@ const NutritionMaster = () => {
     };
 
     return (
-        <div className={`nutrition-master ${theme}`}>
+        <div className="nutrition-master">
             <div className="tool-header">
                 <h1>{"Nutrition Master - Complete Food Database"}</h1>
                 <p>{"Comprehensive nutritional analysis with 500+ foods, fruits, dry fruits, and supplements"}</p>

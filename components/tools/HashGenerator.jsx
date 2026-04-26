@@ -52,7 +52,7 @@ const HashGenerator = () => {
     };
 
     return (
-        <div className={`hash-generator ${theme}`}>
+        <div className="hash-generator">
             <div className="generator-header">
                 <h1>{"Hash Generator" || 'Hash Generator'}</h1>
                 <p>{"Generate MD5, SHA-1, and SHA-256 hashes" || 'Generate MD5, SHA-1, and SHA-256 hashes'}</p>

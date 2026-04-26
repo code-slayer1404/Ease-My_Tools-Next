@@ -223,7 +223,7 @@ const WebsiteCostCalculator = () => {
     };
 
     return (
-        <div className={`website-cost-calculator ${theme}`}>
+        <div className="website-cost-calculator">
             <div className="calculator-header">
                 <h1>{"Website Cost Calculator"}</h1>
                 <p>{"Professional website development cost estimator for agencies and freelancers"}</p>

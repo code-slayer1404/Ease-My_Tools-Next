@@ -79,7 +79,7 @@ const TimeCalculator = () => {
     };
 
     return (
-        <div className={`time-calculator ${theme}`}>
+        <div className="time-calculator">
             <div className="calculator-header">
                 <h1>{"Time Calculator" || 'Time Calculator'}</h1>
                 <p>{"Add, subtract time and calculate date differences" || 'Add, subtract time and calculate date differences'}</p>

@@ -334,7 +334,7 @@
 //     ];
 
 //     return (
-//         <div className={`file-converter ${theme}`}>
+//         <div className="file-converter">
 //             <div className="tool-header">
 //                 <h1>{"File Format Converter"}</h1>
 //                 <p>{"Convert between CSV, Excel, and JSON formats seamlessly"}</p>
@@ -902,7 +902,7 @@ const FileConverter = () => {
     ];
 
     return (
-        <div className={`file-converter ${theme}`}>
+        <div className="file-converter">
             <div className="tool-header">
                 <h1>{"File Format Converter"}</h1>
                 <p>{"Convert between CSV, Excel, and JSON formats seamlessly"}</p>

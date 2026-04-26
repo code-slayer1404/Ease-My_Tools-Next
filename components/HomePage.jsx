@@ -14,7 +14,7 @@ const HomePage = () => {
   const { theme } = useTheme();
 
   return (
-    <div className={`home-page ${theme}`}>
+    <div className="home-page">
       <FeaturedTools />
       <BenefitsSection />
       <TestimonialsSection />

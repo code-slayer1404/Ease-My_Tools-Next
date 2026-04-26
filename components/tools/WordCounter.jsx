@@ -27,7 +27,7 @@ const WordCounter = () => { // namespace for Word Counter
     };
 
     return (
-        <div className={`word-counter ${theme}`}>
+        <div className="word-counter">
             <div className="counter-header">
                 <h1>{"Word Counter"}</h1>
                 <p>{"Count words, characters, and more in your text"}</p>

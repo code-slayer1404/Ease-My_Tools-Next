@@ -4,12 +4,12 @@
     margin: 0 auto;
 }
 
-.jwt-debugger.light {
+body.light .jwt-debugger {
     background: var(--bg-light);
     color: var(--text-light);
 }
 
-.jwt-debugger.dark {
+body.dark .jwt-debugger {
     background: var(--bg-dark);
     color: var(--text-dark);
 }

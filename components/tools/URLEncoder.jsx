@@ -65,7 +65,7 @@ const URLEncoder = () => {
     };
 
     return (
-        <div className={`url-encoder ${theme}`}>
+        <div className="url-encoder">
             <div className="encoder-header">
                 <h1>{"URL Encoder/Decoder" || 'URL Encoder/Decoder'}</h1>
                 <p>{"Encode and decode URL strings online" || 'Encode and decode URL strings online'}</p>

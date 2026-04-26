@@ -146,7 +146,7 @@ const ImageResizer = () => {
     };
 
     return (
-        <div className={`image-resizer ${theme}`}>
+        <div className="image-resizer">
             <div className="resizer-header">
                 <h1>{"Image Resizer" || 'Image Resizer'}</h1>
                 <p>{"Resize images while maintaining quality" || 'Resize images while maintaining quality'}</p>

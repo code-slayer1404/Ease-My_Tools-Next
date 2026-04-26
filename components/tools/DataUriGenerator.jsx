@@ -114,7 +114,7 @@ const DataUriGenerator = () => {
     };
 
     return (
-        <div className={`data-uri-generator ${theme}`}>
+        <div className="data-uri-generator">
             <div className="tool-header">
                 <h1>{"Data URI Generator"}</h1>
                 <p>{"Convert files and text to Data URIs"}</p>

@@ -32,23 +32,23 @@
 }
 
 
-.unit-converter.light {
+body.light .unit-converter {
   background-color: var(--card-light);
   color: var(--text-light);
 }
 
-.unit-converter.light .converter-row input {
+body.light .unit-converter .converter-row input {
   background-color: #f9fafb;
   color: var(--text-light);
   border: 1px solid #d1d5db;
 }
 
-.unit-converter.dark {
+body.dark .unit-converter {
   background-color: var(--card-dark);
   color: var(--text-dark);
 }
 
-.unit-converter.dark .converter-row input {
+body.dark .unit-converter .converter-row input {
   background-color: #1e293b;
   color: var(--text-dark);
   border: 1px solid #334155;
@@ -63,13 +63,13 @@
 }
 
 /* Light Theme */
-.unit-converter.light {
+body.light .unit-converter {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
 /* Dark Theme */
-.unit-converter.dark {
+body.dark .unit-converter {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -104,7 +104,7 @@
     backdrop-filter: blur(10px);
 }
 
-.unit-converter.dark .converter-container {
+body.dark .unit-converter .converter-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -130,7 +130,7 @@
     border: 2px solid transparent;
 }
 
-.unit-converter.dark .category-btn {
+body.dark .unit-converter .category-btn {
     background: #374151;
     color: #d1d5db;
 }
@@ -185,9 +185,9 @@
     background: white;
 }
 
-.unit-converter.dark .value-input,
-.unit-converter.dark .result-input,
-.unit-converter.dark .unit-select {
+body.dark .unit-converter .value-input,
+body.dark .unit-converter .result-input,
+body.dark .unit-converter .unit-select {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -210,7 +210,7 @@
     cursor: not-allowed;
 }
 
-.unit-converter.dark .result-input {
+body.dark .unit-converter .result-input {
     background: #374151;
 }
 
@@ -252,7 +252,7 @@
     margin-top: 1rem;
 }
 
-.unit-converter.dark .result-display {
+body.dark .unit-converter .result-display {
     background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
 }
 

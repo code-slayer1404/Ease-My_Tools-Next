@@ -4,12 +4,12 @@
     margin: 0 auto;
 }
 
-.data-uri-generator.light {
+body.light .data-uri-generator {
     background: var(--bg-light);
     color: var(--text-light);
 }
 
-.data-uri-generator.dark {
+body.dark .data-uri-generator {
     background: var(--bg-dark);
     color: var(--text-dark);
 }

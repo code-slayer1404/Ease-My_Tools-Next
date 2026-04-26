@@ -67,7 +67,7 @@ const Blog = () => {
   ];
 
   return (
-    <div className={`blog-page ${theme}`}>
+    <div className="blog-page">
       <div className="blog-container">
         <header className="blog-header">
           <h1>{"EaseMyTools Blog"}</h1>

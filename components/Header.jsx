@@ -24,7 +24,7 @@ const Header = () => {
   const currentWord = words[index] || { text: "Tools", color: "#6366f1" };
 
   return (
-    <div className={`hero-container ${theme}`}>
+    <div className="hero-container">
       <h1 className="hero-title">
         {"Free Tools to Make"}{" "}
         <span

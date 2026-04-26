@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.case-converter.light {
+body.light .case-converter {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.case-converter.dark {
+body.dark .case-converter {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.case-converter.dark .converter-container {
+body.dark .case-converter .converter-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -71,8 +71,8 @@
     background: white;
 }
 
-.case-converter.dark .text-input, 
-.case-converter.dark .text-output {
+body.dark .case-converter .text-input, 
+body.dark .case-converter .text-output {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -89,7 +89,7 @@
     cursor: not-allowed;
 }
 
-.case-converter.dark .text-output {
+body.dark .case-converter .text-output {
     background: #374151;
 }
 

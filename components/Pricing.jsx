@@ -57,7 +57,7 @@ const Pricing = () => {
   ];
 
   return (
-    <div className={`pricing-page ${theme}`}>
+    <div className="pricing-page">
       <div className="pricing-container">
         <header className="pricing-header">
           <h1>{"Simple, Transparent Pricing"}</h1>

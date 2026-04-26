@@ -105,7 +105,7 @@ you would need to integrate with an OCR service like:
     };
 
     return (
-        <div className={`text-extractor ${theme}`} onPaste={handlePaste}>
+        <div className="text-extractor" onPaste={handlePaste}>
             <div className="extractor-header">
                 <h1>{"Text Extractor" || 'Text Extractor'}</h1>
                 <p>{"Extract text from images (OCR simulation)" || 'Extract text from images (OCR simulation)'}</p>

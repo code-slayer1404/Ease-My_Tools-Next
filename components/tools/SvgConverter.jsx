@@ -238,7 +238,7 @@ const SvgConverter = () => {
     ];
 
     return (
-        <div className={`svg-converter ${theme}`}>
+        <div className="svg-converter">
             <div className="tool-header">
                 <h1>{"SVG Converter"}</h1>
                 <p>{"Convert SVG files to PNG, JPG, and other formats"}</p>

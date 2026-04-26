@@ -74,7 +74,7 @@ const FAQ = () => {
   ];
 
   return (
-    <div className={`faq-page ${theme}`}>
+    <div className="faq-page">
       <div className="faq-container">
         <header className="faq-header">
           <h1>{"Frequently Asked Questions"}</h1>

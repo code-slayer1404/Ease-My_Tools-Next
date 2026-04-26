@@ -132,7 +132,7 @@ const XMLFormatter = () => {
     };
 
     return (
-        <div className={`xml-formatter ${theme}`}>
+        <div className="xml-formatter">
             <div className="formatter-header">
                 <h1>{"XML Formatter" || 'XML Formatter'}</h1>
                 <p>{"Format, validate, and minify XML data" || 'Format, validate, and minify XML data'}</p>

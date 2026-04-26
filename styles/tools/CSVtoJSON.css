@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.csv-json-converter.light {
+body.light .csv-json-converter {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.csv-json-converter.dark {
+body.dark .csv-json-converter {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.csv-json-converter.dark .converter-container {
+body.dark .csv-json-converter .converter-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -58,7 +58,7 @@
     flex-wrap: wrap;
 }
 
-.csv-json-converter.dark .settings-panel {
+body.dark .csv-json-converter .settings-panel {
     background: #1f2937;
 }
 
@@ -81,7 +81,7 @@
     cursor: pointer;
 }
 
-.csv-json-converter.dark .setting select {
+body.dark .csv-json-converter .setting select {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -125,8 +125,8 @@
     line-height: 1.4;
 }
 
-.csv-json-converter.dark .text-input,
-.csv-json-converter.dark .text-output {
+body.dark .csv-json-converter .text-input,
+body.dark .csv-json-converter .text-output {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -143,7 +143,7 @@
     cursor: not-allowed;
 }
 
-.csv-json-converter.dark .text-output {
+body.dark .csv-json-converter .text-output {
     background: #374151;
 }
 
@@ -243,7 +243,7 @@
     border-left: 4px solid #667eea;
 }
 
-.csv-json-converter.dark .info-section {
+body.dark .csv-json-converter .info-section {
     background: #1f2937;
 }
 
@@ -327,12 +327,12 @@
     margin: 0 auto;
 }
 
-.csv-to-json.light {
+body.light .csv-to-json {
     background: var(--bg-light);
     color: var(--text-light);
 }
 
-.csv-to-json.dark {
+body.dark .csv-to-json {
     background: var(--bg-dark);
     color: var(--text-dark);
 }

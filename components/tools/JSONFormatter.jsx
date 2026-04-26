@@ -78,7 +78,7 @@ const JSONFormatter = () => { // <-- i18next
     };
 
     return (
-        <div className={`json-formatter ${theme}`}>
+        <div className="json-formatter">
             <div className="formatter-header">
                 <h1>{"JSON Formatter"}</h1>
                 <p>{"Format, validate, and minify JSON data"}</p>

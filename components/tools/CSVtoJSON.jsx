@@ -150,7 +150,7 @@ const CSVtoJSON = () => {
     };
 
     return (
-        <div className={`csv-json-converter ${theme}`}>
+        <div className="csv-json-converter">
             <div className="converter-header">
                 <h1>{"CSV to JSON Converter" || 'CSV to JSON Converter'}</h1>
                 <p>{"Convert between CSV and JSON formats" || 'Convert between CSV and JSON formats'}</p>
@@ -388,7 +388,7 @@ export default CSVtoJSON;
 //     };
 
 //     return (
-//         <div className={`csv-to-json ${theme}`}>
+//         <div className="csv-to-json">
 //             <div className="tool-header">
 //                 <h1>{"CSV to JSON Converter"}</h1>
 //                 <p>{"Convert between CSV and JSON formats"}</p>

@@ -121,7 +121,7 @@ const ToolsPage = () => {
     return (
         <>
             <Header />
-            <div className={`tools-page ${theme}`}>
+            <div className="tools-page">
                 {/* --- SEARCH SECTION --- */}
                 <div className="search-container">
                     <div className="search-bar">

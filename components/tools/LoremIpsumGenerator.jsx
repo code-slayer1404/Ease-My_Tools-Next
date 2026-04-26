@@ -100,7 +100,7 @@ const LoremIpsumGenerator = () => {
     };
 
     return (
-        <div className={`lorem-generator ${theme}`}>
+        <div className="lorem-generator">
             <div className="generator-header">
                 <h1>{"Lorem Ipsum Generator" || 'Lorem Ipsum Generator'}</h1>
                 <p>{"Generate placeholder text for your projects" || 'Generate placeholder text for your projects'}</p>

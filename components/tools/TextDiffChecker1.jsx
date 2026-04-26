@@ -51,7 +51,7 @@ const TextDiffChecker = () => {
     };
 
     return (
-        <div className={`text-diff-checker ${theme}`}>
+        <div className="text-diff-checker">
             <div className="diff-header">
                 <h1>{t('title') || 'Text Diff Checker'}</h1>
                 <p>{t('subtitle') || 'Compare and find differences between two texts'}</p>

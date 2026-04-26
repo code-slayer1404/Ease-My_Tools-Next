@@ -4,12 +4,12 @@
     margin: 0 auto;
 }
 
-.ssl-checker.light {
+body.light .ssl-checker {
     background: var(--bg-light);
     color: var(--text-light);
 }
 
-.ssl-checker.dark {
+body.dark .ssl-checker {
     background: var(--bg-dark);
     color: var(--text-dark);
 }

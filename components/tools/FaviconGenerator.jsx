@@ -183,7 +183,7 @@ const FaviconGenerator = () => {
   };
 
   return (
-    <div className={`favicon-generator ${theme}`}>
+    <div className="favicon-generator">
       <div className="tool-header">
         <h1>{"Favicon Generator"}</h1>
         <p>{"Create professional favicons for your website in multiple formats and sizes"}</p>

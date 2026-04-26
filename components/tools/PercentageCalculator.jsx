@@ -58,7 +58,7 @@ const PercentageCalculator = () => {
     };
 
     return (
-        <div className={`percentage-calculator ${theme}`}>
+        <div className="percentage-calculator">
             <div className="calculator-header">
                 <h1>{"Percentage Calculator" || 'Percentage Calculator'}</h1>
                 <p>{"Calculate percentages, discounts, and changes" || 'Calculate percentages, discounts, and changes'}</p>

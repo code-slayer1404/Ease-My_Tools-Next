@@ -20,7 +20,7 @@ const CategoryToolsPage = () => {
     // If category doesn't exist, show error message
     if (!toolsByCategory[categoryId] || toolsByCategory[categoryId].length === 0) {
         return (
-            <div className={`category-tools-page ${theme}`}>
+            <div className="category-tools-page">
                 <div className="category-header">
                     <BackButton></BackButton>
                     <h1>Category Not Found</h1>
@@ -52,7 +52,7 @@ const CategoryToolsPage = () => {
     };
 
     return (
-        <div className={`category-tools-page ${theme}`}>
+        <div className="category-tools-page">
             <div className="category-header">
                 <BackButton></BackButton>
                 <h1>{getCategoryTitle()}</h1>
@@ -65,7 +65,7 @@ const CategoryToolsPage = () => {
                     return (
                         <div
                             key={tool.name}
-                            className={`category-tool-card ${theme} floating-card`}
+                            className="category-tool-card floating-card"
                             style={{ animationDelay: `${index * 0.1}s` }}
                             onClick={() => router.push(tool.link)}
                         >

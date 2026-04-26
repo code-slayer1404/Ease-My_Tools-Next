@@ -4,12 +4,12 @@
     transition: all 0.3s ease;
 }
 
-.time-calculator.light {
+body.light .time-calculator {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     color: #2d3748;
 }
 
-.time-calculator.dark {
+body.dark .time-calculator {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: #f1f5f9;
 }
@@ -43,7 +43,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.time-calculator.dark .calculator-container {
+body.dark .time-calculator .calculator-container {
     background: var(--card-dark);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
@@ -67,7 +67,7 @@
     min-width: 200px;
 }
 
-.time-calculator.dark .type-btn {
+body.dark .time-calculator .type-btn {
     border-color: #4b5563;
 }
 
@@ -126,7 +126,7 @@
     font-size: 1rem;
 }
 
-.time-calculator.dark .time-controls input {
+body.dark .time-calculator .time-controls input {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -155,7 +155,7 @@
     font-weight: bold;
 }
 
-.time-calculator.dark .op-btn {
+body.dark .time-calculator .op-btn {
     border-color: #4b5563;
 }
 
@@ -191,7 +191,7 @@
     width: 100%;
 }
 
-.time-calculator.dark .date-input {
+body.dark .time-calculator .date-input {
     background: #1f2937;
     border-color: #4b5563;
     color: #f9fafb;
@@ -241,7 +241,7 @@
     margin-top: 2rem;
 }
 
-.time-calculator.dark .result-section {
+body.dark .time-calculator .result-section {
     background: #1f2937;
 }
 
@@ -277,7 +277,7 @@
     font-weight: 600;
 }
 
-.time-calculator.dark .result-breakdown div {
+body.dark .time-calculator .result-breakdown div {
     background: #374151;
 }
 
@@ -325,7 +325,7 @@
     font-weight: 600;
 }
 
-.time-calculator.dark .total-breakdown div {
+body.dark .time-calculator .total-breakdown div {
     background: #374151;
 }
 

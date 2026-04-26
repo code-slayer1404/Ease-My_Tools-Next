@@ -361,7 +361,7 @@ const ImageToSvg = () => {
     };
 
     return (
-        <div className={`image-to-svg ${theme}`}>
+        <div className="image-to-svg">
             <div className="tool-header">
                 <h1>{"Image to SVG Converter"}</h1>
                 <p>{"Convert raster images (PNG, JPG, WebP) to scalable SVG format"}</p>

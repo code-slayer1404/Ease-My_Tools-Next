@@ -74,7 +74,7 @@ const Education = () => {
   ];
 
   return (
-    <div className={`education-page ${theme}`}>
+    <div className="education-page">
       <div className="education-container">
         <header className="education-header">
           <div className="header-content">

@@ -146,7 +146,7 @@
 //     ];
 
 //     return (
-//         <div className={`remove-background ${theme}`}>
+//         <div className="remove-background">
 //             <div className="tool-header">
 //                 <h1>{"Background Remover"}</h1>
 //                 <p>{"Remove background from images automatically with AI"}</p>
@@ -284,9 +284,7 @@
 //                                         <img 
 //                                             src={processedImage} 
 //                                             alt="Background Removed" 
-//                                             className={`preview-image result-image ${
-//                                                 processingSettings.bg_mode === 'transparent' ? 'transparent-bg' : ''
-//                                             }`}
+//                                             className={`preview-image result-image ${ // processingSettings.bg_mode === 'transparent' ? 'transparent-bg' : '' // }`}
 //                                         />
 //                                         <div className="result-actions">
 //                                             <button onClick={downloadImage} className="download-btn">
@@ -475,7 +473,7 @@
 //   ];
 
 //   return (
-//     <div className={`remove-background ${theme}`}>
+//     <div className="remove-background">
 //       <div className="tool-header">
 //         <h1>{"Background Remover" || 'Remove Background'}</h1>
 //         <p>{"Remove background from images automatically with AI" || 'Remove background and replace with color or image'}</p>
@@ -1152,7 +1150,7 @@ const RemoveBackground = () => {
   };
 
   return (
-    <div className={`remove-background-layout ${theme}`}>
+    <div className="remove-background-layout">
       {/* Top Toolbar */}
       <div className="top-toolbar">
         <div className="left-tools">

@@ -5,12 +5,12 @@
     padding: 2rem;
 }
 
-.base64-container.light {
+body.light .base64-container {
     background: var(--bg-light);
     color: var(--text-light);
 }
 
-.base64-container.dark {
+body.dark .base64-container {
     background: var(--bg-dark);
     color: var(--text-dark);
 }
@@ -52,7 +52,7 @@
     font-size: 0.9rem;
 }
 
-.base64-container.dark .text-area {
+body.dark .base64-container .text-area {
     background: var(--card-dark);
     border-color: #374151;
     color: var(--text-dark);
@@ -73,7 +73,7 @@
     background: rgba(59, 130, 246, 0.05);
 }
 
-.base64-container.dark .file-drop-zone {
+body.dark .base64-container .file-drop-zone {
     border-color: #4b5563;
 }
 
@@ -116,6 +116,6 @@
     background: #f8fafc;
 }
 
-.base64-container.dark .output {
+body.dark .base64-container .output {
     background: #1f2937;
 }

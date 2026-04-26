@@ -335,7 +335,7 @@ const FileRenameTool = () => {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className={`file-rename-tool ${theme}`}>
+    <div className="file-rename-tool">
       <div className="tool-header">
         <h1>{t('title')}</h1>
         <p>{t('subtitle')}</p>
