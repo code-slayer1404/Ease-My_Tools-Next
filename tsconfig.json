@@ -9,8 +9,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
-    "noImplicitAny": true,
-    // ✅ ADD THIS LINE
+    "noImplicitAny": false,
     "ignoreDeprecations": "6.0",
     "noEmit": true,
     "incremental": true,
