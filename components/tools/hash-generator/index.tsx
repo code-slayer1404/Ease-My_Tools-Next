@@ -64,7 +64,7 @@ const HashGenerator = () => {
                         onChange={(e) => setInputText(e.target.value)}
                         placeholder={"Enter text to generate hashes..." || 'Enter text to generate hashes...'}
                         className={styles["text-input"]}
-                        rows="4"
+                        rows={4}
                     />
                 </div>
 

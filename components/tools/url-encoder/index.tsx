@@ -101,7 +101,7 @@ const URLEncoder = () => {
                                 : "Enter URL to decode..." || 'Enter URL to decode...'
                         }
                         className={styles["text-input"]}
-                        rows="4"
+                        rows={4}
                     />
                 </div>
 

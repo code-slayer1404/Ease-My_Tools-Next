@@ -86,7 +86,7 @@ const JwtDebugger = () => {
                         value={jwtToken}
                         onChange={(e) => setJwtToken(e.target.value)}
                         placeholder={"Paste your JWT token here..."}
-                        rows="4"
+                        rows={4}
                         className={error ? 'error' : ''}
                     />
                 </div>

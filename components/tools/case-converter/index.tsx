@@ -55,8 +55,7 @@ const CaseConverter = () => { // <-- i18next
                         onChange={(e) => setInputText(e.target.value)}
                         placeholder={"Enter your text here..."}
                         className={styles["text-input"]}
-                        // @ts-ignore
-                        rows="6"
+                        rows={6}
                     />
                 </div>
 
@@ -85,8 +84,7 @@ const CaseConverter = () => { // <-- i18next
                         readOnly
                         placeholder={"Converted text will appear here..."}
                         className={styles["text-output"]}
-                        // @ts-ignore
-                        rows="6"
+                        rows={6}
                     />
                 </div>
 

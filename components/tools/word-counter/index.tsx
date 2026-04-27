@@ -38,8 +38,7 @@ const WordCounter = () => { // namespace for Word Counter
                         onChange={(e) => setText(e.target.value)}
                         placeholder={"Start typing or paste your text here..."}
                         className={styles["text-area"]}
-                        // @ts-ignore
-                        rows="10"
+                        rows={10}
                     />
                 </div>
 

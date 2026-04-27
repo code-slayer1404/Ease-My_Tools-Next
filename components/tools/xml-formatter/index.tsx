@@ -155,7 +155,7 @@ const XMLFormatter = () => {
                         onChange={(e) => setInputXML(e.target.value)}
                         placeholder={"Paste your XML data here..." || 'Paste your XML data here...'}
                         className={`${styles["xml-input"]} ${!isValid ? 'error' : ''}`}
-                        rows="8"
+                        rows={8}
                     />
                 </div>
 

@@ -91,7 +91,7 @@ const JSONFormatter = () => { // <-- i18next
                         placeholder={"Paste your JSON here..."}
                         className={`${styles["json-input"]} ${!isValid ? 'error' : ''}`}
                         // @ts-ignore
-                        rows="8"
+                        rows={8}
                     />
                 </div>
 
