@@ -4,18 +4,14 @@ import CategoryToolsPage from "@/components/CategoryToolsPage";
 import { categoryTitles, getToolBySlug, toolsByCategory } from "@/data/toolsData";
 import { notFound } from "next/navigation";
 
-// Next.js 15 dynamic route params are async; always await params before using slug.
-const resolveSlug = async (paramsInput: Promise<{ slug: string }> | { slug: string }) => {
-  const resolvedParams = await paramsInput;
-  return resolvedParams?.slug;
+type PageProps = {
+  params: {
+    slug: string;
+  };
 };
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }> | { slug: string };
-}): Promise<Metadata> {
-  const slug = await resolveSlug(params);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const slug = params.slug;
   const tool = getToolBySlug(slug);
 
   if (tool) {
@@ -35,12 +31,8 @@ export async function generateMetadata({
   return {};
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug: string }> | { slug: string };
-}) {
-  const slug = await resolveSlug(params);
+export default async function Page({ params }: PageProps) {
+  const slug = params.slug;
   const tool = getToolBySlug(slug);
 
   if (tool) {
