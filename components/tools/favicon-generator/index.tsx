@@ -18,18 +18,15 @@ const FaviconGenerator = () => {
     preserveAspectRatio: true
   });
 
-  // ✅ FIX HERE (only change)
   const fileInputRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // Supported formats with descriptions
   const formatOptions = [
     { value: 'ico', label: 'ICO', description: "Traditional favicon format, supports multiple sizes in one file", extensions: ['.ico'] },
     { value: 'png', label: 'PNG', description: "Modern format with transparency support", extensions: ['.png'] },
     { value: 'all', label: "All Formats", description: "Generate both ICO and PNG formats for maximum compatibility", extensions: ['.ico', '.png', '.svg'] }
   ];
 
-  // Common favicon sizes
   const sizeOptions = [
     { value: 16, label: '16×16', description: "Standard browser favicon" },
     { value: 32, label: '32×32', description: "Taskbar and bookmark icons" },
@@ -40,7 +37,6 @@ const FaviconGenerator = () => {
     { value: 512, label: '512×512', description: "Progressive Web Apps" }
   ];
 
-  // Handle file upload
   const handleFileUpload = useCallback((uploadedFile) => {
     if (!uploadedFile) return;
 
@@ -55,15 +51,21 @@ const FaviconGenerator = () => {
     }
 
     const reader = new FileReader();
+
+    // ✅ ONLY FIX HERE
     reader.onload = (e) => {
-      setOriginalImage(e.target.result);
-      setFile(uploadedFile);
-      setGeneratedIcons([]);
+      const result = e.target.result;
+
+      if (typeof result === "string") {
+        setOriginalImage(result);
+        setFile(uploadedFile);
+        setGeneratedIcons([]);
+      }
     };
+
     reader.readAsDataURL(uploadedFile);
   }, []);
 
-  // Handle drag and drop
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     const uploadedFile = e.dataTransfer.files[0];
@@ -74,7 +76,6 @@ const FaviconGenerator = () => {
     e.preventDefault();
   }, []);
 
-  // Toggle size selection
   const toggleSize = (size) => {
     setSettings(prev => ({
       ...prev,
@@ -84,7 +85,6 @@ const FaviconGenerator = () => {
     }));
   };
 
-  // Select all sizes
   const selectAllSizes = () => {
     setSettings(prev => ({
       ...prev,
@@ -92,7 +92,6 @@ const FaviconGenerator = () => {
     }));
   };
 
-  // Clear all sizes
   const clearAllSizes = () => {
     setSettings(prev => ({
       ...prev,
@@ -100,7 +99,6 @@ const FaviconGenerator = () => {
     }));
   };
 
-  // Generate favicons
   const generateFavicons = async () => {
     if (!file) {
       alert("Please upload an image first");
