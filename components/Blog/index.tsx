@@ -1,9 +1,19 @@
 "use client";
 import styles from './styles.module.css';
 
+type Post = {
+  id: number;
+  title: string;
+  date: string;
+  readTime: string;
+  excerpt?: string;
+  category?: string;
+  image?: string;
+};
+
 const Blog = () => {
 
-  const featuredPosts = [
+  const featuredPosts: Post[] = [
     {
       id: 1,
       title: "10 Ways to Boost Your Productivity with Online Tools",
@@ -41,7 +51,7 @@ const Blog = () => {
     { name: "Security", count: 2 }
   ];
 
-  const recentPosts = [
+  const recentPosts: Post[] = [
     {
       id: 4,
       title: "How to Convert PDFs Without Losing Formatting",
@@ -62,6 +72,8 @@ const Blog = () => {
     }
   ];
 
+  const allPosts: Post[] = [...featuredPosts, ...recentPosts];
+
   return (
     <div className={styles["blog-page"]}>
       <div className={styles["blog-container"]}>
@@ -74,6 +86,7 @@ const Blog = () => {
 
         <div className={styles["blog-layout"]}>
           <main className={styles["blog-content"]}>
+
             <section className={styles["featured-posts"]}>
               <h2>{"Featured Posts"}</h2>
               <div className={styles["posts-grid"]}>
@@ -89,7 +102,9 @@ const Blog = () => {
                         <span className={styles["post-read-time"]}>{post.readTime}</span>
                       </div>
                       <h3 className={styles["post-title"]}>{post.title}</h3>
-                      <p className={styles["post-excerpt"]}>{post.excerpt}</p>
+                      {post.excerpt && (
+                        <p className={styles["post-excerpt"]}>{post.excerpt}</p>
+                      )}
                       <a href="#" className={styles["read-more"]}>
                         {"Read More"} →
                       </a>
@@ -102,7 +117,7 @@ const Blog = () => {
             <section className={styles["all-posts"]}>
               <h2>{"All Posts"}</h2>
               <div className={styles["posts-list"]}>
-                {[...featuredPosts, ...recentPosts].map((post) => (
+                {allPosts.map((post) => (
                   <article key={post.id} className={styles["post-item"]}>
                     <div className={styles["post-info"]}>
                       <div className={styles["post-meta"]}>
@@ -121,6 +136,7 @@ const Blog = () => {
                 ))}
               </div>
             </section>
+
           </main>
 
           <aside className={styles["blog-sidebar"]}>
@@ -168,6 +184,7 @@ const Blog = () => {
               </div>
             </div>
           </aside>
+
         </div>
       </div>
     </div>
