@@ -90,7 +90,6 @@ const JSONFormatter = () => { // <-- i18next
                         onChange={(e) => setInputJSON(e.target.value)}
                         placeholder={"Paste your JSON here..."}
                         className={`${styles["json-input"]} ${!isValid ? 'error' : ''}`}
-                        // @ts-ignore
                         rows={8}
                     />
                 </div>

@@ -21,10 +21,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  if (slug && categoryTitles[slug]) {
+  // ✅ FIX: cast slug to valid keys
+  if (slug && categoryTitles[slug as keyof typeof categoryTitles]) {
     return {
-      title: `EaseMyTools - ${categoryTitles[slug]}`,
-      description: `Explore ${categoryTitles[slug]} on EaseMyTools.`,
+      title: `EaseMyTools - ${categoryTitles[slug as keyof typeof categoryTitles]}`,
+      description: `Explore ${categoryTitles[slug as keyof typeof categoryTitles]} on EaseMyTools.`,
     };
   }
 
@@ -40,7 +41,8 @@ export default async function Page({ params }: PageProps) {
     return <DynamicComponent />;
   }
 
-  if (slug && toolsByCategory[slug]) {
+  // ✅ FIX here as well for consistency
+  if (slug && toolsByCategory[slug as keyof typeof toolsByCategory]) {
     return <CategoryToolsPage categoryId={slug} />;
   }
 
