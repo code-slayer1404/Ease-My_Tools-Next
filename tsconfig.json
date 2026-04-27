@@ -8,10 +8,10 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    // ✅ CHANGE: reduce noise but keep safety
     "strict": false,
-    // ✅ ADD: still catch real issues
-    "noImplicitAny": false,
+    "noImplicitAny": true,
+    // ✅ ADD THIS LINE
+    "ignoreDeprecations": "6.0",
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
