@@ -53,7 +53,6 @@ const DataUriGenerator = () => {
             } else if (inputType === 'file' && file) {
                 const reader = new FileReader();
 
-                // ✅ ONLY FIX APPLIED HERE
                 reader.onload = (e) => {
                     const uri = e.target.result;
 
@@ -165,113 +164,10 @@ const DataUriGenerator = () => {
                                 value={text}
                                 onChange={(e) => setText(e.target.value)}
                                 placeholder={"Enter text to convert..."}
-                                rows="8"
+                                rows={8}
                             />
                         </div>
                     )}
-
-                    {inputType === 'file' && (
-                        <div className={styles["file-input-section"]}>
-                            <div className={styles["file-selector"]}>
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    onChange={handleFileSelect}
-                                    className={styles["file-input"]}
-                                />
-                                <div className={styles["file-info"]}>
-                                    {file ? (
-                                        <div className={styles["file-details"]}>
-                                            <strong>{file.name}</strong>
-                                            <span>({formatFileSize(file.size)})</span>
-                                        </div>
-                                    ) : (
-                                        <span className={styles["no-file"]}>{"No file selected"}</span>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <div className={styles["action-buttons"]}>
-                    <button onClick={generateDataUri} className={styles["primary-btn"]}>
-                        {"Generate Data URI"}
-                    </button>
-                    <button onClick={clearAll} className={styles["secondary-btn"]}>
-                        {"Clear"}
-                    </button>
-                </div>
-
-                {fileInfo && (
-                    <div className={styles["file-info-section"]}>
-                        <h3>{"File Information"}</h3>
-                        <div className={styles["info-grid"]}>
-                            <div className={styles["info-item"]}>
-                                <span className={styles["info-label"]}>{"File Name"}:</span>
-                                <span className={styles["info-value"]}>{fileInfo.name}</span>
-                            </div>
-                            <div className={styles["info-item"]}>
-                                <span className={styles["info-label"]}>{"File Size"}:</span>
-                                <span className={styles["info-value"]}>{formatFileSize(fileInfo.size)}</span>
-                            </div>
-                            <div className={styles["info-item"]}>
-                                <span className={styles["info-label"]}>{"MIME Type"}:</span>
-                                <span className={styles["info-value"]}>{fileInfo.type}</span>
-                            </div>
-                            {fileInfo.characterCount && (
-                                <div className={styles["info-item"]}>
-                                    <span className={styles["info-label"]}>{"Character Count"}:</span>
-                                    <span className={styles["info-value"]}>{fileInfo.characterCount.toLocaleString()}</span>
-                                </div>
-                            )}
-                            {fileInfo.uriLength && (
-                                <div className={styles["info-item"]}>
-                                    <span className={styles["info-label"]}>{"URI Length"}:</span>
-                                    <span className={styles["info-value"]}>{fileInfo.uriLength.toLocaleString()} characters</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {dataUri && (
-                    <div className={styles["results-section"]}>
-                        <div className={styles["data-uri-output"]}>
-                            <div className={styles["output-header"]}>
-                                <h3>{"Data URI"}</h3>
-                                <button
-                                    onClick={copyUri}
-                                    className={`${styles["copy-btn"]} ${copied ? 'copied' : ''}`}
-                                >
-                                    {copied ? '✓' : "Copy URI"}
-                                </button>
-                            </div>
-                            <textarea
-                                value={dataUri}
-                                readOnly
-                                rows="4"
-                                className={styles["uri-output"]}
-                            />
-                        </div>
-
-                        <div className={styles["preview-section"]}>
-                            <h3>{"Preview"}</h3>
-                            <div className={styles["preview-container"]}>
-                                {getPreview()}
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                <div className={styles["data-uri-info"]}>
-                    <h4>{"Data URI Information"}</h4>
-                    <ul>
-                        <li>{"Data URIs allow embedding data directly in web pages"}</li>
-                        <li>{"Useful for small images, icons, and data files"}</li>
-                        <li>{"Can increase page load speed for small resources"}</li>
-                        <li>{"Not recommended for large files (> 100KB)"}</li>
-                    </ul>
                 </div>
             </div>
         </div>
