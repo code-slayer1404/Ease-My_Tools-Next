@@ -4,9 +4,10 @@ import { useState } from 'react';
 import styles from './styles.module.css';
 
 const FAQ = () => {
-  const [openItems, setOpenItems] = useState({});
+  // ✅ FIX: add type
+  const [openItems, setOpenItems] = useState<Record<number, boolean>>({});
 
-  const toggleItem = (index) => {
+  const toggleItem = (index: number) => {
     setOpenItems(prev => ({
       ...prev,
       [index]: !prev[index]
@@ -48,7 +49,7 @@ const FAQ = () => {
         },
         {
           question: "Why is a tool not working?",
-          answer: "If a tool isn\\'t working, try refreshing the page, clearing your browser cache, or using a different browser. Most issues are resolved by these simple steps."
+          answer: "If a tool isn't working, try refreshing the page, clearing your browser cache, or using a different browser. Most issues are resolved by these simple steps."
         }
       ]
     },
@@ -61,7 +62,7 @@ const FAQ = () => {
         },
         {
           question: "How do I reset my password?",
-          answer: "Click on \"Forgot Password\" on the login page and enter your email address. We\\'ll send you instructions to reset your password."
+          answer: "Click on \"Forgot Password\" on the login page and enter your email address. We'll send you instructions to reset your password."
         },
         {
           question: "Can I delete my account?",
@@ -97,11 +98,11 @@ const FAQ = () => {
                 {category.items.map((item, itemIndex) => {
                   const globalIndex = categoryIndex * 10 + itemIndex;
                   return (
-                    <div 
-                      key={itemIndex} 
+                    <div
+                      key={itemIndex}
                       className={`${styles["faq-item"]} ${openItems[globalIndex] ? styles["open"] : ""}`}
                     >
-                      <div 
+                      <div
                         className={styles["faq-question"]}
                         onClick={() => toggleItem(globalIndex)}
                       >
@@ -127,13 +128,13 @@ const FAQ = () => {
           <h2>{"Still need help?"}</h2>
           <p>{"Can't find the answer you're looking for? Please contact our support team."}</p>
           <div className={styles["support-buttons"]}>
-            <button 
+            <button
               className={`${styles["support-button"]} ${styles["primary"]}`}
               onClick={() => window.location.href = '/contact'}
             >
               {"Contact Support"}
             </button>
-            <button 
+            <button
               className={`${styles["support-button"]} ${styles["secondary"]}`}
               onClick={() => window.location.href = '/tools'}
             >

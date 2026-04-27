@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles.module.css';
 
-const t = (key, fallback) => fallback ?? key;
+// ✅ FIX: fallback optional
+const t = (key: string, fallback?: string) => fallback ?? key;
 
-const UnitConverter = () => { // <-- i18next
+const UnitConverter = () => {
     const [category, setCategory] = useState('length');
     const [fromUnit, setFromUnit] = useState('meter');
     const [toUnit, setToUnit] = useState('kilometer');
@@ -13,7 +14,6 @@ const UnitConverter = () => { // <-- i18next
     const [result, setResult] = useState('');
     const [isConverting, setIsConverting] = useState(false);
 
-    // Unit conversion formulas
     const conversionFormulas = {
         length: { meter: 1, kilometer: 0.001, centimeter: 100, millimeter: 1000, mile: 0.000621371, yard: 1.09361, foot: 3.28084, inch: 39.3701 },
         weight: { kilogram: 1, gram: 1000, milligram: 1000000, pound: 2.20462, ounce: 35.274 },
@@ -27,16 +27,14 @@ const UnitConverter = () => { // <-- i18next
         speed: { meterPerSecond: 1, kilometerPerHour: 3.6, milePerHour: 2.23694, knot: 1.94384 }
     };
 
-    // Get categories in current language
     const getCategories = () => {
         const categoryKeys = ['length', 'weight', 'temperature', 'area', 'volume', 'speed'];
         return categoryKeys.reduce((acc, key) => {
             acc[key] = t(`unitConverter:categories.${key}`, key.charAt(0).toUpperCase() + key.slice(1));
             return acc;
-        }, {});
+        }, {} as Record<string, string>);
     };
 
-    // Get units for the current category in current language
     const getUnits = () => {
         const unitKeys = Object.keys(conversionFormulas[category] || {});
         return unitKeys.map(key => ({
@@ -106,7 +104,6 @@ const UnitConverter = () => { // <-- i18next
             </div>
 
             <div className={styles["converter-container"]}>
-                {/* Category Selection */}
                 <div className={styles["category-selector"]}>
                     {Object.entries(categories).map(([key, label]) => (
                         <button
@@ -119,7 +116,6 @@ const UnitConverter = () => { // <-- i18next
                     ))}
                 </div>
 
-                {/* Conversion Interface */}
                 <div className={styles["conversion-interface"]}>
                     <div className={styles["input-section"]}>
                         <label>{"From"}</label>
@@ -131,57 +127,31 @@ const UnitConverter = () => { // <-- i18next
                                 placeholder={"Enter value"}
                                 className={styles["value-input"]}
                             />
-                            <select
-                                value={fromUnit}
-                                onChange={(e) => setFromUnit(e.target.value)}
-                                className={styles["unit-select"]}
-                                disabled={!units.length}
-                            >
+                            <select value={fromUnit} onChange={(e) => setFromUnit(e.target.value)} className={styles["unit-select"]} disabled={!units.length}>
                                 {units.map(unit => (
-                                    <option key={unit.value} value={unit.value}>
-                                        {unit.label}
-                                    </option>
+                                    <option key={unit.value} value={unit.value}>{unit.label}</option>
                                 ))}
                             </select>
                         </div>
                     </div>
 
-                    <button
-                        className={styles["swap-btn"]}
-                        onClick={swapUnits}
-                        title={"Swap"}
-                        disabled={!units.length}
-                    >
+                    <button className={styles["swap-btn"]} onClick={swapUnits} title={"Swap"} disabled={!units.length}>
                         ⇄
                     </button>
 
                     <div className={styles["output-section"]}>
                         <label>{"To"}</label>
                         <div className={styles["input-group"]}>
-                            <input
-                                type="text"
-                                value={result || ''}
-                                readOnly
-                                className={styles["result-input"]}
-                                placeholder={"Result"}
-                            />
-                            <select
-                                value={toUnit}
-                                onChange={(e) => setToUnit(e.target.value)}
-                                className={styles["unit-select"]}
-                                disabled={!units.length}
-                            >
+                            <input type="text" value={result || ''} readOnly className={styles["result-input"]} placeholder={"Result"} />
+                            <select value={toUnit} onChange={(e) => setToUnit(e.target.value)} className={styles["unit-select"]} disabled={!units.length}>
                                 {units.map(unit => (
-                                    <option key={unit.value} value={unit.value}>
-                                        {unit.label}
-                                    </option>
+                                    <option key={unit.value} value={unit.value}>{unit.label}</option>
                                 ))}
                             </select>
                         </div>
                     </div>
                 </div>
 
-                {/* Result Display */}
                 {result && result !== 'Error' && (
                     <div className={styles["result-display"]}>
                         <h3>{"Result"}:</h3>
