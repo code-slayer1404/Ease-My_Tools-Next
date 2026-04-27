@@ -5,13 +5,13 @@ import { categoryTitles, getToolBySlug, toolsByCategory } from "@/data/toolsData
 import { notFound } from "next/navigation";
 
 type PageProps = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const slug = params.slug;
+  const { slug } = await params;
   const tool = getToolBySlug(slug);
 
   if (tool) {
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function Page({ params }: PageProps) {
-  const slug = params.slug;
+  const { slug } = await params;
   const tool = getToolBySlug(slug);
 
   if (tool) {
