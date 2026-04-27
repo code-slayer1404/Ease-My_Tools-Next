@@ -1,15 +1,16 @@
 "use client";
 
-//@ts-nocheck
 import React, { useState, useRef } from "react";
 import styles from './styles.module.css';
 
 const Base64Converter = () => {
     console.log("Base64Converter was rendered");
+
     const [input, setInput] = useState("");
     const [output, setOutput] = useState("");
-    const [mode, setMode] = useState("encode");
-    const fileInputRef = useRef(null);
+    const [mode, setMode] = useState<"encode" | "decode">("encode");
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleEncode = () => {
         if (mode === "encode") {
@@ -17,24 +18,31 @@ const Base64Converter = () => {
         } else {
             try {
                 setOutput(decodeURIComponent(escape(atob(input))));
-            } catch (error) {
+            } catch {
                 setOutput("❌ Invalid Base64 string");
             }
         }
     };
 
-    const handleFileUpload = (file) => {
+    const handleFileUpload = (file: File) => {
         const reader = new FileReader();
-        reader.onload = (e) => {
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+            const result = e.target?.result;
+
             if (mode === "encode") {
-                const base64 = e.target.result.split(',')[1];
-                setOutput(base64);
+                // ✅ SAFE TYPE NARROWING
+                if (typeof result === "string") {
+                    const base64 = result.split(",")[1];
+                    setOutput(base64 || "");
+                }
             }
         };
+
         reader.readAsDataURL(file);
     };
 
-    const handleDrop = (e) => {
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
         if (file) handleFileUpload(file);
@@ -45,10 +53,12 @@ const Base64Converter = () => {
 
         const blob = new Blob([output], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
+
         const a = document.createElement("a");
         a.href = url;
         a.download = mode === "encode" ? "encoded.txt" : "decoded.txt";
         a.click();
+
         URL.revokeObjectURL(url);
     };
 
@@ -100,12 +110,18 @@ const Base64Converter = () => {
                 <input
                     type="file"
                     ref={fileInputRef}
-                    onChange={(e) => handleFileUpload(e.target.files[0])}
+                    onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(file);
+                    }}
                     hidden
                 />
             </div>
 
-            <button className={`${styles["action-btn"]} ${styles["convert-btn"]}`} onClick={handleEncode}>
+            <button
+                className={`${styles["action-btn"]} ${styles["convert-btn"]}`}
+                onClick={handleEncode}
+            >
                 {mode === "encode" ? "Encode" : "Decode"}
             </button>
 
@@ -125,7 +141,10 @@ const Base64Converter = () => {
                         <button className={styles["action-btn"]} onClick={downloadFile}>
                             {"📥 Download as File"}
                         </button>
-                        <button className={`${styles["action-btn"]} ${styles["clear-btn"]}`} onClick={clearAll}>
+                        <button
+                            className={`${styles["action-btn"]} ${styles["clear-btn"]}`}
+                            onClick={clearAll}
+                        >
                             {"🗑️ Clear"}
                         </button>
                     </div>
