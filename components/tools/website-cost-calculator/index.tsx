@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import styles from './styles.module.css';
 
-const t = (key, fallback) => fallback ?? key;
+const t = (key: string, fallback?: string) => fallback ?? key;
 
 const WebsiteCostCalculator = () => {
     

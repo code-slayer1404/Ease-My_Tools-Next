@@ -375,12 +375,12 @@
 //     if (!uploadedFile) return;
 
 //     if (uploadedFile.size > 15 * 1024 * 1024) {
-//       alert("File is too large. Maximum size is 10MB" || 'File too large (max 15MB)');
+//       alert("File is too large. Maximum size is 10MB");
 //       return;
 //     }
 
 //     if (!uploadedFile.type.startsWith('image/')) {
-//       alert("Please upload a valid image file" || 'Invalid file type');
+//       alert("Please upload a valid image file");
 //       return;
 //     }
 
@@ -411,7 +411,7 @@
 
 //   const callApi = async () => {
 //     if (!file) {
-//       alert("Please select a file first" || 'Please upload an image first');
+//       alert("Please select a file first");
 //       return;
 //     }
 
@@ -444,7 +444,7 @@
 //       setProcessedImage(url);
 //     } catch (err) {
 //       console.error(err);
-//       alert(err.message || "Failed to remove background" || 'Error processing image');
+//       alert(err.message || "Failed to remove background");
 //     } finally {
 //       setProcessing(false);
 //     }
@@ -477,8 +477,8 @@
 //   return (
 //     <div className={styles["remove-background"]}>
 //       <div className={styles["tool-header"]}>
-//         <h1>{"Background Remover" || 'Remove Background'}</h1>
-//         <p>{"Remove background from images automatically with AI" || 'Remove background and replace with color or image'}</p>
+//         <h1>{"Background Remover"}</h1>
+//         <p>{"Remove background from images automatically with AI"}</p>
 //       </div>
 
 //       <div className={styles["remover-container"]}>
@@ -491,10 +491,10 @@
 //           >
 //             <div className={styles["upload-content"]}>
 //               <div className={styles["upload-icon"]}>🖼️</div>
-//               <h3>{"Upload Image" || 'Click or drop image here'}</h3>
-//               <p>{"Drag & drop your image here or click to browse" || 'Drag & drop an image'}</p>
-//               <small>{"Supported formats: PNG, JPG, JPEG, WebP" || 'PNG, JPG, JPEG'}</small>
-//               <small>{"Max file size: 10MB" || 'Max 15MB'}</small>
+//               <h3>{"Upload Image"}</h3>
+//               <p>{"Drag & drop your image here or click to browse"}</p>
+//               <small>{"Supported formats: PNG, JPG, JPEG, WebP"}</small>
+//               <small>{"Max file size: 10MB"}</small>
 //             </div>
 
 //             <input
@@ -511,9 +511,9 @@
 //               <strong>{file.name}</strong>
 //               <br />
 //               <small>
-//                 {"File size" || 'Size'}: {(file.size / 1024).toFixed(2)} KB
+//                 {"File size"}: {(file.size / 1024).toFixed(2)} KB
 //                 {originalDimensions.current.width > 0 && (
-//                   <> | {"Dimensions" || 'Dimensions'}: {originalDimensions.current.width} × {originalDimensions.current.height}</>
+//                   <> | {"Dimensions"}: {originalDimensions.current.width} × {originalDimensions.current.height}</>
 //                 )}
 //               </small>
 //             </div>
@@ -522,7 +522,7 @@
 
 //         {file && (
 //           <div className={styles["settings-section"]}>
-//             <h3>{"Advanced Options" || 'Background Options'}</h3>
+//             <h3>{"Advanced Options"}</h3>
 //             <div className={styles["settings-grid"]}>
 //               <div className={styles["setting-group"]}>
 //                 <label>{t('backgroundMode') || 'Background Mode'}</label>
@@ -584,7 +584,7 @@
 
 //               <div className={`${styles["setting-group"]} ${styles["full-width"]}`}>
 //                 <div className={styles["api-info"]}>
-//                   <small>⚡ {"Remove background from images automatically with AI" || 'Processed locally via backend'}</small>
+//                   <small>⚡ {"Remove background from images automatically with AI"}</small>
 //                 </div>
 //               </div>
 //             </div>
@@ -598,10 +598,10 @@
 //               className={`${styles["primary-btn"]} ${processing ? 'processing' : ''}`}
 //               disabled={processing}
 //             >
-//               {processing ? ("Processing..." || 'Processing...') : ("Remove Background" || 'Apply')}
+//               {processing ? ("Processing...") : ("Remove Background")}
 //             </button>
 //             <button onClick={clearAll} className={styles["secondary-btn"]}>
-//               {"Clear" || 'Clear'}
+//               {"Clear"}
 //             </button>
 //           </div>
 //         )}
@@ -611,13 +611,13 @@
 //             <div className={styles["preview-container"]}>
 //               {originalImage && (
 //                 <div className={styles["preview-item"]}>
-//                   <h4>{"Original Image" || 'Original'}</h4>
+//                   <h4>{"Original Image"}</h4>
 //                   <img src={originalImage} alt="Original" className={styles["preview-image"]} />
 //                 </div>
 //               )}
 //               {processedImage && (
 //                 <div className={styles["preview-item"]}>
-//                   <h4>{"Background Removed" || 'Result'}</h4>
+//                   <h4>{"Background Removed"}</h4>
 //                   <div className={styles["result-container"]}>
 //                     <img
 //                       src={processedImage}
@@ -625,10 +625,10 @@
 //                       className={`${styles["preview-image"]} ${styles["result-image"]} ${processingSettings.bg_mode === 'transparent' ? 'transparent-bg' : ''}`}
 //                     />
 //                     <div className={styles["result-actions"]}>
-//                       <button onClick={downloadImage} className={styles["download-btn"]}>{"Download" || 'Download'}</button>
+//                       <button onClick={downloadImage} className={styles["download-btn"]}>{"Download"}</button>
 //                     </div>
 //                     {processingSettings.bg_mode === 'transparent' ? (
-//                       <div className={styles["transparency-note"]}><small>✓ {"Transparency" || 'Transparent background'}</small></div>
+//                       <div className={styles["transparency-note"]}><small>✓ {"Transparency"}</small></div>
 //                     ) : (
 //                       <div className={styles["color-note"]}><small>✓ {processingSettings.bg_mode === 'color' ? processingSettings.bg_color : 'Photo background'}</small></div>
 //                     )}
@@ -947,7 +947,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import styles from './styles.module.css';
 
-const t = (key, fallback) => fallback ?? key;
+const t = (key: string, fallback?: string) => fallback ?? key;
 
 const RemoveBackground = () => {
   

@@ -19,7 +19,7 @@ const ImageResizer = () => {
         if (!file) return;
 
         if (!file.type.startsWith('image/')) {
-            alert("Please select an image file" || 'Please select an image file');
+            alert("Please select an image file");
             return;
         }
 
@@ -40,7 +40,7 @@ const ImageResizer = () => {
 
     const resizeImage = () => {
         if (!originalImage) {
-            alert("Please upload an image first" || 'Please upload an image first');
+            alert("Please upload an image first");
             return;
         }
 
@@ -146,8 +146,8 @@ const ImageResizer = () => {
     return (
         <div className={styles["image-resizer"]}>
             <div className={styles["resizer-header"]}>
-                <h1>{"Image Resizer" || 'Image Resizer'}</h1>
-                <p>{"Resize images while maintaining quality" || 'Resize images while maintaining quality'}</p>
+                <h1>{"Image Resizer"}</h1>
+                <p>{"Resize images while maintaining quality"}</p>
             </div>
 
             <div className={styles["resizer-container"]}>
@@ -163,42 +163,42 @@ const ImageResizer = () => {
                     <label htmlFor="image-upload" className={styles["upload-label"]}>
                         <div className={styles["upload-icon"]}>🖼️</div>
                         <div className={styles["upload-text"]}>
-                            {"Click to upload image" || 'Click to upload image'}
+                            {"Click to upload image"}
                         </div>
                         <div className={styles["upload-hint"]}>
-                            {"Supported formats: JPG, PNG, GIF, BMP, WebP" || 'Supported formats: JPG, PNG, GIF, BMP, WebP'}
+                            {"Supported formats: JPG, PNG, GIF, BMP, WebP"}
                         </div>
                     </label>
                 </div>
 
                 {originalImage && (
                     <div className={styles["resize-controls"]}>
-                        <h3>{"Resize Settings" || 'Resize Settings'}</h3>
+                        <h3>{"Resize Settings"}</h3>
                         
                         <div className={styles["preset-buttons"]}>
-                            <h4>{"Quick Presets:" || 'Quick Presets:'}</h4>
+                            <h4>{"Quick Presets:"}</h4>
                             <div className={styles["preset-grid"]}>
                                 <button onClick={() => applyPreset('facebook')} className={styles["preset-btn"]}>
-                                    {"Facebook (1200×630)" || 'Facebook (1200×630)'}
+                                    {"Facebook (1200×630)"}
                                 </button>
                                 <button onClick={() => applyPreset('instagram')} className={styles["preset-btn"]}>
-                                    {"Instagram (1080×1080)" || 'Instagram (1080×1080)'}
+                                    {"Instagram (1080×1080)"}
                                 </button>
                                 <button onClick={() => applyPreset('twitter')} className={styles["preset-btn"]}>
-                                    {"Twitter (1200×675)" || 'Twitter (1200×675)'}
+                                    {"Twitter (1200×675)"}
                                 </button>
                                 <button onClick={() => applyPreset('thumbnail')} className={styles["preset-btn"]}>
-                                    {"Thumbnail (300×300)" || 'Thumbnail (300×300)'}
+                                    {"Thumbnail (300×300)"}
                                 </button>
                                 <button onClick={() => applyPreset('hd')} className={styles["preset-btn"]}>
-                                    {"HD (1920×1080)" || 'HD (1920×1080)'}
+                                    {"HD (1920×1080)"}
                                 </button>
                             </div>
                         </div>
 
                         <div className={styles["size-controls"]}>
                             <div className={styles["size-input"]}>
-                                <label>{"Width" || 'Width'}</label>
+                                <label>{"Width"}</label>
                                 <input
                                     type="number"
                                     value={width}
@@ -209,7 +209,7 @@ const ImageResizer = () => {
                                 <span>px</span>
                             </div>
                             <div className={styles["size-input"]}>
-                                <label>{"Height" || 'Height'}</label>
+                                <label>{"Height"}</label>
                                 <input
                                     type="number"
                                     value={height}
@@ -228,11 +228,11 @@ const ImageResizer = () => {
                                     checked={maintainAspectRatio}
                                     onChange={(e) => setMaintainAspectRatio(e.target.checked)}
                                 />
-                                {"Maintain aspect ratio" || 'Maintain aspect ratio'}
+                                {"Maintain aspect ratio"}
                             </label>
                             
                             <div className={styles["quality-control"]}>
-                                <label>{"Quality" || 'Quality'}: {Math.round(quality * 100)}%</label>
+                                <label>{"Quality"}: {Math.round(quality * 100)}%</label>
                                 <input
                                     type="range"
                                     min="0.1"
@@ -246,7 +246,7 @@ const ImageResizer = () => {
                         </div>
 
                         <button onClick={resizeImage} className={styles["resize-btn"]}>
-                            {"Resize Image" || 'Resize Image'}
+                            {"Resize Image"}
                         </button>
                     </div>
                 )}
@@ -254,7 +254,7 @@ const ImageResizer = () => {
                 <div className={styles["preview-section"]}>
                     {originalImage && (
                         <div className={`${styles["image-preview"]} ${styles["original"]}`}>
-                            <h4>{"Original" || 'Original'}</h4>
+                            <h4>{"Original"}</h4>
                             <img src={originalImage} alt="Original" />
                             <div className={styles["image-info"]}>
                                 {originalSize.width} × {originalSize.height} px
@@ -264,13 +264,13 @@ const ImageResizer = () => {
 
                     {resizedImage && (
                         <div className={`${styles["image-preview"]} ${styles["resized"]}`}>
-                            <h4>{"Resized" || 'Resized'}</h4>
+                            <h4>{"Resized"}</h4>
                             <img src={resizedImage} alt="Resized" />
                             <div className={styles["image-info"]}>
                                 {width} × {height} px
                             </div>
                             <button onClick={downloadResizedImage} className={styles["download-btn"]}>
-                                {"Download Resized Image" || 'Download Resized Image'}
+                                {"Download Resized Image"}
                             </button>
                         </div>
                     )}
@@ -278,22 +278,22 @@ const ImageResizer = () => {
 
                 <div className={styles["action-buttons"]}>
                     <button onClick={clearAll} className={styles["clear-btn"]}>
-                        {"Clear All" || 'Clear All'}
+                        {"Clear All"}
                     </button>
                 </div>
 
                 <canvas ref={canvasRef} style={{ display: 'none' }} />
 
                 <div className={styles["info-section"]}>
-                    <h4>{"About Image Resizing" || 'About Image Resizing'}</h4>
-                    <p>{"Image resizing is the process of changing the dimensions of an image while maintaining its visual quality. This is useful for optimizing images for web, social media, or storage." || 'Image resizing is the process of changing the dimensions of an image while maintaining its visual quality. This is useful for optimizing images for web, social media, or storage.'}</p>
+                    <h4>{"About Image Resizing"}</h4>
+                    <p>{"Image resizing is the process of changing the dimensions of an image while maintaining its visual quality. This is useful for optimizing images for web, social media, or storage."}</p>
                     
-                    <h5>{"Tips:" || 'Tips:'}</h5>
+                    <h5>{"Tips:"}</h5>
                     <ul>
-                        <li>{"Maintain aspect ratio to prevent distortion" || 'Maintain aspect ratio to prevent distortion'}</li>
-                        <li>{"Use higher quality for important images" || 'Use higher quality for important images'}</li>
-                        <li>{"Consider file size for web optimization" || 'Consider file size for web optimization'}</li>
-                        <li>{"Test different sizes for different platforms" || 'Test different sizes for different platforms'}</li>
+                        <li>{"Maintain aspect ratio to prevent distortion"}</li>
+                        <li>{"Use higher quality for important images"}</li>
+                        <li>{"Consider file size for web optimization"}</li>
+                        <li>{"Test different sizes for different platforms"}</li>
                     </ul>
                 </div>
             </div>

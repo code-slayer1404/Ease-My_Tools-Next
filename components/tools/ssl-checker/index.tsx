@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import styles from './styles.module.css';
 
-const t = (key, fallback) => fallback ?? key;
+const t = (key: string, fallback?: string) => fallback ?? key;
 
 const SslChecker = () => {
     const [domain, setDomain] = useState('');
@@ -43,7 +43,7 @@ const SslChecker = () => {
             const validUntil = new Date(now);
             validUntil.setFullYear(now.getFullYear() + 1);
             
-            const daysRemaining = Math.ceil((validUntil - now) / (1000 * 60 * 60 * 24));
+            const daysRemaining = Math.ceil((validUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
             const mockCertificate = {
                 domain: domain,

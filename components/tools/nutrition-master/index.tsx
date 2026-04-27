@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import styles from './styles.module.css';
 
-const t = (key, fallback) => fallback ?? key;
+const t = (key: string, fallback?: string) => fallback ?? key;
 
 // Comprehensive food database with 500+ items
 // const COMPREHENSIVE_FOOD_DATABASE = [

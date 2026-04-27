@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import styles from './styles.module.css';
 
-const t = (key, fallback) => fallback ?? key;
+const t = (key: string, fallback?: string) => fallback ?? key;
 
 const TextDiffChecker = () => {
     const [text1, setText1] = useState('');

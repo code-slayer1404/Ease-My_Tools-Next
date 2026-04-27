@@ -33,7 +33,7 @@ const TimeCalculator = () => {
 
     const calculateDateDifference = () => {
         if (!startDate || !endDate) {
-            alert("Please select both dates" || 'Please select both dates');
+            alert("Please select both dates");
             return;
         }
 
@@ -41,11 +41,11 @@ const TimeCalculator = () => {
         const end = new Date(endDate);
         
         if (start > end) {
-            alert("Start date must be before end date" || 'Start date must be before end date');
+            alert("Start date must be before end date");
             return;
         }
 
-        const diffTime = Math.abs(end - start);
+        const diffTime = Math.abs(end.getTime() - start.getTime());
         const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
         const diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
@@ -79,8 +79,8 @@ const TimeCalculator = () => {
     return (
         <div className={styles["time-calculator"]}>
             <div className={styles["calculator-header"]}>
-                <h1>{"Time Calculator" || 'Time Calculator'}</h1>
-                <p>{"Add, subtract time and calculate date differences" || 'Add, subtract time and calculate date differences'}</p>
+                <h1>{"Time Calculator"}</h1>
+                <p>{"Add, subtract time and calculate date differences"}</p>
             </div>
 
             <div className={styles["calculator-container"]}>
@@ -89,23 +89,23 @@ const TimeCalculator = () => {
                         className={`${styles["type-btn"]} ${calculationType === 'add' ? styles["active"] : ""}`}
                         onClick={() => setCalculationType('add')}
                     >
-                        {"Add/Subtract Time" || 'Add/Subtract Time'}
+                        {"Add/Subtract Time"}
                     </button>
                     <button 
                         className={`${styles["type-btn"]} ${calculationType === 'date' ? styles["active"] : ""}`}
                         onClick={() => setCalculationType('date')}
                     >
-                        {"Date Difference" || 'Date Difference'}
+                        {"Date Difference"}
                     </button>
                 </div>
 
                 {calculationType === 'add' && (
                     <div className={styles["time-section"]}>
-                        <h3>{"Add/Subtract Time" || 'Add/Subtract Time'}</h3>
+                        <h3>{"Add/Subtract Time"}</h3>
                         
                         <div className={styles["time-inputs"]}>
                             <div className={styles["time-group"]}>
-                                <label>{"Time 1" || 'Time 1'}</label>
+                                <label>{"Time 1"}</label>
                                 <div className={styles["time-controls"]}>
                                     <input
                                         type="number"
@@ -151,7 +151,7 @@ const TimeCalculator = () => {
                             </div>
 
                             <div className={styles["time-group"]}>
-                                <label>{"Time 2" || 'Time 2'}</label>
+                                <label>{"Time 2"}</label>
                                 <div className={styles["time-controls"]}>
                                     <input
                                         type="number"
@@ -183,19 +183,19 @@ const TimeCalculator = () => {
                         </div>
 
                         <button onClick={calculateTime} className={styles["calculate-btn"]}>
-                            {"Calculate" || 'Calculate'}
+                            {"Calculate"}
                         </button>
 
                         {result && (
                             <div className={styles["result-section"]}>
-                                <h4>{"Result" || 'Result'}</h4>
+                                <h4>{"Result"}</h4>
                                 <div className={styles["result-display"]}>
                                     <div className={styles["result-time"]}>{formatTime(result)}</div>
                                     <div className={styles["result-breakdown"]}>
-                                        <div>{result.hours} {"hours" || 'hours'}</div>
-                                        <div>{result.minutes} {"minutes" || 'minutes'}</div>
-                                        <div>{result.seconds} {"seconds" || 'seconds'}</div>
-                                        <div>{result.totalSeconds} {"Total Seconds" || 'total seconds'}</div>
+                                        <div>{result.hours} {"hours"}</div>
+                                        <div>{result.minutes} {"minutes"}</div>
+                                        <div>{result.seconds} {"seconds"}</div>
+                                        <div>{result.totalSeconds} {"Total Seconds"}</div>
                                     </div>
                                 </div>
                             </div>
@@ -205,11 +205,11 @@ const TimeCalculator = () => {
 
                 {calculationType === 'date' && (
                     <div className={styles["date-section"]}>
-                        <h3>{"Date Difference" || 'Date Difference'}</h3>
+                        <h3>{"Date Difference"}</h3>
                         
                         <div className={styles["date-inputs"]}>
                             <div className={styles["date-group"]}>
-                                <label>{"Start Date" || 'Start Date'}</label>
+                                <label>{"Start Date"}</label>
                                 <input
                                     type="date"
                                     value={startDate}
@@ -218,7 +218,7 @@ const TimeCalculator = () => {
                                 />
                             </div>
                             <div className={styles["date-group"]}>
-                                <label>{"End Date" || 'End Date'}</label>
+                                <label>{"End Date"}</label>
                                 <input
                                     type="date"
                                     value={endDate}
@@ -229,36 +229,36 @@ const TimeCalculator = () => {
                         </div>
 
                         <button onClick={calculateDateDifference} className={styles["calculate-btn"]}>
-                            {"Calculate Difference" || 'Calculate Difference'}
+                            {"Calculate Difference"}
                         </button>
 
                         {dateResult && (
                             <div className={styles["result-section"]}>
-                                <h4>{"Difference" || 'Difference'}</h4>
+                                <h4>{"Difference"}</h4>
                                 <div className={styles["date-result"]}>
                                     <div className={styles["result-grid"]}>
                                         <div className={styles["result-item"]}>
                                             <span className={styles["value"]}>{dateResult.days}</span>
-                                            <span className={styles["label"]}>{"Days" || 'Days'}</span>
+                                            <span className={styles["label"]}>{"Days"}</span>
                                         </div>
                                         <div className={styles["result-item"]}>
                                             <span className={styles["value"]}>{dateResult.hours}</span>
-                                            <span className={styles["label"]}>{"hours" || 'Hours'}</span>
+                                            <span className={styles["label"]}>{"hours"}</span>
                                         </div>
                                         <div className={styles["result-item"]}>
                                             <span className={styles["value"]}>{dateResult.minutes}</span>
-                                            <span className={styles["label"]}>{"minutes" || 'Minutes'}</span>
+                                            <span className={styles["label"]}>{"minutes"}</span>
                                         </div>
                                         <div className={styles["result-item"]}>
                                             <span className={styles["value"]}>{dateResult.seconds}</span>
-                                            <span className={styles["label"]}>{"seconds" || 'Seconds'}</span>
+                                            <span className={styles["label"]}>{"seconds"}</span>
                                         </div>
                                     </div>
                                     <div className={styles["total-breakdown"]}>
-                                        <div>{"Total Days" || 'Total Days'}: {dateResult.totalDays.toFixed(2)}</div>
-                                        <div>{"Total Hours" || 'Total Hours'}: {dateResult.totalHours.toFixed(2)}</div>
-                                        <div>{"Total Minutes" || 'Total Minutes'}: {dateResult.totalMinutes.toFixed(2)}</div>
-                                        <div>{"Total Seconds" || 'Total Seconds'}: {dateResult.totalSeconds.toFixed(2)}</div>
+                                        <div>{"Total Days"}: {dateResult.totalDays.toFixed(2)}</div>
+                                        <div>{"Total Hours"}: {dateResult.totalHours.toFixed(2)}</div>
+                                        <div>{"Total Minutes"}: {dateResult.totalMinutes.toFixed(2)}</div>
+                                        <div>{"Total Seconds"}: {dateResult.totalSeconds.toFixed(2)}</div>
                                     </div>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@ const TimeCalculator = () => {
                 )}
 
                 <button onClick={clearAll} className={styles["clear-btn"]}>
-                    {"Clear All" || 'Clear All'}
+                    {"Clear All"}
                 </button>
             </div>
         </div>

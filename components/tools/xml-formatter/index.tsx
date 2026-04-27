@@ -12,7 +12,7 @@ const XMLFormatter = () => {
 
     const formatXML = () => {
         if (!inputXML.trim()) {
-            alert("Please enter XML data" || 'Please enter XML data');
+            alert("Please enter XML data");
             return;
         }
 
@@ -78,7 +78,7 @@ const XMLFormatter = () => {
 
     const validateXML = () => {
         if (!inputXML.trim()) {
-            setError("Please enter XML data" || 'Please enter XML data');
+            setError("Please enter XML data");
             setIsValid(false);
             return;
         }
@@ -93,7 +93,7 @@ const XMLFormatter = () => {
             }
             
             setIsValid(true);
-            setError("Valid XML!" || 'Valid XML!');
+            setError("Valid XML!");
         } catch (err) {
             setIsValid(false);
             setError(err.message);
@@ -102,7 +102,7 @@ const XMLFormatter = () => {
 
     const minifyXML = () => {
         if (!inputXML.trim()) {
-            alert("Please enter XML data" || 'Please enter XML data');
+            alert("Please enter XML data");
             return;
         }
 
@@ -126,34 +126,34 @@ const XMLFormatter = () => {
 
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text);
-        alert("Copied to clipboard!" || 'Copied to clipboard!');
+        alert("Copied to clipboard!");
     };
 
     return (
         <div className={styles["xml-formatter"]}>
             <div className={styles["formatter-header"]}>
-                <h1>{"XML Formatter" || 'XML Formatter'}</h1>
-                <p>{"Format, validate, and minify XML data" || 'Format, validate, and minify XML data'}</p>
+                <h1>{"XML Formatter"}</h1>
+                <p>{"Format, validate, and minify XML data"}</p>
             </div>
 
             <div className={styles["formatter-container"]}>
                 <div className={styles["settings-panel"]}>
                     <div className={styles["setting"]}>
-                        <label>{"Indent Size" || 'Indent Size'}:</label>
+                        <label>{"Indent Size"}:</label>
                         <select value={indentSize} onChange={(e) => setIndentSize(parseInt(e.target.value))}>
-                            <option value={2}>2 {"spaces" || 'spaces'}</option>
-                            <option value={4}>4 {"spaces" || 'spaces'}</option>
-                            <option value={8}>8 {"spaces" || 'spaces'}</option>
+                            <option value={2}>2 {"spaces"}</option>
+                            <option value={4}>4 {"spaces"}</option>
+                            <option value={8}>8 {"spaces"}</option>
                         </select>
                     </div>
                 </div>
 
                 <div className={styles["input-section"]}>
-                    <label>{"Input XML" || 'Input XML'}</label>
+                    <label>{"Input XML"}</label>
                     <textarea
                         value={inputXML}
                         onChange={(e) => setInputXML(e.target.value)}
-                        placeholder={"Paste your XML data here..." || 'Paste your XML data here...'}
+                        placeholder={"Paste your XML data here..."}
                         className={`${styles["xml-input"]} ${!isValid ? 'error' : ''}`}
                         rows={8}
                     />
@@ -161,16 +161,16 @@ const XMLFormatter = () => {
 
                 <div className={styles["action-buttons"]}>
                     <button onClick={formatXML} className={styles["format-btn"]}>
-                        {"Format XML" || 'Format XML'}
+                        {"Format XML"}
                     </button>
                     <button onClick={minifyXML} className={styles["minify-btn"]}>
-                        {"Minify XML" || 'Minify XML'}
+                        {"Minify XML"}
                     </button>
                     <button onClick={validateXML} className={styles["validate-btn"]}>
-                        {"Validate XML" || 'Validate XML'}
+                        {"Validate XML"}
                     </button>
                     <button onClick={clearAll} className={styles["clear-btn"]}>
-                        {"Clear All" || 'Clear All'}
+                        {"Clear All"}
                     </button>
                 </div>
 
@@ -182,28 +182,28 @@ const XMLFormatter = () => {
 
                 {formattedXML && (
                     <div className={styles["output-section"]}>
-                        <label>{"Formatted XML" || 'Formatted XML'}</label>
+                        <label>{"Formatted XML"}</label>
                         <pre className={styles["xml-output"]}>
                             {formattedXML}
                         </pre>
                         <div className={styles["output-actions"]}>
                             <button onClick={() => copyToClipboard(formattedXML)} className={styles["copy-btn"]}>
-                                {"Copy to Clipboard" || 'Copy to Clipboard'}
+                                {"Copy to Clipboard"}
                             </button>
                         </div>
                     </div>
                 )}
 
                 <div className={styles["info-section"]}>
-                    <h4>{"About XML" || 'About XML'}</h4>
-                    <p>{"XML (eXtensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable." || 'XML (eXtensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable.'}</p>
+                    <h4>{"About XML"}</h4>
+                    <p>{"XML (eXtensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable."}</p>
                     
-                    <h5>{"Common Uses:" || 'Common Uses:'}</h5>
+                    <h5>{"Common Uses:"}</h5>
                     <ul>
-                        <li>{"Web services (SOAP, REST)" || 'Web services (SOAP, REST)'}</li>
-                        <li>{"Configuration files" || 'Configuration files'}</li>
-                        <li>{"Data exchange between systems" || 'Data exchange between systems'}</li>
-                        <li>{"Document storage" || 'Document storage'}</li>
+                        <li>{"Web services (SOAP, REST)"}</li>
+                        <li>{"Configuration files"}</li>
+                        <li>{"Data exchange between systems"}</li>
+                        <li>{"Document storage"}</li>
                     </ul>
                 </div>
             </div>

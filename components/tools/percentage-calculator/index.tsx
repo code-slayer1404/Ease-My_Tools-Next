@@ -58,8 +58,8 @@ const PercentageCalculator = () => {
     return (
         <div className={styles["percentage-calculator"]}>
             <div className={styles["calculator-header"]}>
-                <h1>{"Percentage Calculator" || 'Percentage Calculator'}</h1>
-                <p>{"Calculate percentages, discounts, and changes" || 'Calculate percentages, discounts, and changes'}</p>
+                <h1>{"Percentage Calculator"}</h1>
+                <p>{"Calculate percentages, discounts, and changes"}</p>
             </div>
 
             <div className={styles["calculator-container"]}>
@@ -68,48 +68,48 @@ const PercentageCalculator = () => {
                         className={`${styles["type-btn"]} ${calculationType === 'percentage' ? styles["active"] : ""}`}
                         onClick={() => setCalculationType('percentage')}
                     >
-                        {"Basic Percentage" || 'Basic Percentage'}
+                        {"Basic Percentage"}
                     </button>
                     <button 
                         className={`${styles["type-btn"]} ${calculationType === 'change' ? styles["active"] : ""}`}
                         onClick={() => setCalculationType('change')}
                     >
-                        {"Percentage Change" || 'Percentage Change'}
+                        {"Percentage Change"}
                     </button>
                     <button 
                         className={`${styles["type-btn"]} ${calculationType === 'findNumber' ? styles["active"] : ""}`}
                         onClick={() => setCalculationType('findNumber')}
                     >
-                        {"Find Number" || 'Find Number'}
+                        {"Find Number"}
                     </button>
                 </div>
 
                 {calculationType === 'percentage' && (
                     <div className={styles["calculation-section"]}>
-                        <h3>{"Basic Percentage" || 'Basic Percentage'}</h3>
+                        <h3>{"Basic Percentage"}</h3>
                         <div className={styles["input-group"]}>
-                            <label>{"What is" || 'What is'} </label>
+                            <label>{"What is"} </label>
                             <input
                                 type="number"
                                 value={values.percentage}
                                 onChange={(e) => setValues(prev => ({ ...prev, percentage: e.target.value }))}
                                 placeholder="%"
                             />
-                            <label> {"of" || 'of'} </label>
+                            <label> {"of"} </label>
                             <input
                                 type="number"
                                 value={values.number}
                                 onChange={(e) => setValues(prev => ({ ...prev, number: e.target.value }))}
-                                placeholder={"Number" || 'Number'}
+                                placeholder={"Number"}
                             />
                             <span>?</span>
                         </div>
                         <button onClick={calculatePercentage} className={styles["calculate-btn"]}>
-                            {"Calculate" || 'Calculate'}
+                            {"Calculate"}
                         </button>
                         {values.result && (
                             <div className={styles["result"]}>
-                                <strong>{values.percentage}% {"of" || 'of'} {values.number} = {values.result}</strong>
+                                <strong>{values.percentage}% {"of"} {values.number} = {values.result}</strong>
                             </div>
                         )}
                     </div>
@@ -117,29 +117,29 @@ const PercentageCalculator = () => {
 
                 {calculationType === 'change' && (
                     <div className={styles["calculation-section"]}>
-                        <h3>{"Percentage Change" || 'Percentage Change'}</h3>
+                        <h3>{"Percentage Change"}</h3>
                         <div className={`${styles["input-group"]} ${styles["vertical"]}`}>
-                            <label>{"Original Value" || 'Original Value'}</label>
+                            <label>{"Original Value"}</label>
                             <input
                                 type="number"
                                 value={values.original}
                                 onChange={(e) => setValues(prev => ({ ...prev, original: e.target.value }))}
-                                placeholder={"Original Value" || 'Original Value'}
+                                placeholder={"Original Value"}
                             />
-                            <label>{"Final Value" || 'Final Value'}</label>
+                            <label>{"Final Value"}</label>
                             <input
                                 type="number"
                                 value={values.final}
                                 onChange={(e) => setValues(prev => ({ ...prev, final: e.target.value }))}
-                                placeholder={"Final Value" || 'Final Value'}
+                                placeholder={"Final Value"}
                             />
                         </div>
                         <button onClick={calculatePercentageChange} className={styles["calculate-btn"]}>
-                            {"Calculate" || 'Calculate'}
+                            {"Calculate"}
                         </button>
                         {values.change && (
                             <div className={styles["result"]}>
-                                <strong>{"Percentage Change" || 'Percentage Change'}: {values.change}%</strong>
+                                <strong>{"Percentage Change"}: {values.change}%</strong>
                             </div>
                         )}
                     </div>
@@ -147,36 +147,36 @@ const PercentageCalculator = () => {
 
                 {calculationType === 'findNumber' && (
                     <div className={styles["calculation-section"]}>
-                        <h3>{"Find Number" || 'Find Number'}</h3>
+                        <h3>{"Find Number"}</h3>
                         <div className={styles["input-group"]}>
-                            <label>{values.result} {"is" || 'is'} </label>
+                            <label>{values.result} {"is"} </label>
                             <input
                                 type="number"
                                 value={values.percentage}
                                 onChange={(e) => setValues(prev => ({ ...prev, percentage: e.target.value }))}
                                 placeholder="%"
                             />
-                            <label> {"of what number?" || 'of what number?'} </label>
+                            <label> {"of what number?"} </label>
                             <input
                                 type="number"
                                 value={values.result}
                                 onChange={(e) => setValues(prev => ({ ...prev, result: e.target.value }))}
-                                placeholder={"Result" || 'Result'}
+                                placeholder={"Result"}
                             />
                         </div>
                         <button onClick={calculateNumberFromPercentage} className={styles["calculate-btn"]}>
-                            {"Calculate" || 'Calculate'}
+                            {"Calculate"}
                         </button>
                         {values.number && (
                             <div className={styles["result"]}>
-                                <strong>{values.result} {"is" || 'is'} {values.percentage}% {"of" || 'of'} {values.number}</strong>
+                                <strong>{values.result} {"is"} {values.percentage}% {"of"} {values.number}</strong>
                             </div>
                         )}
                     </div>
                 )}
 
                 <button onClick={clearAll} className={styles["clear-btn"]}>
-                    {"Clear All" || 'Clear All'}
+                    {"Clear All"}
                 </button>
             </div>
         </div>
