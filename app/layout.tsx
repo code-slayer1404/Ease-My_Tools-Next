@@ -6,6 +6,9 @@ import Providers from "./providers";
 export const metadata = {
   title: "EaseMyTools",
   description: "EaseMyTools utility platform",
+  alternates: {
+    canonical: "https://easemytools.com",
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
