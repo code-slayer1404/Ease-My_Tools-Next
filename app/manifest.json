@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "EaseMyTools",
+  "short_name": "EaseMyTools",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
