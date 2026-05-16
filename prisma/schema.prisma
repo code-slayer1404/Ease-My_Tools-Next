@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  PREMIUM
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+
+  // Basic profile
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  // Native credentials auth
+  // Nullable because OAuth users may not have passwords
+  password      String?
+
+  // Authorization
+  role          Role      @default(USER)
+
+  // Future Razorpay/subscription support
+  razorpayCustomerId String?
+  premiumUntil       DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts      Account[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+
+  userId            String
+
+  // oauth / credentials
+  type              String
+
+  // google / github / credentials
+  provider          String
+
+  providerAccountId String
+
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

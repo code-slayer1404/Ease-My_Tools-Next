@@ -1,0 +1,73 @@
+.signInButton,
+.signOutButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--card-light);
+    color: var(--text-light);
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+:global(.dark) .signInButton,
+:global(.dark) .signOutButton {
+    background: var(--card-dark);
+    border-color: #374151;
+    color: var(--text-dark);
+}
+
+.signInButton:hover,
+.signOutButton:hover {
+    background: #f3f4f6;
+    transform: translateY(-1px);
+}
+
+:global(.dark) .signInButton:hover,
+:global(.dark) .signOutButton:hover {
+    background: #334155;
+}
+
+.signOutButton {
+    color: #dc2626;
+    border-color: #fee2e2;
+}
+
+:global(.dark) .signOutButton {
+    color: #f87171;
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.signOutButton:hover {
+    background: #fee2e2;
+    border-color: #dc2626;
+}
+
+:global(.dark) .signOutButton:hover {
+    background: rgba(220, 38, 38, 0.15);
+    border-color: #f87171;
+}
+
+.googleIcon {
+    width: 18px;
+    height: 18px;
+}
+
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e5e7eb;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

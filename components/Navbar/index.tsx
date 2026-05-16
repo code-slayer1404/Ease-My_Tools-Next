@@ -4,11 +4,13 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from './styles.module.css';
 import { useTheme } from "next-themes";
+import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
   console.log("navbar was rendered");
 
   const { theme, setTheme, resolvedTheme } = useTheme();
+  const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
 
   const rawMenus = [
@@ -59,6 +61,19 @@ const Navbar = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -130,11 +145,24 @@ const Navbar = () => {
           ))}
         </nav>
 
-        <div className={`flex`}>
+        <div className={styles["navbar-right"]}>
           <div className={styles["navbar-actions"]}>
-            <Link href={"/login" as any} className={styles["signin-btn"]}>
-              Sign In
-            </Link>
+            {status === "loading" ? (
+              <div className={styles["auth-loading"]}>...</div>
+            ) : session ? (
+              <div className={styles["user-menu"]}>
+                <span className={styles["user-email"]}>
+                  {session.user?.email?.split("@")[0]}
+                </span>
+                <button onClick={() => signOut()} className={styles["signout-btn"]}>
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <Link href={"/login" as any} className={styles["signin-btn"]}>
+                Sign In
+              </Link>
+            )}
             <button className={styles["theme-toggle-btn"]} onClick={handleThemeToggle}>
               {!mounted ? "🌓 Theme" : activeTheme === "light" ? "🌙 Dark" : "☀️ Light"}
             </button>
@@ -160,7 +188,7 @@ const Navbar = () => {
             <nav ref={menuRef} className={styles["mobile-menu"]}>
               <div className={styles["mobile-menu-header"]}>
                 <div className={styles["mobile-menu-title"]}>Menu</div>
-                <button className={styles["mobile-close-btn"]} onClick={toggleMenu}></button>
+                <button className={styles["mobile-close-btn"]} onClick={toggleMenu}>✕</button>
               </div>
 
               <div className={styles["mobile-menu-content"]}>
@@ -201,6 +229,25 @@ const Navbar = () => {
                     )}
                   </div>
                 ))}
+
+                <div className={styles["mobile-auth-section"]}>
+                  {status === "loading" ? (
+                    <div className={styles["mobile-auth-loading"]}>Loading...</div>
+                  ) : session ? (
+                    <>
+                      <div className={styles["mobile-user-email"]}>
+                        {session.user?.email}
+                      </div>
+                      <button onClick={() => signOut()} className={styles["mobile-signout-btn"]}>
+                        Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <Link href={"/login" as any} className={styles["mobile-signin-btn"]} onClick={toggleMenu}>
+                      Sign In
+                    </Link>
+                  )}
+                </div>
               </div>
             </nav>
           </>

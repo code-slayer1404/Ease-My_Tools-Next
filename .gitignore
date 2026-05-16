@@ -27,3 +27,9 @@ dist-ssr
 
 # TypeScript build cache
 tsconfig.tsbuildinfo
+
+/app/generated/prisma
+
+.env
+.env.local
+/app/generated/prisma
