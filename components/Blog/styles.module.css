@@ -221,6 +221,7 @@
   border-color: #374151;
 }
 
+.sidebar-section h2,
 .sidebar-section h3 {
   font-size: 1.25rem;
   margin-bottom: 1.5rem;
@@ -399,4 +400,14 @@
   .sidebar-section {
     padding: 1.5rem;
   }
+}
+
+.author-meta {
+  margin-top: 0.75rem;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+:global(.dark) .author-meta {
+  color: #9ca3af;
 }
