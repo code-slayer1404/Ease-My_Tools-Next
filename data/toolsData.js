@@ -41,8 +41,21 @@ export const toolsByCategory = {
       icon: MdOutlineImage,
       component: () => import("@/components/tools/image-resizer"),
       seo: {
-        title: "Image Resizer",
-        description: "Use the Image Resizer tool on EaseMyTools.",
+        title: "Image Resizer | Resize Images for Web and Social",
+        description: "Resize JPG, PNG, WebP, and AVIF images quickly for websites, social media, and documents.",
+      },
+      seoContent: {
+        h1: "Image Resizer",
+        intro: "Resize images to exact dimensions in seconds while keeping visual quality suitable for web and sharing.",
+        howToUse: ["Upload an image.", "Set width and height or choose a preset.", "Apply resize and download the result."],
+        features: ["Custom width and height controls", "Common social and web presets", "Supports popular image formats"],
+        benefits: ["Faster page load times", "Consistent media dimensions", "Better fit across platforms"],
+        useCases: ["Blog and landing page assets", "Marketplace product photos", "Social media post images"],
+        faqs: [
+          { question: "Will resizing reduce image quality?", answer: "Resizing can affect detail, but the tool is optimized to keep results clear for normal web use." },
+          { question: "Can I resize for specific platforms?", answer: "Yes, you can enter exact dimensions to match any platform requirement." },
+        ],
+        relatedTools: [{ slug: "image-compressor", name: "Image Compressor" }, { slug: "remove-background", name: "Remove Background" }, { slug: "profile-pic-optimizer", name: "Profile Picture Optimizer" }],
       },
     },
     {
@@ -56,6 +69,19 @@ export const toolsByCategory = {
           "Compress JPEG, PNG, WebP, and AVIF images to exact file sizes while preserving quality. Perfect for web optimization.",
         keywords:
           "image compressor, compress image, reduce image size, image optimizer, webp converter",
+      },
+      seoContent: {
+        h1: "Image Compressor",
+        intro: "Compress image files to smaller sizes while keeping useful visual quality for websites, email, and sharing.",
+        howToUse: ["Upload an image file.", "Choose target size, format, and mode.", "Compress and download the optimized result."],
+        features: ["Target file size control", "JPEG, PNG, WebP, and AVIF options", "Compression modes for quality vs size"],
+        benefits: ["Faster upload and download speed", "Lower storage usage", "Improved web performance"],
+        useCases: ["Website image optimization", "Email attachment limits", "Content publishing workflows"],
+        faqs: [
+          { question: "Which format gives the smallest files?", answer: "WebP and AVIF typically produce smaller files than older formats for many images." },
+          { question: "Can I keep metadata?", answer: "Yes, you can choose whether metadata is preserved when compressing." },
+        ],
+        relatedTools: [{ slug: "image-resizer", name: "Image Resizer" }, { slug: "remove-background", name: "Remove Background" }, { slug: "file-converter", name: "File Converter" }],
       },
     },
         {
@@ -116,8 +142,21 @@ export const toolsByCategory = {
       icon: MdAutoFixHigh,
       component: () => import("@/components/tools/remove-background"),
       seo: {
-        title: "Remove Background",
-        description: "Use AI to remove image backgrounds in seconds.",
+        title: "Remove Background | Remove Photo Backgrounds Online",
+        description: "Remove image backgrounds and export clean transparent cutouts for products, profiles, and designs.",
+      },
+      seoContent: {
+        h1: "Remove Background",
+        intro: "Remove distracting backgrounds from photos and keep focus on your subject with a simple upload workflow.",
+        howToUse: ["Upload an image.", "Run cutout or choose a background mode.", "Download your processed image."],
+        features: ["Automatic subject cutout", "Transparent, solid color, and photo backgrounds", "Extra effects and basic adjustments"],
+        benefits: ["Cleaner product and profile visuals", "Faster image editing workflow", "No heavy desktop editor required"],
+        useCases: ["Ecommerce product listings", "Profile photos and team pages", "Quick creative mockups"],
+        faqs: [
+          { question: "Which file types work best?", answer: "Clear JPG or PNG images with a visible subject generally produce the best cutout results." },
+          { question: "Can I keep a transparent background?", answer: "Yes, choose the transparent option before downloading." },
+        ],
+        relatedTools: [{ slug: "image-resizer", name: "Image Resizer" }, { slug: "image-compressor", name: "Image Compressor" }, { slug: "profile-pic-optimizer", name: "Profile Picture Optimizer" }],
       },
     },
     {
@@ -216,12 +255,25 @@ export const toolsByCategory = {
     },
     {
       name: "PDFImageExtractor",
-      slug: "pdfImage-extractor",
+      slug: "pdf-image-extractor",
       icon: VscFilePdf,
       component: () => import("@/components/tools/pdf-image-extractor"),
       seo: {
-        title: "PDF Image Extractor",
-        description: "Extract embedded images from PDF files.",
+        title: "PDF Image Extractor | Extract Images from PDF Files",
+        description: "Extract embedded images from PDF files quickly for reuse in presentations, documents, and design tasks.",
+      },
+      seoContent: {
+        h1: "PDF Image Extractor",
+        intro: "Pull images out of PDF documents without manually taking screenshots page by page.",
+        howToUse: ["Upload your PDF file.", "Run extraction to detect embedded images.", "Download selected images."],
+        features: ["Extracts images from uploaded PDF files", "Simple upload and export flow", "Useful for document asset reuse"],
+        benefits: ["Saves manual capture time", "Keeps extracted visuals reusable", "Reduces repetitive editing work"],
+        useCases: ["Reusing report graphics", "Preparing training documents", "Collecting assets from PDF brochures"],
+        faqs: [
+          { question: "Does it extract every visible graphic?", answer: "It extracts embedded images. Some vector-only content may need separate handling." },
+          { question: "Is my upload stored permanently?", answer: "The page is designed for quick processing workflows rather than long-term storage." },
+        ],
+        relatedTools: [{ slug: "file-converter", name: "File Converter" }, { slug: "image-compressor", name: "Image Compressor" }, { slug: "image-resizer", name: "Image Resizer" }],
       },
     },
   ],
@@ -294,8 +346,21 @@ export const toolsByCategory = {
       icon: FaFileCsv,
       component: () => import("@/components/tools/file-converter"),
       seo: {
-        title: "File Converter",
-        description: "Convert files between supported formats.",
+        title: "File Converter | Convert Files Between Formats",
+        description: "Convert files between supported formats quickly for sharing, compatibility, and workflow convenience.",
+      },
+      seoContent: {
+        h1: "File Converter",
+        intro: "Convert files into compatible formats so they are easier to share, upload, and use across tools.",
+        howToUse: ["Upload your source file.", "Choose the target format.", "Run conversion and download."],
+        features: ["Straightforward format selection", "Quick file processing flow", "Browser-based usage with no install"],
+        benefits: ["Better compatibility across platforms", "Faster file preparation", "Simpler collaboration and sharing"],
+        useCases: ["Preparing files for clients", "Converting documents for tools that require specific formats", "Normalizing assets before publishing"],
+        faqs: [
+          { question: "Are all formats supported?", answer: "Support depends on the converter setup for this tool. Use the available options shown in the UI." },
+          { question: "Can I convert large files?", answer: "Large files may take longer. Keep file sizes reasonable for best performance." },
+        ],
+        relatedTools: [{ slug: "pdf-image-extractor", name: "PDF Image Extractor" }, { slug: "csv-to-json", name: "CSV to JSON" }, { slug: "image-compressor", name: "Image Compressor" }],
       },
     },
     {
