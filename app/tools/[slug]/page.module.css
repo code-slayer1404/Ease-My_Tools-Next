@@ -6,9 +6,10 @@
 
 .breadcrumbNav {
   max-width: 1200px;
-  margin: 0.4rem auto 0;
+  margin: 0.3rem auto 0;
   padding: 0 1rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .breadcrumbList {
@@ -27,17 +28,21 @@
 }
 
 .breadcrumbItem + .breadcrumbItem::before {
-  content: "/";
+  content: "»";
   opacity: 0.6;
 }
 
-.breadcrumbItem a {
+.breadcrumbLink {
   color: inherit;
   text-decoration: none;
 }
 
-.breadcrumbItem a:hover {
+.breadcrumbLink:hover {
   text-decoration: underline;
+}
+
+.breadcrumbCurrent {
+  opacity: 0.8;
 }
 
 .sectionCard {
