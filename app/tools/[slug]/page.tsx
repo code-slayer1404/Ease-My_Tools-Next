@@ -19,7 +19,15 @@ function BreadcrumbNav({ items }: { items: Crumb[] }) {
       <ol className={styles.breadcrumbList}>
         {items.map((item) => (
           <li key={item.name} className={styles.breadcrumbItem}>
-            {item.href ? <a href={item.href}>{item.name}</a> : <span aria-current="page">{item.name}</span>}
+            {item.href ? (
+              <Link href={item.href} className={styles.breadcrumbLink}>
+                {item.name}
+              </Link>
+            ) : (
+              <span aria-current="page" className={styles.breadcrumbCurrent}>
+                {item.name}
+              </span>
+            )}
           </li>
         ))}
       </ol>
