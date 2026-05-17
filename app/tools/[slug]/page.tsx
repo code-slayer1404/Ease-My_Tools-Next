@@ -10,65 +10,65 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import type { ToolSeoSectionData } from "@/components/ToolSeoContent";
 
-
 function ToolSeoIntro({ seoContent }: { seoContent: ToolSeoSectionData }) {
   return (
-    <section className={styles.seoIntro} aria-label="Tool overview">
-      <h1 className={styles.seoTitle}>{seoContent.h1}</h1>
-      <p className={styles.seoDescription}>{seoContent.intro}</p>
+    <section className={styles.toolSection} aria-label="Tool overview">
+      <div className={styles.sectionCard}>
+        <h1 className={styles.sectionTitle}>{seoContent.h1}</h1>
+        <p className={styles.sectionDescription}>{seoContent.intro}</p>
+      </div>
     </section>
   );
 }
 
-function ToolSeoDetails(
-  { seoContent, toolName }: { seoContent: ToolSeoSectionData; toolName: string }
-) {
+function ToolSeoDetails({ seoContent, toolName }: { seoContent: ToolSeoSectionData; toolName: string }) {
   return (
-    <section className={styles.seoDetails} aria-label={`${toolName} details`}>
-      <section className={styles.seoCard}>
-        <h2>How to use</h2>
-        <ol className={styles.seoText}>{seoContent.howToUse.map((item) => <li key={item}>{item}</li>)}</ol>
-      </section>
-      <section className={styles.seoCard}>
-        <h2>Features</h2>
-        <ul className={styles.seoText}>{seoContent.features.map((item) => <li key={item}>{item}</li>)}</ul>
-      </section>
-      <section className={styles.seoCard}>
-        <h2>Benefits</h2>
-        <ul className={styles.seoText}>{seoContent.benefits.map((item) => <li key={item}>{item}</li>)}</ul>
-      </section>
-      <section className={styles.seoCard}>
-        <h2>Use cases</h2>
-        <ul className={styles.seoText}>{seoContent.useCases.map((item) => <li key={item}>{item}</li>)}</ul>
-      </section>
-      <section className={styles.seoCard}>
-        <h2>Frequently asked questions</h2>
-        <div className={styles.faqList}>
-          {seoContent.faqs.map((faq) => (
-            <article key={faq.question} className={styles.faqItem}>
-              <h3>{faq.question}</h3>
-              <p className={styles.seoText}>{faq.answer}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-      <section className={styles.seoCard}>
-        <h2>Related tools</h2>
-        <ul className={styles.relatedList}>
-          {seoContent.relatedTools.map((relatedTool) => (
-            <li key={relatedTool.slug}>
-              <Link href={`/tools/${relatedTool.slug}`}>{relatedTool.name}</Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+    <section className={styles.toolSection} aria-label={`${toolName} details`}>
+      <div className={styles.detailsGrid}>
+        <section className={styles.sectionCard}>
+          <h2 className={styles.cardHeading}>How to use</h2>
+          <ol className={styles.listText}>{seoContent.howToUse.map((item) => <li key={item}>{item}</li>)}</ol>
+        </section>
+        <section className={styles.sectionCard}>
+          <h2 className={styles.cardHeading}>Features</h2>
+          <ul className={styles.listText}>{seoContent.features.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+        <section className={styles.sectionCard}>
+          <h2 className={styles.cardHeading}>Benefits</h2>
+          <ul className={styles.listText}>{seoContent.benefits.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+        <section className={styles.sectionCard}>
+          <h2 className={styles.cardHeading}>Use cases</h2>
+          <ul className={styles.listText}>{seoContent.useCases.map((item) => <li key={item}>{item}</li>)}</ul>
+        </section>
+        <section className={styles.sectionCard}>
+          <h2 className={styles.cardHeading}>Frequently asked questions</h2>
+          <div className={styles.faqList}>
+            {seoContent.faqs.map((faq) => (
+              <article key={faq.question} className={styles.faqItem}>
+                <h3 className={styles.faqQuestion}>{faq.question}</h3>
+                <p className={styles.listText}>{faq.answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+        <section className={styles.sectionCard}>
+          <h2 className={styles.cardHeading}>Related tools</h2>
+          <ul className={styles.relatedList}>
+            {seoContent.relatedTools.map((relatedTool) => (
+              <li key={relatedTool.slug}>
+                <Link href={`/tools/${relatedTool.slug}`}>{relatedTool.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
     </section>
   );
 }
-export async function generateMetadata(
-  { params }: { params: Promise<{ slug: string }> }
-): Promise<Metadata> {
-  const { slug } = await params;   // ✅ must await
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
   const tool = getToolBySlug(slug);
 
   if (tool) {
@@ -94,10 +94,8 @@ export async function generateMetadata(
   return {};
 }
 
-export default async function Page(
-  { params }: { params: Promise<{ slug: string }> }
-) {
-  const { slug } = await params;   // ✅ must await
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const tool = getToolBySlug(slug);
 
   if (tool) {
@@ -110,14 +108,16 @@ export default async function Page(
     ]);
     const faqSchema = tool.seoContent?.faqs ? createFAQSchema(tool.seoContent.faqs) : null;
 
-    return (<>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      {faqSchema ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} /> : null}
-      {tool.seoContent ? <ToolSeoIntro seoContent={tool.seoContent} /> : null}
-      <DynamicComponent />
-      {tool.seoContent ? <ToolSeoDetails seoContent={tool.seoContent} toolName={tool.name} /> : null}
-    </>);
+    return (
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+        {faqSchema ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} /> : null}
+        {tool.seoContent ? <ToolSeoIntro seoContent={tool.seoContent} /> : null}
+        <DynamicComponent />
+        {tool.seoContent ? <ToolSeoDetails seoContent={tool.seoContent} toolName={tool.name} /> : null}
+      </>
+    );
   }
 
   if (slug && toolsByCategory[slug]) {
