@@ -149,7 +149,7 @@ const Business = () => {
         <section className={styles["business-cta"]}>
           <div className={styles["cta-content"]}>
             <h2>{"Ready to Transform Your Team\\'s Workflow?"}</h2>
-            <p>{"Join thousands of businesses that trust EaseMyTools for their daily operations."}</p>
+            <p>{"Teams of different sizes use EaseMyTools to streamline recurring digital tasks."}</p>
             <div className={styles["cta-buttons"]}>
               <button className={`${styles["cta-button"]} ${styles["primary"]}`}>
                 {"Start Free Trial"}

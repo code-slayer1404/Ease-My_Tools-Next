@@ -6,21 +6,21 @@ const Press = () => {
   const pressReleases = [
     {
       id: 1,
-      title: "EaseMyTools Launches Revolutionary AI-Powered Background Removal Tool",
+      title: "EaseMyTools Announces New Background Editing Improvements",
       date: '2024-01-15',
       excerpt: "New feature allows users to remove image backgrounds with unprecedented accuracy and speed, completely free.",
       category: "Product Launch"
     },
     {
       id: 2,
-      title: "EaseMyTools Reaches 1 Million Users Milestone",
+      title: "EaseMyTools Publishes Product Update and Roadmap",
       date: '2024-01-10',
       excerpt: "Platform celebrates rapid growth and user adoption across 150+ countries worldwide.",
       category: "Milestone"
     },
     {
       id: 3,
-      title: "Company Secures $5M in Series A Funding",
+      title: "EaseMyTools Shares Platform Reliability Update",
       date: '2024-01-05',
       excerpt: "Funding round led by Tech Ventures to accelerate product development and global expansion.",
       category: "Funding"
@@ -29,21 +29,21 @@ const Press = () => {
 
   const mediaCoverage = [
     {
-      outlet: 'TechCrunch',
+      outlet: 'Industry Newsletter',
       logo: '📰',
       title: "EaseMyTools is Revolutionizing Online File Processing",
       date: '2024-01-12',
       link: '#'
     },
     {
-      outlet: 'Product Hunt',
+      outlet: 'Developer Community Blog',
       logo: '🚀',
       title: "Product of the Day: EaseMyTools Suite",
       date: '2024-01-08',
       link: '#'
     },
     {
-      outlet: 'The Verge',
+      outlet: 'Digital Workflow Journal',
       logo: '🔊',
       title: "How Local Processing is Changing Online Tools",
       date: '2024-01-03',
@@ -112,7 +112,7 @@ const Press = () => {
                 </div>
                 <h3 className={styles["release-title"]}>{release.title}</h3>
                 <p className={styles["release-excerpt"]}>{release.excerpt}</p>
-                <a href="#" className={styles["read-more"]}>
+                <a href="#" className={styles["read-more"]} aria-label={`Read full release: ${release.title}`}>
                   {"Read Full Release"} →
                 </a>
               </article>
@@ -133,7 +133,7 @@ const Press = () => {
                   </div>
                 </div>
                 <h4 className={styles["coverage-title"]}>{coverage.title}</h4>
-                <a href={coverage.link} className={styles["read-article"]} target="_blank" rel="noopener noreferrer">
+                <a href={coverage.link} className={styles["read-article"]} aria-label={`Read article from ${coverage.outlet}: ${coverage.title}`} target="_blank" rel="noopener noreferrer">
                   {"Read Article"} →
                 </a>
               </article>
@@ -154,7 +154,7 @@ const Press = () => {
                   <p>{item.description}</p>
                   <span className={styles["kit-format"]}>{item.format}</span>
                 </div>
-                <a href="#" className={styles["download-button"]}>
+                <a href="#" className={styles["download-button"]} aria-label={`Download ${item.name}`}>
                   {"Download"}
                 </a>
               </div>
@@ -174,9 +174,9 @@ const Press = () => {
               <ul>
                 <li>{"Founded: 2023"}</li>
                 <li>{"Headquarters: San Francisco, CA"}</li>
-                <li>{"Users: 1M+ worldwide"}</li>
+                <li>{"Users: Usage metrics are not publicly disclosed"}</li>
                 <li>{"Tools: 50+ and growing"}</li>
-                <li>{"Team: 25+ employees"}</li>
+                <li>{"Team: Team details available on request"}</li>
               </ul>
             </div>
           </div>
