@@ -105,7 +105,7 @@ const Navbar = () => {
                 onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
               >
                 <span className={styles.avatar}>
-                  {session.user?.email?.[0].toUpperCase()}
+                    {session.user?.email?.charAt(0).toUpperCase() || "?"}
                 </span>
                 <span className={styles.chevron}>▾</span>
               </button>
