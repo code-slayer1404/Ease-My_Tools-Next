@@ -2,258 +2,200 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import styles from './styles.module.css';
+import styles from "./styles.module.css";
 import { useTheme } from "next-themes";
 import { useSession, signOut } from "next-auth/react";
 
 const Navbar = () => {
-  console.log("navbar was rendered");
-
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const userDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  const rawMenus = [
-    { title: "PDF", items: [{ label: "Merge PDF", icon: "📑" }, { label: "Split PDF", icon: "✂️" }, { label: "Compress PDF", icon: "📉" }] },
-    { title: "Image", items: [{ label: "Remove BG", icon: "🖼️" }, { label: "Resize", icon: "📏" }, { label: "Convert", icon: "🔄" }] },
-    { title: "Video", items: [{ label: "Compress", icon: "🎥" }, { label: "Mute", icon: "🔇" }, { label: "Convert", icon: "🔄" }] },
-    { title: "File", items: [{ label: "Split Excel", icon: "📊" }, { label: "Word → PDF", icon: "📝" }, { label: "PPT → PDF", icon: "📽️" }] }
+  const menus = [
+    { title: "PDF", items: ["Merge PDF", "Split PDF", "Compress PDF"] },
+    { title: "Image", items: ["Remove BG", "Resize", "Convert"] },
+    { title: "Video", items: ["Compress", "Mute", "Convert"] },
+    { title: "File", items: ["Split Excel", "Word → PDF", "PPT → PDF"] },
   ];
 
-  const menus = Array.isArray(rawMenus) ? rawMenus : [];
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const hamburgerRef = useRef<HTMLButtonElement | null>(null);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-
-      if (
-        isMenuOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(target) &&
-        hamburgerRef.current &&
-        !hamburgerRef.current.contains(target)
-      ) {
-        setIsMenuOpen(false);
-        setActiveDropdown(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isMenuOpen]);
-
-  // Close menu on resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1023) {
-        setIsMenuOpen(false);
-        setActiveDropdown(null);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Prevent body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-    if (isMenuOpen) {
-      setActiveDropdown(null);
-    }
-  };
-
-  const toggleDropdown = (index: number) => {
-    setActiveDropdown(activeDropdown === index ? null : index);
+  const icons: Record<string, string> = {
+    "Merge PDF": "📑", "Split PDF": "✂️", "Compress PDF": "📉",
+    "Remove BG": "🖼️", "Resize": "📏", "Convert": "🔄",
+    "Compress": "🎥", "Mute": "🔇",
+    "Split Excel": "📊", "Word → PDF": "📝", "PPT → PDF": "📽️",
   };
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const activeTheme = theme === "system" ? resolvedTheme : theme;
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(e.target as Node)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  const handleThemeToggle = () => {
-    setTheme(activeTheme === "dark" ? "light" : "dark");
-  };
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  const activeTheme = theme === "system" ? resolvedTheme : theme;
+  const toggleTheme = () => setTheme(activeTheme === "dark" ? "light" : "dark");
 
   return (
-    <header className={styles["navbar"]}>
-      <div className={styles["navbar-container"]}>
-
-        <Link href={"/" as any} className={styles["navbar-logo"]} style={{ textDecoration: "None" }}>
+    <header className={styles.navbar}>
+      <div className={styles.container}>
+        <Link href="/" className={styles.logo}>
           EaseMyTools
         </Link>
 
-        <nav className={styles["navbar-desktop-nav"]}>
-          {menus.map((menu, index) => (
+        <div className={styles.desktopMenu}>
+          {menus.map((menu, idx) => (
             <div
-              className={styles["nav-desktop-item"]}
-              key={index}
-              onMouseEnter={() =>
-                window.innerWidth > 1023 && setActiveDropdown(index)
-              }
-              onMouseLeave={() =>
-                window.innerWidth > 1023 && setActiveDropdown(null)
-              }
+              key={idx}
+              className={styles.dropdown}
+              onMouseEnter={() => setOpenDropdown(idx)}
+              onMouseLeave={() => setOpenDropdown(null)}
             >
-              <button className={styles["nav-desktop-link"]}>
-                {menu.title}
-                <span className={styles["desktop-arrow"]}>▾</span>
+              <button className={styles.dropdownBtn}>
+                {menu.title} <span className={styles.arrow}>▾</span>
               </button>
-
-              {activeDropdown === index && (
-                <div className={styles["desktop-dropdown-panel"]}>
-                  <div className={styles["desktop-dropdown-grid"]}>
-                    {menu.items.map((item: any, itemIndex: number) => (
-                      <Link
-                        key={itemIndex}
-                        href={`/${(item as any).id || ""}` as any}
-                        className={styles["desktop-dropdown-item"]}
-                        onClick={() => {
-                          setIsMenuOpen(false);
-                          setActiveDropdown(null);
-                        }}
-                      >
-                        <div className={styles["dropdown-item-icon"]}>{item.icon}</div>
-                        <div className={styles["dropdown-item-label"]}>{item.label}</div>
-                      </Link>
-                    ))}
-                  </div>
+              {openDropdown === idx && (
+                <div className={styles.dropdownPanel}>
+                  {menu.items.map((item, i) => (
+                    <Link
+                      key={i}
+                      href={`/tools/${item.toLowerCase().replace(/\s/g, "-")}`}
+                      className={styles.dropdownItem}
+                    >
+                      <span className={styles.itemIcon}>{icons[item]}</span>
+                      <span>{item}</span>
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
           ))}
-        </nav>
-
-        <div className={styles["navbar-right"]}>
-          <div className={styles["navbar-actions"]}>
-            {status === "loading" ? (
-              <div className={styles["auth-loading"]}>...</div>
-            ) : session ? (
-              <div className={styles["user-menu"]}>
-                <span className={styles["user-email"]}>
-                  {/* {session.user?.email?.split("@")[0]} */}
-                  {session.user?.name}
-                </span>
-                <button onClick={() => signOut()} className={styles["signout-btn"]}>
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <Link href={"/login" as any} className={styles["signin-btn"]}>
-                Sign In
-              </Link>
-            )}
-            <button className={styles["theme-toggle-btn"]} onClick={handleThemeToggle}>
-              {!mounted ? "🌓 Theme" : activeTheme === "light" ? "🌙 Dark" : "☀️ Light"}
-            </button>
-          </div>
-
-          <button
-            ref={hamburgerRef}
-            className={`${styles["mobile-hamburger"]} ${isMenuOpen ? styles["active"] : ""}`}
-            onClick={toggleMenu}
-            aria-label="Toggle menu"
-          >
-            <div className={styles["hamburger-lines"]}>
-              <span className={styles["line"]}></span>
-              <span className={styles["line"]}></span>
-              <span className={styles["line"]}></span>
-            </div>
-          </button>
         </div>
 
-        {isMenuOpen && (
-          <>
-            <div className={styles["mobile-menu-overlay"]} onClick={toggleMenu} />
-            <nav ref={menuRef} className={styles["mobile-menu"]}>
-              <div className={styles["mobile-menu-header"]}>
-                <div className={styles["mobile-menu-title"]}>Menu</div>
-                <button className={styles["mobile-close-btn"]} onClick={toggleMenu}>✕</button>
-              </div>
+        <div className={styles.right}>
+          {status === "loading" ? (
+            <div className={styles.loader}>...</div>
+          ) : session ? (
+            // Desktop user menu only (hidden on mobile via CSS)
+            <div className={styles.userMenu} ref={userDropdownRef}>
+              <button
+                className={styles.userBtn}
+                onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+              >
+                <span className={styles.avatar}>
+                  {session.user?.email?.[0].toUpperCase()}
+                </span>
+                <span className={styles.chevron}>▾</span>
+              </button>
+              {isUserDropdownOpen && (
+                <div className={styles.userDropdown}>
+                  <div className={styles.userEmail}>{session.user?.email}</div>
+                  <button onClick={() => signOut()} className={styles.signOutBtn}>
+                    Sign Out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className={styles.signInBtn}>
+              Sign In
+            </Link>
+          )}
+          <button className={styles.themeBtn} onClick={toggleTheme}>
+            {!mounted
+              ? "🌓 Theme"
+              : activeTheme === "light"
+                ? "🌙 Dark"
+                : "☀️ Light"}
+          </button>
 
-              <div className={styles["mobile-menu-content"]}>
-                {menus.map((menu, index) => (
-                  <div
-                    className={`${styles["mobile-menu-item"]} ${activeDropdown === index ? styles["active"] : ""}`}
-                    key={index}
+          <button
+            className={`${styles.hamburger} ${isMobileMenuOpen ? styles.active : ""}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+
+      {isMobileMenuOpen && (
+        <>
+          <div className={styles.overlay} onClick={() => setIsMobileMenuOpen(false)} />
+          <div className={styles.mobileMenu} ref={mobileMenuRef}>
+            <div className={styles.mobileHeader}>
+              <span>Menu</span>
+              <button onClick={() => setIsMobileMenuOpen(false)} className={styles.closeBtn}>✕</button>
+            </div>
+            <div className={styles.mobileContent}>
+              {menus.map((menu, idx) => (
+                <div key={idx} className={styles.mobileDropdown}>
+                  <button
+                    className={styles.mobileDropdownBtn}
+                    onClick={() => setOpenDropdown(openDropdown === idx ? null : idx)}
                   >
-                    <button
-                      className={styles["mobile-menu-link"]}
-                      onClick={() => toggleDropdown(index)}
-                    >
-                      <span>{menu.title}</span>
-                      <span className={styles["mobile-arrow"]}>
-                        {activeDropdown === index ? "▴" : "▾"}
-                      </span>
-                    </button>
-
-                    {activeDropdown === index && (
-                      <div className={styles["mobile-dropdown-panel"]}>
-                        <div className={styles["mobile-dropdown-grid"]}>
-                          {menu.items.map((item: any, itemIndex: number) => (
-                            <Link
-                              key={itemIndex}
-                              href={`/${(item as any).id || ""}` as any}
-                              className={styles["mobile-dropdown-item"]}
-                              onClick={() => {
-                                setIsMenuOpen(false);
-                                setActiveDropdown(null);
-                              }}
-                            >
-                              <div className={styles["mobile-item-icon"]}>{item.icon}</div>
-                              <div className={styles["mobile-item-label"]}>{item.label}</div>
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                <div className={styles["mobile-auth-section"]}>
-                  {status === "loading" ? (
-                    <div className={styles["mobile-auth-loading"]}>Loading...</div>
-                  ) : session ? (
-                    <>
-                      <div className={styles["mobile-user-email"]}>
-                        {session.user?.email}
-                      </div>
-                      <button onClick={() => signOut()} className={styles["mobile-signout-btn"]}>
-                        Sign Out
-                      </button>
-                    </>
-                  ) : (
-                    <Link href={"/login" as any} className={styles["mobile-signin-btn"]} onClick={toggleMenu}>
-                      Sign In
-                    </Link>
+                    {menu.title}
+                    <span>{openDropdown === idx ? "▴" : "▾"}</span>
+                  </button>
+                  {openDropdown === idx && (
+                    <div className={styles.mobileDropdownPanel}>
+                      {menu.items.map((item, i) => (
+                        <Link
+                          key={i}
+                          href={`/tools/${item.toLowerCase().replace(/\s/g, "-")}`}
+                          className={styles.mobileDropdownItem}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <span className={styles.itemIcon}>{icons[item]}</span>
+                          <span>{item}</span>
+                        </Link>
+                      ))}
+                    </div>
                   )}
                 </div>
+              ))}
+              <div className={styles.mobileAuth}>
+                {session ? (
+                  <>
+                    <div className={styles.mobileUserEmail}>{session.user?.email}</div>
+                    <button
+                      onClick={() => signOut()}
+                      className={styles.mobileSignOut}
+                    >
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <Link href="/login" className={styles.mobileSignIn} onClick={() => setIsMobileMenuOpen(false)}>
+                    Sign In
+                  </Link>
+                )}
               </div>
-            </nav>
-          </>
-        )}
-      </div>
+            </div>
+          </div>
+        </>
+      )}
     </header>
   );
 };
