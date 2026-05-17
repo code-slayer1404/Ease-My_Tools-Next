@@ -4,11 +4,28 @@ import { createSEOMetadata } from "@/lib/seo";
 import { createBreadcrumbSchema, createFAQSchema, createWebApplicationSchema } from "@/lib/schema";
 import dynamic from "next/dynamic";
 import CategoryToolsPage from "@/components/CategoryToolsPage";
-import { categoryTitles, getToolBySlug, toolsByCategory } from "@/data/toolsData";
+import { categoryTitles, getRelatedTools, getToolBySlug, getToolCategoryBySlug, toolsByCategory } from "@/data/toolsData";
 import { notFound } from "next/navigation";
 import styles from "./page.module.css";
 import Link from "next/link";
 import type { ToolSeoSectionData } from "@/components/ToolSeoContent";
+import RelatedToolsSection from "@/components/RelatedToolsSection";
+
+type Crumb = { name: string; href?: string };
+
+function BreadcrumbNav({ items }: { items: Crumb[] }) {
+  return (
+    <nav className={styles.breadcrumbNav} aria-label="Breadcrumb">
+      <ol className={styles.breadcrumbList}>
+        {items.map((item) => (
+          <li key={item.name} className={styles.breadcrumbItem}>
+            {item.href ? <a href={item.href}>{item.name}</a> : <span aria-current="page">{item.name}</span>}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
 
 function ToolSeoIntro({ seoContent }: { seoContent: ToolSeoSectionData }) {
   return (
@@ -57,7 +74,7 @@ function ToolSeoDetails({ seoContent, toolName }: { seoContent: ToolSeoSectionDa
           <ul className={styles.relatedList}>
             {seoContent.relatedTools.map((relatedTool) => (
               <li key={relatedTool.slug}>
-                <Link href={`/tools/${relatedTool.slug}`}>{relatedTool.name}</Link>
+                <Link href={`/tools/${relatedTool.slug}`}>{relatedTool.name} tool</Link>
               </li>
             ))}
           </ul>
@@ -100,12 +117,18 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   if (tool) {
     const DynamicComponent = dynamic(() => tool.component() as Promise<{ default: ComponentType }>);
+    const toolCategoryId = getToolCategoryBySlug(slug);
+    const categoryTitle = toolCategoryId ? categoryTitles[toolCategoryId] : null;
+    const categoryPath = toolCategoryId ? `/tools/${toolCategoryId}` : null;
+    const relatedTools = getRelatedTools(slug, 6);
     const toolSchema = createWebApplicationSchema(tool.name, `https://easemytools.com/tools/${slug}`, tool.seo.description);
-    const breadcrumbSchema = createBreadcrumbSchema([
+    const breadcrumbItems = [
       { name: "Home", item: "https://easemytools.com" },
       { name: "Tools", item: "https://easemytools.com/tools" },
+      ...(toolCategoryId ? [{ name: categoryTitles[toolCategoryId], item: `https://easemytools.com/tools/${toolCategoryId}` }] : []),
       { name: tool.name, item: `https://easemytools.com/tools/${slug}` },
-    ]);
+    ];
+    const breadcrumbSchema = createBreadcrumbSchema(breadcrumbItems);
     const faqSchema = tool.seoContent?.faqs ? createFAQSchema(tool.seoContent.faqs) : null;
 
     return (
@@ -113,9 +136,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(toolSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
         {faqSchema ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} /> : null}
+        <BreadcrumbNav items={[{ name: "Home", href: "/" }, { name: "Tools", href: "/tools" }, ...(categoryTitle && categoryPath ? [{ name: categoryTitle, href: categoryPath }] : []), { name: tool.name }]} />
         {tool.seoContent ? <ToolSeoIntro seoContent={tool.seoContent} /> : null}
         <DynamicComponent />
         {tool.seoContent ? <ToolSeoDetails seoContent={tool.seoContent} toolName={tool.name} /> : null}
+        <RelatedToolsSection currentToolName={tool.name} categoryTitle={categoryTitle ?? null} relatedTools={relatedTools} />
       </>
     );
   }

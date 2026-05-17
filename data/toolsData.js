@@ -523,6 +523,42 @@ export const getToolBySlug = (slug) => {
     .find((tool) => tool.slug === slug);
 };
 
+export const getToolCategoryBySlug = (slug) => {
+  return Object.entries(toolsByCategory).find(([, tools]) => tools.some((tool) => tool.slug === slug))?.[0] ?? null;
+};
+
+const getToolTerms = (tool) => {
+  const keywordSource = [tool.name, tool.seo?.title, tool.seo?.description, tool.seo?.keywords]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return new Set(keywordSource.split(/[^a-z0-9]+/).filter((term) => term.length > 2));
+};
+
+export const getRelatedTools = (slug, limit = 6) => {
+  const sourceTool = getToolBySlug(slug);
+  if (!sourceTool) return [];
+
+  const sourceCategory = getToolCategoryBySlug(slug);
+  const sourceTerms = getToolTerms(sourceTool);
+  const allTools = getAllTools().filter((tool) => tool.slug !== slug);
+
+  const rankedTools = allTools
+    .map((tool) => {
+      const toolTerms = getToolTerms(tool);
+      const sharedTerms = [...sourceTerms].filter((term) => toolTerms.has(term)).length;
+      const sameCategoryBoost = sourceCategory && toolsByCategory[sourceCategory]?.some((item) => item.slug === tool.slug) ? 2 : 0;
+      return { tool, score: sharedTerms + sameCategoryBoost };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((entry) => entry.tool);
+
+  return rankedTools;
+};
+
 export const getToolCategories = () => {
   return [
     {
