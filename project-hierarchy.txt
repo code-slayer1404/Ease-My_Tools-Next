@@ -1,5 +1,5 @@
 Ease-My_Tools-Next
-├─ .eslintrc.json
+├─ .env.local
 ├─ .gitignore
 ├─ .vscode
 │  └─ settings.json
@@ -7,7 +7,17 @@ Ease-My_Tools-Next
 │  ├─ about
 │  │  └─ page.tsx
 │  ├─ api
-│  │  └─ page.tsx
+│  │  ├─ auth
+│  │  │  └─ [...nextauth]
+│  │  │     └─ route.ts
+│  │  ├─ compress
+│  │  │  └─ route.ts
+│  │  ├─ page.tsx
+│  │  ├─ register
+│  │  │  └─ route.ts
+│  │  └─ test-email
+│  │     └─ route.ts
+│  ├─ apple-icon.png
 │  ├─ blog
 │  │  └─ page.tsx
 │  ├─ business
@@ -15,6 +25,8 @@ Ease-My_Tools-Next
 │  ├─ contact
 │  │  └─ page.tsx
 │  ├─ cookie-policy
+│  │  └─ page.tsx
+│  ├─ dashboard
 │  │  └─ page.tsx
 │  ├─ desktop
 │  │  └─ page.tsx
@@ -26,10 +38,16 @@ Ease-My_Tools-Next
 │  │  └─ page.tsx
 │  ├─ faq
 │  │  └─ page.tsx
+│  ├─ favicon.ico
 │  ├─ features
 │  │  └─ page.tsx
 │  ├─ globals.css
+│  ├─ icon0.svg
+│  ├─ icon1.png
 │  ├─ layout.tsx
+│  ├─ login
+│  │  └─ page.tsx
+│  ├─ manifest.json
 │  ├─ mobile
 │  │  └─ page.tsx
 │  ├─ not-found.tsx
@@ -41,20 +59,29 @@ Ease-My_Tools-Next
 │  ├─ privacy-policy
 │  │  └─ page.tsx
 │  ├─ providers.tsx
+│  ├─ register
+│  │  └─ page.tsx
+│  ├─ robots.ts
 │  ├─ security
 │  │  └─ page.tsx
+│  ├─ sitemap.ts
 │  ├─ terms-conditions
 │  │  └─ page.tsx
-│  └─ tools
-│     ├─ page.tsx
-│     └─ [slug]
-│        └─ page.tsx
+│  ├─ tools
+│  │  ├─ page.tsx
+│  │  └─ [slug]
+│  │     └─ page.tsx
+│  └─ verify-email
+│     └─ page.tsx
 ├─ components
 │  ├─ About
 │  │  ├─ index.tsx
 │  │  └─ styles.module.css
 │  ├─ API
 │  │  ├─ index.tsx
+│  │  └─ styles.module.css
+│  ├─ AuthButton
+│  │  ├─ AuthButton.tsx
 │  │  └─ styles.module.css
 │  ├─ BackButton
 │  │  ├─ index.tsx
@@ -104,6 +131,9 @@ Ease-My_Tools-Next
 │  ├─ HomePage
 │  │  ├─ index.tsx
 │  │  └─ styles.module.css
+│  ├─ Login
+│  │  ├─ index.tsx
+│  │  └─ styles.module.css
 │  ├─ MobileApp
 │  │  ├─ index.tsx
 │  │  └─ styles.module.css
@@ -120,6 +150,9 @@ Ease-My_Tools-Next
 │  │  ├─ index.tsx
 │  │  └─ styles.module.css
 │  ├─ PrivacyPolicy
+│  │  ├─ index.tsx
+│  │  └─ styles.module.css
+│  ├─ Register
 │  │  ├─ index.tsx
 │  │  └─ styles.module.css
 │  ├─ ScrollToTop
@@ -167,6 +200,9 @@ Ease-My_Tools-Next
 │  │  ├─ hash-generator
 │  │  │  ├─ index.tsx
 │  │  │  └─ styles.module.css
+│  │  ├─ image-compressor
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
 │  │  ├─ image-resizer
 │  │  │  ├─ index.tsx
 │  │  │  └─ styles.module.css
@@ -198,6 +234,9 @@ Ease-My_Tools-Next
 │  │  │  ├─ index.tsx
 │  │  │  └─ styles.module.css
 │  │  ├─ percentage-calculator
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
+│  │  ├─ profile-pic-optimizer
 │  │  │  ├─ index.tsx
 │  │  │  └─ styles.module.css
 │  │  ├─ qr-code-tool
@@ -233,6 +272,9 @@ Ease-My_Tools-Next
 │  │  ├─ url-encoder
 │  │  │  ├─ index.tsx
 │  │  │  └─ styles.module.css
+│  │  ├─ video-thumbnail-generator
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
 │  │  ├─ website-cost-calculator
 │  │  │  ├─ index.tsx
 │  │  │  └─ styles.module.css
@@ -248,14 +290,25 @@ Ease-My_Tools-Next
 ├─ data
 │  └─ toolsData.js
 ├─ declarations.d.ts
+├─ eslint.config.mjs
+├─ lib
+│  ├─ auth-options.ts
+│  ├─ auth.ts
+│  ├─ mail.ts
+│  └─ prisma.ts
+├─ middleware.ts
 ├─ next-env.d.ts
 ├─ next.config.ts
 ├─ package-lock.json
 ├─ package.json
+├─ prisma
+│  └─ schema.prisma
 ├─ project-hierarchy.txt
 ├─ public
-│  ├─ 404.html
-│  └─ EaseMyTools.svg
+│  ├─ EaseMyTools.svg
+│  ├─ web-app-manifest-192x192.png
+│  └─ web-app-manifest-512x512.png
 ├─ README.md
 ├─ tsconfig.json
-└─ tsconfig.tsbuildinfo
+└─ types
+   └─ next-auth.d.ts

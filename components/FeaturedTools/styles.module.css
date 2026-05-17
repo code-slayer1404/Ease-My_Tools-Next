@@ -80,7 +80,8 @@
   /* min-height: 320px; */
   cursor: pointer;
   position: relative;
-
+  color: inherit;
+  text-decoration: none;
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
