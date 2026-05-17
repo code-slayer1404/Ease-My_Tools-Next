@@ -60,7 +60,7 @@ const DesktopApp = () => {
           <div className={styles["header-content"]}>
             <h1>{"EaseMyTools Desktop"}</h1>
             <p className={styles["subtitle"]}>
-              {"Get the full power of EaseMyTools on your desktop. Faster, more secure, and works offline."}
+              {"Review planned desktop capabilities for offline-friendly workflows and local processing."}
             </p>
             <div className={styles["download-badges"]}>
               {downloadOptions.map((option, index) => (
