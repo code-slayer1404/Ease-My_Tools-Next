@@ -1,0 +1,98 @@
+.breadcrumbNav {
+    padding: 1rem 2rem 0.75rem;
+}
+
+.breadcrumbList {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    gap: 0.45rem;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.breadcrumbItem {
+    display: flex;
+    align-items: center;
+
+    gap: 0.45rem;
+}
+
+.breadcrumbLink {
+    color: #64748b;
+
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition: color 0.2s ease;
+}
+
+.breadcrumbLink:hover {
+    color: var(--primary);
+}
+
+:global(.dark) .breadcrumbLink {
+    color: #94a3b8;
+}
+
+.breadcrumbCurrent {
+    color: var(--primary);
+
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.separator {
+    color: #94a3b8;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+
+    transform: translateY(-1px);
+
+    user-select: none;
+}
+
+:global(.dark) .separator {
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+    .breadcrumbNav {
+        padding: 0.85rem 1rem 0.65rem;
+    }
+
+    .breadcrumbLink,
+    .breadcrumbCurrent {
+        font-size: 0.82rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .breadcrumbNav {
+        padding: 0.75rem 0.75rem 0.5rem;
+    }
+
+    .breadcrumbList {
+        gap: 0.35rem;
+    }
+
+    .breadcrumbItem {
+        gap: 0.35rem;
+    }
+
+    .breadcrumbLink,
+    .breadcrumbCurrent {
+        font-size: 0.78rem;
+    }
+
+    .separator {
+        font-size: 0.72rem;
+    }
+}

@@ -1,0 +1,140 @@
+.relatedTools {
+    padding: 0 2rem 2.5rem;
+}
+
+.relatedContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.relatedHeader {
+    margin-bottom: 1rem;
+}
+
+.relatedTitle {
+    margin: 0 0 0.35rem;
+
+    font-size: 1.9rem;
+    font-weight: 800;
+
+    background: linear-gradient(135deg,
+            #667eea 0%,
+            #764ba2 100%);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.relatedSubtitle {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+:global(.dark) .relatedSubtitle {
+    color: #9ca3af;
+}
+
+.toolsGrid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit,
+            minmax(240px, 1fr));
+
+    gap: 1rem;
+}
+
+.toolCard {
+    display: block;
+
+    background: var(--card-light);
+
+    border-radius: 16px;
+
+    padding: 1.25rem;
+
+    text-decoration: none;
+
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.toolCard:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .toolCard {
+    background: var(--card-dark);
+
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+}
+
+.toolName {
+    margin: 0 0 0.7rem;
+
+    color: var(--primary);
+
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.toolDescription {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+:global(.dark) .toolDescription {
+    color: #9ca3af;
+}
+
+@media (max-width: 1024px) {
+    .relatedTools {
+        padding: 0 1rem 2rem;
+    }
+
+    .toolsGrid {
+        grid-template-columns: repeat(2,
+                minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .relatedTools {
+        padding: 0 0.75rem 1.5rem;
+    }
+
+    .relatedTitle {
+        font-size: 1.4rem;
+    }
+
+    .toolsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .toolCard {
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .toolName {
+        font-size: 0.95rem;
+    }
+
+    .toolDescription {
+        font-size: 0.85rem;
+    }
+}

@@ -1,0 +1,136 @@
+.toolFaq {
+    padding: 0 2rem 2rem;
+}
+
+.faqContainer {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.faqHeader {
+    margin-bottom: 1rem;
+}
+
+.faqTitle {
+    margin: 0 0 0.35rem;
+
+    font-size: 1.9rem;
+    font-weight: 800;
+
+    background: linear-gradient(135deg,
+            #667eea 0%,
+            #764ba2 100%);
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.faqSubtitle {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+:global(.dark) .faqSubtitle {
+    color: #9ca3af;
+}
+
+.faqGrid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit,
+            minmax(320px, 1fr));
+
+    gap: 1rem;
+}
+
+.faqCard {
+    background: var(--card-light);
+
+    border-radius: 16px;
+
+    padding: 1.25rem;
+
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.faqCard:hover {
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark) .faqCard {
+    background: var(--card-dark);
+
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+}
+
+.question {
+    margin: 0 0 0.65rem;
+
+    color: var(--primary);
+
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.answer {
+    margin: 0;
+
+    color: #6b7280;
+
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+:global(.dark) .answer {
+    color: #9ca3af;
+}
+
+@media (max-width: 1024px) {
+    .toolFaq {
+        padding: 0 1rem 1.5rem;
+    }
+
+    .faqGrid {
+        grid-template-columns: repeat(2,
+                minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .toolFaq {
+        padding: 0 0.75rem 1rem;
+    }
+
+    .faqTitle {
+        font-size: 1.4rem;
+    }
+
+    .faqGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .faqCard {
+        padding: 1rem;
+        border-radius: 14px;
+    }
+
+    .question {
+        font-size: 0.95rem;
+    }
+
+    .answer {
+        font-size: 0.88rem;
+    }
+}

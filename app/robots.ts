@@ -1,8 +1,9 @@
-// app/robots.ts
+import type {
+    MetadataRoute,
+} from "next";
 
-import type { MetadataRoute } from "next";
-
-const BASE_URL = "https://easemytools.com";
+const BASE_URL =
+    "https://easemytools.com";
 
 export default function robots(): MetadataRoute.Robots {
     return {
@@ -10,18 +11,32 @@ export default function robots(): MetadataRoute.Robots {
             {
                 userAgent: "*",
 
-                allow: "/",
+                allow: [
+                    "/",
+                    "/tools/",
+                    "/blog/",
+                ],
 
                 disallow: [
+                    // API
+
                     "/api/",
-                    "/verify-email",
+
+                    // Auth
+
                     "/login",
                     "/register",
+                    "/verify-email",
+
+                    // User / Private
+
+                    "/dashboard/",
                 ],
             },
         ],
 
-        sitemap: `${BASE_URL}/sitemap.xml`,
+        sitemap:
+            `${BASE_URL}/sitemap.xml`,
 
         host: BASE_URL,
     };
