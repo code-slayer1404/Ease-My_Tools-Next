@@ -13,9 +13,6 @@ export default function ToolHero({
     return (
         <section className={styles.toolHero}>
                 <div className={styles.heroCard}>
-                    <span className={styles.categoryBadge}>
-                        Tool
-                    </span>
 
                     <h1 className={styles.heroTitle}>
                         {tool.seoContent?.h1 || tool.name}

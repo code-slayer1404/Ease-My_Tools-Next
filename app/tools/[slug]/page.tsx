@@ -200,7 +200,7 @@ export default async function Page({
 
 				{/* Hero */}
 
-				<ToolHero tool={tool} />
+				{/* <ToolHero tool={tool} /> */}
 
 				{/* Tool */}
 
