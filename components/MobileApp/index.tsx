@@ -48,7 +48,7 @@ const MobileApp = () => {
           <div className={styles["header-content"]}>
             <h1>{"EaseMyTools Mobile"}</h1>
             <p className={styles["subtitle"]}>
-              {"Take your favorite tools anywhere. Download our mobile app for iOS and Android."}
+              {"Explore planned mobile experiences and current browser-first access for iOS and Android users."}
             </p>
             <div className={styles["app-badges"]}>
               {appStores.map((store, index) => (
