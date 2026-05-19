@@ -177,7 +177,7 @@
   padding: 8px 16px;
   border-radius: 12px;
   border: none;
-  /* font-size: 0.9rem; */
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -489,7 +489,6 @@
   text-align: center;
 }
 
-/* Hide user menu (avatar) on mobile */
 @media (max-width: 1023px) {
   .desktopMenu {
     display: none;
@@ -513,22 +512,19 @@
     font-size: 1.5rem;
   }
 
-  .themeBtn {
-    padding: 8px 12px;
-    font-size: 0.8rem;
-    min-height: 36px;
-  }
-
+  .themeBtn,
   .signInBtn {
-    padding: 8px 16px;
+    padding: 8px 14px;
     font-size: 0.85rem;
     min-height: 36px;
   }
 }
 
 @media (max-width: 480px) {
-  .themeBtn {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+  .themeBtn,
+  .signInBtn {
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    min-height: 34px;
   }
 }
