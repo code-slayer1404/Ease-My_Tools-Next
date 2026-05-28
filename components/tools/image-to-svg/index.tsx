@@ -1,616 +1,677 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from 'react';
-import styles from './styles.module.css';
+import {
+  useCallback,
+  useState,
+} from "react";
 
-const ImageToSvg = () => {
-    const [file, setFile] = useState<any | null>(null);
-    const [originalImage, setOriginalImage] = useState('');
-    const [svgOutput, setSvgOutput] = useState('');
-    const [processing, setProcessing] = useState(false);
-    const [conversionSettings, setConversionSettings] = useState({
-        mode: 'posterized',
-        colors: 8,
-        threshold: 128,
-        simplify: 1.0,
-        smooth: 0.5,
-        accuracy: 'medium',
-        optimize: true,
-        removeSmallShapes: true,
-        minShapeSize: 5,
-        roundCoordinates: true,
-        decimalPlaces: 2
-    });
-    
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
-    const originalDimensions = useRef({ width: 0, height: 0 });
+import { useDropzone } from "react-dropzone";
 
-    const handleFileUpload = useCallback((uploadedFile) => {
-        if (!uploadedFile) return;
+import { motion } from "framer-motion";
 
-        if (uploadedFile.size > 10 * 1024 * 1024) {
-            alert("File is too large. Maximum size is 10MB");
-            return;
-        }
+import ImageTracer from "imagetracerjs";
 
-        if (!uploadedFile.type.startsWith('image/')) {
-            alert("Please upload a valid image file");
-            return;
-        }
+import styles from "./styles.module.css";
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const result = e.target?.result;
-            if (typeof result !== "string") return;
-            const imageUrl = result;
-            setFile(uploadedFile);
-            setOriginalImage(imageUrl);
-            setSvgOutput('');
-            
-            // Get image dimensions
-            const img = new Image();
-            img.onload = () => {
-                originalDimensions.current = {
-                    width: img.width,
-                    height: img.height
-                };
-            };
-            img.src = imageUrl;
-        };
-        reader.readAsDataURL(uploadedFile);
-    }, []);
+type TraceMode =
+  | "logo"
+  | "detailed"
+  | "sketch"
+  | "anime"
+  | "icon"
+  | "blackwhite"
+  | "smooth"
+  | "minimal";
 
-    const handleDrop = useCallback((e) => {
-        e.preventDefault();
-        const uploadedFile = e.dataTransfer.files[0];
-        handleFileUpload(uploadedFile);
-    }, [handleFileUpload]);
+export default function ImageToSvg() {
+  const [preview, setPreview] =
+    useState<string>("");
 
-    const handleDragOver = useCallback((e) => {
-        e.preventDefault();
-    }, []);
+  const [svgCode, setSvgCode] =
+    useState<string>("");
 
-    // Simple color quantization function
-    const quantize = (imageData, maxColors) => {
-        const pixels: { r: number; g: number; b: number; a: number }[] = [];        const colorMap = new Map();
-        
-        for (let i = 0; i < imageData.data.length; i += 4) {
-            const r = imageData.data[i];
-            const g = imageData.data[i + 1];
-            const b = imageData.data[i + 2];
-            const a = imageData.data[i + 3];
-            
-            const color = `rgba(${r},${g},${b},${a})`;
-            colorMap.set(color, (colorMap.get(color) || 0) + 1);
-            pixels.push({ r, g, b, a });
-        }
-        
-        // Simple k-means like quantization (simplified)
-        const colors = Array.from(colorMap.entries())
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, maxColors)
-            .map(entry => {
-                const [color] = entry;
-                const match = color.match(/rgba\((\d+),(\d+),(\d+),(\d+)\)/);
-                return {
-                    r: parseInt(match[1]),
-                    g: parseInt(match[2]),
-                    b: parseInt(match[3]),
-                    a: parseInt(match[4])
-                };
-            });
-        
-        return { pixels, colors };
+  const [svgUrl, setSvgUrl] =
+    useState<string>("");
+
+  const [loading, setLoading] =
+    useState<boolean>(false);
+
+  const [mode, setMode] =
+    useState<TraceMode>("logo");
+
+  const [quality, setQuality] =
+    useState<number>(5);
+
+  const [recommendedMode,
+    setRecommendedMode] =
+    useState<string>("");
+
+  const [file, setFile] =
+    useState<File | null>(null);
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const selectedFile =
+        acceptedFiles?.[0];
+
+      if (!selectedFile)
+        return;
+
+      // 10MB LIMIT
+      if (
+        selectedFile.size >
+        10 * 1024 * 1024
+      ) {
+        alert(
+          "Please upload image smaller than 10MB"
+        );
+
+        return;
+      }
+
+      setFile(selectedFile);
+
+      const imageUrl =
+        URL.createObjectURL(
+          selectedFile
+        );
+
+      setPreview(imageUrl);
+
+      setSvgCode("");
+
+      setSvgUrl("");
+
+      // SMART MODE DETECTION
+      const fileName =
+        selectedFile.name.toLowerCase();
+
+      if (
+        fileName.includes("logo") ||
+        fileName.includes("icon")
+      ) {
+        setMode("logo");
+
+        setQuality(5);
+
+        setRecommendedMode(
+          "Recommended: Logo Mode"
+        );
+      } else if (
+        fileName.includes("anime") ||
+        fileName.includes("cartoon")
+      ) {
+        setMode("anime");
+
+        setQuality(6);
+
+        setRecommendedMode(
+          "Recommended: Anime Mode"
+        );
+      } else if (
+        fileName.includes("sketch") ||
+        fileName.includes("drawing")
+      ) {
+        setMode("sketch");
+
+        setQuality(2);
+
+        setRecommendedMode(
+          "Recommended: Sketch Mode"
+        );
+      } else if (
+        selectedFile.size >
+        4 * 1024 * 1024
+      ) {
+        setMode("minimal");
+
+        setQuality(3);
+
+        setRecommendedMode(
+          "Recommended: Minimal Mode"
+        );
+      } else {
+        setMode("detailed");
+
+        setQuality(6);
+
+        setRecommendedMode(
+          "Recommended: Detailed Mode"
+        );
+      }
+    },
+    []
+  );
+
+  const {
+    getRootProps,
+    getInputProps,
+  } = useDropzone({
+    accept: {
+      "image/png": [],
+      "image/jpeg": [],
+      "image/jpg": [],
+      "image/webp": [],
+      "image/gif": [],
+      "image/bmp": [],
+      "image/tiff": [],
+      "image/avif": [],
+      "image/x-icon": [],
+    },
+
+    multiple: false,
+
+    onDrop,
+  });
+
+  const getModeSettings =
+    (): Record<
+      string,
+      number | boolean
+    > => {
+      switch (mode) {
+        // LOGO
+        case "logo":
+          return {
+            ltres: 0.1,
+            qtres: 0.1,
+            pathomit: 1,
+            colorsampling: 2,
+            numberofcolors:
+              quality,
+            mincolorratio: 0,
+            colorquantcycles: 3,
+            scale: 1,
+            strokewidth: 1,
+            blurradius: 0,
+            blurdelta: 4,
+            roundcoords: 1,
+          };
+
+        // DETAILED
+        case "detailed":
+          return {
+            ltres: 1,
+            qtres: 1,
+            pathomit: 6,
+            colorsampling: 2,
+            numberofcolors:
+              quality + 1,
+            mincolorratio: 0,
+            colorquantcycles: 2,
+            scale: 1,
+            strokewidth: 1,
+            blurradius: 1,
+            blurdelta: 10,
+          };
+
+        // SKETCH
+        case "sketch":
+          return {
+            ltres: 4,
+            qtres: 4,
+            pathomit: 12,
+            colorsampling: 0,
+            numberofcolors: 2,
+            colorquantcycles: 1,
+            scale: 1,
+            strokewidth: 2,
+            blurradius: 0,
+            blurdelta: 20,
+          };
+
+        // ANIME
+        case "anime":
+          return {
+            ltres: 0.5,
+            qtres: 0.5,
+            pathomit: 2,
+            colorsampling: 2,
+            numberofcolors: 8,
+            colorquantcycles: 2,
+            scale: 1,
+            strokewidth: 1,
+            blurradius: 1,
+            blurdelta: 6,
+          };
+
+        // ICON
+        case "icon":
+          return {
+            ltres: 0.1,
+            qtres: 0.1,
+            pathomit: 0,
+            colorsampling: 0,
+            numberofcolors: 4,
+            colorquantcycles: 1,
+            scale: 1,
+            strokewidth: 1,
+          };
+
+        // BLACK & WHITE
+        case "blackwhite":
+          return {
+            ltres: 1,
+            qtres: 1,
+            pathomit: 1,
+            colorsampling: 0,
+            numberofcolors: 2,
+            colorquantcycles: 1,
+            scale: 1,
+            strokewidth: 1,
+          };
+
+        // SMOOTH
+        case "smooth":
+          return {
+            ltres: 2,
+            qtres: 2,
+            pathomit: 8,
+            colorsampling: 2,
+            numberofcolors:
+              quality,
+            colorquantcycles: 2,
+            scale: 1,
+            strokewidth: 1,
+            blurradius: 2,
+            blurdelta: 12,
+            roundcoords: 2,
+          };
+
+        // MINIMAL
+        case "minimal":
+          return {
+            ltres: 4,
+            qtres: 4,
+            pathomit: 20,
+            colorsampling: 0,
+            numberofcolors: 3,
+            colorquantcycles: 1,
+            scale: 1,
+            strokewidth: 1,
+          };
+
+        default:
+          return {};
+      }
     };
 
-    // Convert image to SVG using canvas and manual tracing
-    const convertToSvg = async () => {
-        if (!originalImage) {
-            alert("Please select a file first");
-            return;
-        }
+  // IMAGE ENHANCEMENT API
+  const enhanceImage =
+    async (): Promise<string> => {
+      if (!file) {
+        throw new Error(
+          "No file selected"
+        );
+      }
 
-        setProcessing(true);
+      const formData =
+        new FormData();
 
-        try {
-            const canvas = canvasRef.current;
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
-            const img = new Image();
+      formData.append(
+        "file",
+        file
+      );
 
-            img.onload = () => {
-                // Set canvas dimensions to image dimensions
-                canvas.width = img.width;
-                canvas.height = img.height;
-                
-                // Draw image on canvas
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const response =
+        await fetch(
+          "/api/image-to-svg",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
 
-                // Get image data for processing
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                
-                // Generate SVG based on settings
-                let svgContent = '';
-                
-                switch (conversionSettings.mode) {
-                    case 'blackWhite':
-                        svgContent = generateBlackWhiteSVG(imageData);
-                        break;
-                    case 'grayscale':
-                        svgContent = generateGrayscaleSVG(imageData);
-                        break;
-                    case 'posterized':
-                    default:
-                        svgContent = generatePosterizedSVG(imageData);
-                        break;
-                }
+      if (!response.ok) {
+        throw new Error(
+          "Enhancement failed"
+        );
+      }
 
-                setSvgOutput(svgContent);
-                setProcessing(false);
-            };
+      const blob =
+        await response.blob();
 
-            img.onerror = () => {
-                setProcessing(false);
-                alert("Conversion failed");
-            };
-
-            img.src = originalImage;
-
-        } catch (error) {
-            console.error('Conversion error:', error);
-            setProcessing(false);
-            alert("Conversion failed");
-        }
+      return URL.createObjectURL(
+        blob
+      );
     };
 
-    const generateBlackWhiteSVG = (imageData) => {
-        const { width, height } = imageData;
-        const threshold = conversionSettings.threshold;
-        const paths: string[] = [];
-        
-        // Simple edge detection and path generation
-        for (let y = 0; y < height; y += 2) {
-            for (let x = 0; x < width; x += 2) {
-                const index = (y * width + x) * 4;
-                const r = imageData.data[index];
-                const g = imageData.data[index + 1];
-                const b = imageData.data[index + 2];
-                
-                // Convert to grayscale
-                const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-                
-                if (brightness < threshold) {
-                    const size = conversionSettings.simplify;
-                    paths.push(
-                        `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="black"/>`
-                    );
+  // SVG CONVERSION
+  const convertToSvg =
+    async (): Promise<void> => {
+      if (!preview) return;
+
+      try {
+        setLoading(true);
+
+        const enhancedImage =
+          await enhanceImage();
+
+        ImageTracer.imageToSVG(
+          enhancedImage,
+          (
+            svgString: string
+          ) => {
+            setSvgCode(
+              svgString
+            );
+
+            const blob =
+              new Blob(
+                [svgString],
+                {
+                  type:
+                    "image/svg+xml",
                 }
+              );
+
+            const url =
+              URL.createObjectURL(
+                blob
+              );
+
+            setSvgUrl(url);
+
+            setLoading(false);
+          },
+          getModeSettings()
+        );
+      } catch (
+        error: unknown
+      ) {
+        console.error(error);
+
+        setLoading(false);
+
+        alert(
+          "SVG conversion failed"
+        );
+      }
+    };
+
+  // COPY SVG
+  const copySvg =
+    async (): Promise<void> => {
+      if (!svgCode) return;
+
+      await navigator.clipboard.writeText(
+        svgCode
+      );
+
+      alert("SVG copied");
+    };
+
+  return (
+    <div className={styles.wrapper}>
+      <div className={styles.grid}>
+        {/* LEFT PANEL */}
+
+        <div className={styles.card}>
+          <div
+            {...getRootProps()}
+            className={
+              styles.dropzone
             }
-        }
-        
-        return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-  ${paths.join('\n  ')}
-</svg>`;
-    };
+          >
+            <input
+              {...getInputProps()}
+            />
 
-    const generateGrayscaleSVG = (imageData) => {
-        const { width, height } = imageData;
-        const step = Math.max(1, Math.floor(conversionSettings.simplify));
-        const paths: string[] = [];
-        
-        for (let y = 0; y < height; y += step) {
-            for (let x = 0; x < width; x += step) {
-                const index = (y * width + x) * 4;
-                const r = imageData.data[index];
-                const g = imageData.data[index + 1];
-                const b = imageData.data[index + 2];
-                const a = imageData.data[index + 3] / 255;
-                
-                if (a > 0.1) { // Only add visible pixels
-                    const brightness = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
-                    const color = `rgb(${brightness},${brightness},${brightness})`;
-                    
-                    paths.push(
-                        `<rect x="${x}" y="${y}" width="${step}" height="${step}" fill="${color}" opacity="${a}"/>`
-                    );
-                }
-            }
-        }
-        
-        return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-  ${paths.join('\n  ')}
-</svg>`;
-    };
-
-    const generatePosterizedSVG = (imageData) => {
-        const { width, height } = imageData;
-        const step = Math.max(1, Math.floor(conversionSettings.simplify));
-        const maxColors = conversionSettings.colors;
-        
-        // Simple color quantization
-        const colorMap = new Map();
-        
-        for (let y = 0; y < height; y += step) {
-            for (let x = 0; x < width; x += step) {
-                const index = (y * width + x) * 4;
-                const r = Math.round(imageData.data[index] / 32) * 32;
-                const g = Math.round(imageData.data[index + 1] / 32) * 32;
-                const b = Math.round(imageData.data[index + 2] / 32) * 32;
-                const a = imageData.data[index + 3];
-                
-                if (a > 10) { // Only add visible pixels
-                    const color = `rgb(${r},${g},${b})`;
-                    const key = `${r},${g},${b}`;
-                    
-                    if (!colorMap.has(key)) {
-                        colorMap.set(key, []);
-                    }
-                    colorMap.get(key).push({ x, y });
-                }
-            }
-        }
-        
-        // Take most frequent colors up to maxColors
-        const sortedColors = Array.from(colorMap.entries())
-            .sort((a, b) => b[1].length - a[1].length)
-            .slice(0, maxColors);
-        
-        const paths: string[] = [];
-        
-        sortedColors.forEach(([colorKey, points]) => {
-            const [r, g, b] = colorKey.split(',').map(Number);
-            const color = `rgb(${r},${g},${b})`;
-            
-            // Group nearby points for optimization
-            points.forEach(point => {
-                paths.push(
-                    `<rect x="${point.x}" y="${point.y}" width="${step}" height="${step}" fill="${color}"/>`
-                );
-            });
-        });
-        
-        return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-  ${paths.join('\n  ')}
-</svg>`;
-    };
-
-    const downloadSvg = () => {
-        if (!svgOutput) return;
-
-        const blob = new Blob([svgOutput], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        const fileName = `converted-${Date.now()}.svg`;
-        
-        link.download = fileName;
-        link.href = url;
-        link.click();
-        URL.revokeObjectURL(url);
-    };
-
-    const copySvgCode = async () => {
-        if (!svgOutput) return;
-
-        try {
-            await navigator.clipboard.writeText(svgOutput);
-            alert('SVG code copied to clipboard!');
-        } catch (err) {
-            console.error('Failed to copy: ', err);
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = svgOutput;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert('SVG code copied to clipboard!');
-        }
-    };
-
-    const clearAll = () => {
-        setFile(null);
-        setOriginalImage('');
-        setSvgOutput('');
-        setConversionSettings({
-            mode: 'posterized',
-            colors: 8,
-            threshold: 128,
-            simplify: 1.0,
-            smooth: 0.5,
-            accuracy: 'medium',
-            optimize: true,
-            removeSmallShapes: true,
-            minShapeSize: 5,
-            roundCoordinates: true,
-            decimalPlaces: 2
-        });
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-    };
-
-    const getAccuracySettings = (accuracy) => {
-        switch (accuracy) {
-            case 'low':
-                return { simplify: 4.0, colors: 4 };
-            case 'medium':
-                return { simplify: 2.0, colors: 8 };
-            case 'high':
-                return { simplify: 1.0, colors: 16 };
-            case 'veryHigh':
-                return { simplify: 0.5, colors: 32 };
-            default:
-                return { simplify: 2.0, colors: 8 };
-        }
-    };
-
-    const handleAccuracyChange = (newAccuracy) => {
-        const settings = getAccuracySettings(newAccuracy);
-        setConversionSettings(prev => ({
-            ...prev,
-            accuracy: newAccuracy,
-            simplify: settings.simplify,
-            colors: settings.colors
-        }));
-    };
-
-    return (
-        <div className={styles["image-to-svg"]}>
-            {/* <div className={styles["tool-header"]}>
-                <h1>{"Image to SVG Converter"}</h1>
-                <p>{"Convert raster images (PNG, JPG, WebP) to scalable SVG format"}</p>
-            </div> */}
-
-            <div className={styles["converter-container"]}>
-                {/* Upload Section */}
-                <div className={styles["upload-section"]}>
-                    <div 
-                        className={styles["upload-area"]}
-                        onDrop={handleDrop}
-                        onDragOver={handleDragOver}
-                        onClick={() => fileInputRef.current?.click()}
-                    >
-                        <div className={styles["upload-content"]}>
-                            <div className={styles["upload-icon"]}>🖼️</div>
-                            <h3>{"Upload Image File"}</h3>
-                            <p>{"Drag & drop your image here or click to browse"}</p>
-                            <small>{"Supported formats: PNG, JPG, JPEG, WebP, GIF"}</small>
-                            <small>{"Max file size: 10MB"}</small>
-                        </div>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleFileUpload(e.target.files?.[0])}
-                            style={{ display: 'none' }}
-                        />
-                    </div>
-
-                    {file && (
-                        <div className={styles["file-info"]}>
-                            <strong>Selected file:</strong> {file.name}
-                            <br />
-                            <small>
-                                {"File size"}: {(file.size / 1024).toFixed(2)} KB
-                                {originalDimensions.current.width > 0 && (
-                                    <> | {"Dimensions"}: {originalDimensions.current.width} × {originalDimensions.current.height}</>
-                                )}
-                            </small>
-                        </div>
-                    )}
-                </div>
-
-                {/* Conversion Settings */}
-                {file && (
-                    <div className={styles["settings-section"]}>
-                        <h3>{"Conversion Mode"}</h3>
-                        
-                        <div className={styles["settings-grid"]}>
-                            <div className={styles["setting-group"]}>
-                                <label>{"Trace Method"}</label>
-                                <select
-                                    value={conversionSettings.mode}
-                                    onChange={(e) => setConversionSettings(prev => ({
-                                        ...prev,
-                                        mode: e.target.value
-                                    }))}
-                                >
-                                    <option value="posterized">{"Full Color"}</option>
-                                    <option value="grayscale">{"Grayscale"}</option>
-                                    <option value="blackWhite">{"Black & White"}</option>
-                                </select>
-                            </div>
-
-                            <div className={styles["setting-group"]}>
-                                <label>{"Accuracy"}</label>
-                                <select
-                                    value={conversionSettings.accuracy}
-                                    onChange={(e) => handleAccuracyChange(e.target.value)}
-                                >
-                                    <option value="low">{"Low"}</option>
-                                    <option value="medium">{"Medium"}</option>
-                                    <option value="high">{"High"}</option>
-                                    <option value="veryHigh">{"Very High"}</option>
-                                </select>
-                            </div>
-
-                            {conversionSettings.mode === 'posterized' && (
-                                <div className={styles["setting-group"]}>
-                                    <label>{"Max Colors"}: {conversionSettings.colors}</label>
-                                    <input
-                                        type="range"
-                                        min="2"
-                                        max="32"
-                                        value={conversionSettings.colors}
-                                        onChange={(e) => setConversionSettings(prev => ({
-                                            ...prev,
-                                            colors: parseInt(e.target.value)
-                                        }))}
-                                    />
-                                </div>
-                            )}
-
-                            {conversionSettings.mode === 'blackWhite' && (
-                                <div className={styles["setting-group"]}>
-                                    <label>{"Threshold"}: {conversionSettings.threshold}</label>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="255"
-                                        value={conversionSettings.threshold}
-                                        onChange={(e) => setConversionSettings(prev => ({
-                                            ...prev,
-                                            threshold: parseInt(e.target.value)
-                                        }))}
-                                    />
-                                </div>
-                            )}
-
-                            <div className={styles["setting-group"]}>
-                                <label>{"Simplify"}: {conversionSettings.simplify}</label>
-                                <input
-                                    type="range"
-                                        min="0.5"
-                                        max="8"
-                                        step="0.5"
-                                        value={conversionSettings.simplify}
-                                        onChange={(e) => setConversionSettings(prev => ({
-                                            ...prev,
-                                            simplify: parseFloat(e.target.value)
-                                        }))}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Advanced Options */}
-                        <details className={styles["advanced-options"]}>
-                            <summary>{"Advanced Options"}</summary>
-                            <div className={styles["advanced-grid"]}>
-                                <div className={styles["setting-group"]}>
-                                    <label className={styles["checkbox-label"]}>
-                                        <input
-                                            type="checkbox"
-                                            checked={conversionSettings.optimize}
-                                            onChange={(e) => setConversionSettings(prev => ({
-                                                ...prev,
-                                                optimize: e.target.checked
-                                            }))}
-                                        />
-                                        {"Optimize SVG"}
-                                    </label>
-                                </div>
-
-                                <div className={styles["setting-group"]}>
-                                    <label className={styles["checkbox-label"]}>
-                                        <input
-                                            type="checkbox"
-                                            checked={conversionSettings.removeSmallShapes}
-                                            onChange={(e) => setConversionSettings(prev => ({
-                                                ...prev,
-                                                removeSmallShapes: e.target.checked
-                                            }))}
-                                        />
-                                        {"Remove small shapes"}
-                                    </label>
-                                </div>
-
-                                <div className={styles["setting-group"]}>
-                                    <label className={styles["checkbox-label"]}>
-                                        <input
-                                            type="checkbox"
-                                            checked={conversionSettings.roundCoordinates}
-                                            onChange={(e) => setConversionSettings(prev => ({
-                                                ...prev,
-                                                roundCoordinates: e.target.checked
-                                            }))}
-                                        />
-                                        {"Round coordinates"}
-                                    </label>
-                                </div>
-                            </div>
-                        </details>
-                    </div>
-                )}
-
-                {/* Action Buttons */}
-                {file && (
-                    <div className={styles["action-buttons"]}>
-                        <button 
-                            onClick={convertToSvg} 
-                            className={styles["primary-btn"]}
-                            disabled={processing}
-                        >
-                            {processing ? "Processing image..." : "Convert to SVG"}
-                        </button>
-                        <button onClick={clearAll} className={styles["secondary-btn"]}>
-                            {"Clear"}
-                        </button>
-                    </div>
-                )}
-
-                {/* Preview Section */}
-                {(originalImage || svgOutput) && (
-                    <div className={styles["preview-section"]}>
-                        <div className={styles["preview-container"]}>
-                            {originalImage && (
-                                <div className={styles["preview-item"]}>
-                                    <h4>{"Original Image"}</h4>
-                                    <img 
-                                        src={originalImage} 
-                                        alt="Original" 
-                                        className={styles["preview-image"]}
-                                    />
-                                </div>
-                            )}
-                            {svgOutput && (
-                                <div className={styles["preview-item"]}>
-                                    <h4>{"SVG Output"}</h4>
-                                    <div 
-                                        className={styles["preview-svg"]}
-                                        dangerouslySetInnerHTML={{ __html: svgOutput }}
-                                    />
-                                    <div className={styles["svg-actions"]}>
-                                        <button onClick={downloadSvg} className={styles["download-btn"]}>
-                                            {"Download SVG"}
-                                        </button>
-                                        <button onClick={copySvgCode} className={styles["copy-btn"]}>
-                                            {"Copy SVG Code"}
-                                        </button>
-                                    </div>
-                                    {svgOutput.length > 0 && (
-                                        <div className={styles["file-info"]}>
-                                            <small>{"SVG Size"}: {(svgOutput.length / 1024).toFixed(2)} KB</small>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* SVG Code Preview */}
-                        {svgOutput && (
-                            <div className={styles["code-section"]}>
-                                <h4>{"SVG Code"}</h4>
-                                <pre className={styles["svg-code"]}>
-                                    {svgOutput}
-                                </pre>
-                            </div>
-                        )}
-                    </div>
-                )}
+            <div
+              className={styles.icon}
+            >
+              🖼️
             </div>
 
-            {/* Hidden canvas for processing */}
-            <canvas ref={canvasRef} style={{ display: 'none' }} />
-            <canvas ref={previewCanvasRef} style={{ display: 'none' }} />
-        </div>
-    );
-};
+            <h2>
+              Upload Image
+            </h2>
 
-export default ImageToSvg;
+            <p>
+              Drag & Drop or Click
+            </p>
+
+            <button
+              type="button"
+              className={
+                styles.uploadBtn
+              }
+            >
+              Choose File
+            </button>
+          </div>
+
+          {/* MODE */}
+
+          <div className={styles.section}>
+            <label>
+              Conversion Mode
+            </label>
+
+            <select
+              value={mode}
+              onChange={(e) =>
+                setMode(
+                  e.target
+                    .value as TraceMode
+                )
+              }
+              className={
+                styles.select
+              }
+            >
+              <option value="logo">
+                Logo
+              </option>
+
+              <option value="detailed">
+                Detailed
+              </option>
+
+              <option value="sketch">
+                Sketch
+              </option>
+
+              <option value="anime">
+                Anime
+              </option>
+
+              <option value="icon">
+                Icon
+              </option>
+
+              <option value="blackwhite">
+                Black & White
+              </option>
+
+              <option value="smooth">
+                Smooth
+              </option>
+
+              <option value="minimal">
+                Minimal
+              </option>
+            </select>
+
+            {recommendedMode && (
+              <p
+                style={{
+                  marginTop: "10px",
+                  fontSize: "14px",
+                  opacity: 0.7,
+                }}
+              >
+                {recommendedMode}
+              </p>
+            )}
+          </div>
+
+          {/* QUALITY */}
+
+          <div className={styles.section}>
+            <label>
+              SVG Quality (
+              {quality} Colors )
+            </label>
+
+            <input
+              type="range"
+              min="2"
+              max="6"
+              value={quality}
+              onChange={(e) =>
+                setQuality(
+                  Number(
+                    e.target
+                      .value
+                  )
+                )
+              }
+              className={
+                styles.range
+              }
+            />
+          </div>
+
+          {/* CONVERT */}
+
+          <button
+            type="button"
+            onClick={
+              convertToSvg
+            }
+            disabled={
+              !preview ||
+              loading
+            }
+            className={
+              styles.convertBtn
+            }
+          >
+            {loading
+              ? "Converting..."
+              : "Convert to SVG"}
+          </button>
+
+          <div className={styles.note}>
+            Best results:
+            <br />
+            • logos
+            <br />
+            • icons
+            <br />
+            • illustrations
+            <br />
+            • anime
+            <br />
+            • signatures
+          </div>
+        </div>
+
+        {/* RIGHT PANEL */}
+
+        <div className={styles.card}>
+          <div
+            className={
+              styles.previewGrid
+            }
+          >
+            {/* ORIGINAL */}
+
+            <div>
+              <h3>Original</h3>
+
+              <div
+                className={
+                  styles.previewBox
+                }
+              >
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className={
+                      styles.previewImage
+                    }
+                  />
+                ) : (
+                  <p>
+                    No Image
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* SVG */}
+
+            <div>
+              <h3>
+                SVG Result
+              </h3>
+
+              <div
+                className={
+                  styles.previewBox
+                }
+              >
+                {svgUrl ? (
+                  <img
+                    src={svgUrl}
+                    alt="SVG"
+                    className={
+                      styles.previewImage
+                    }
+                  />
+                ) : (
+                  <p>
+                    SVG Preview
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {svgUrl && (
+            <>
+              <div
+                className={
+                  styles.actions
+                }
+              >
+                <a
+                  href={svgUrl}
+                  download="converted.svg"
+                  className={
+                    styles.downloadBtn
+                  }
+                >
+                  Download SVG
+                </a>
+
+                <button
+                  type="button"
+                  onClick={
+                    copySvg
+                  }
+                  className={
+                    styles.copyBtn
+                  }
+                >
+                  Copy SVG
+                </button>
+              </div>
+
+              <textarea
+                readOnly
+                value={svgCode}
+                className={
+                  styles.code
+                }
+              />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
