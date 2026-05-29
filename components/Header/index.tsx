@@ -24,7 +24,7 @@ const Header = () => {
   return (
     <div className={styles["hero-container"]}>
       <h1 className={styles["hero-title"]}>
-        {"Free Tools to Make"}{" "}
+        {"Free Tools to Simplify"}{" "}
         <span
           key={currentWord.text}
           className={styles["highlight"]}
@@ -32,9 +32,9 @@ const Header = () => {
         >
           {currentWord.text}
         </span>{" "}
-        {"Simple"}
+        {/* {"Simple"} */}
       </h1>
-      <p className={styles["hero-subtitle"]}>{"We offer PDF, video, image and other online tools to make your life easier"}</p>
+      <p className={styles["hero-subtitle"]}>{"Smart online tools to edit, convert, and compress your PDFs, videos, and images instantly"}</p>
     </div>
   );
 };

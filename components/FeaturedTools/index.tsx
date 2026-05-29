@@ -13,22 +13,22 @@ const FeaturedTools = () => {
   const featuredTools: FeaturedTool[] = [
     {
       icon: '🖼️',
-      title: "Remove Background",
-      description: "AI-powered background removal in seconds",
+      title: "Image Compressor",
+      description: "Compress images to your exact target file size",
       badge: 'Popular',
-      slug: 'remove-background'
+      slug: 'image-compressor'
     },
     {
       icon: '📄',
-      title: "PDF Converter",
-      description: "Convert PDFs to various formats",
-      slug: 'file-converter'
+      title: "Markdown Previewer",
+      description: "Write and preview Markdown and HTML files in real-time",
+      slug: 'markdown-previewer'
     },
     {
-      icon: '🎨',
-      title: "Image Resizer",
-      description: "Resize images without quality loss",
-      slug: 'image-resizer'
+      icon: '🔍',
+      title: "Text Diff Checker",
+      description: "Compare two texts and highlight the differences instantly",
+      slug: 'text-diff-checker'
     },
     {
       icon: '🔐',

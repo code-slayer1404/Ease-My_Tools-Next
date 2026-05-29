@@ -533,3 +533,27 @@
     padding: 2rem 1.5rem;
   }
 }
+
+.features-grid,
+.use-cases-grid,
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.feature-card,
+.use-case-card,
+.resource-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover,
+.use-case-card:hover,
+.resource-card:hover {
+  transform: translateY(-6px);
+}

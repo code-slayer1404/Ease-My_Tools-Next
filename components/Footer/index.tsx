@@ -13,7 +13,7 @@ const Footer = () => {
           <h4>PRODUCT</h4>
           <Link href={"/" as any} >{"Home"}</Link>
           <Link href={"/features" as any} >{"Features"}</Link>
-          <Link href={"/pricing" as any} >{"Pricing"}</Link>
+          {/* <Link href={"/pricing" as any} >{"Pricing"}</Link> */}
           <Link href={"/tools" as any} >{"Tools"}</Link>
           <Link href={"/faq" as any} >{"FAQ"}</Link>
         </div>
@@ -22,7 +22,7 @@ const Footer = () => {
           <h4>RESOURCES</h4>
           <Link href={"/desktop" as any} >{"EaseMyTools Desktop"}</Link>
           <Link href={"/mobile" as any} >{"EaseMyTools Mobile"}</Link>
-          <Link href={"/api" as any} >{"API"}</Link>
+          {/* <Link href={"/api" as any} >{"API"}</Link> */}
           <Link href={"/docs" as any} >{"Documentation"}</Link>
         </div>
 
@@ -45,7 +45,7 @@ const Footer = () => {
           <Link href={"/about" as any} >{"About Us"}</Link>
           <Link href={"/contact" as any} >{"Contact Us"}</Link>
           <Link href={"/blog" as any} >{"Blog"}</Link>
-          <Link href={"/press" as any} >{"Press"}</Link>
+          {/* <Link href={"/press" as any} >{"Press"}</Link> */}
         </div>
       </div>
 
