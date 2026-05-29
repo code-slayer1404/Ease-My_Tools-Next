@@ -19,7 +19,10 @@ Ease-My_Tools-Next
 │  │     └─ route.ts
 │  ├─ apple-icon.png
 │  ├─ blog
-│  │  └─ page.tsx
+│  │  ├─ page.tsx
+│  │  └─ [slug]
+│  │     ├─ page.module.css
+│  │     └─ page.tsx
 │  ├─ business
 │  │  └─ page.tsx
 │  ├─ contact
@@ -45,6 +48,8 @@ Ease-My_Tools-Next
 │  ├─ icon0.svg
 │  ├─ icon1.png
 │  ├─ layout.tsx
+│  ├─ loading.module.css
+│  ├─ loading.tsx
 │  ├─ login
 │  │  └─ page.tsx
 │  ├─ manifest.json
@@ -70,8 +75,11 @@ Ease-My_Tools-Next
 │  ├─ tools
 │  │  ├─ page.tsx
 │  │  └─ [slug]
+│  │     ├─ page.module.css
 │  │     └─ page.tsx
 │  └─ verify-email
+│     ├─ loading.tsx
+│     ├─ page.module.css
 │     └─ page.tsx
 ├─ components
 │  ├─ About
@@ -166,6 +174,22 @@ Ease-My_Tools-Next
 │  ├─ TestimonialsSection
 │  │  ├─ index.tsx
 │  │  └─ styles.module.css
+│  ├─ tool-page
+│  │  ├─ BreadcrumbNav
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
+│  │  ├─ RelatedTools
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
+│  │  ├─ ToolContent
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
+│  │  ├─ ToolFaq
+│  │  │  ├─ index.tsx
+│  │  │  └─ styles.module.css
+│  │  └─ ToolHero
+│  │     ├─ index.tsx
+│  │     └─ styles.module.css
 │  ├─ tools
 │  │  ├─ age-calculator
 │  │  │  ├─ index.tsx
@@ -294,8 +318,12 @@ Ease-My_Tools-Next
 ├─ lib
 │  ├─ auth-options.ts
 │  ├─ auth.ts
+│  ├─ blog.ts
 │  ├─ mail.ts
-│  └─ prisma.ts
+│  ├─ prisma.ts
+│  ├─ schema.ts
+│  ├─ schemaHelper.ts
+│  └─ seo.ts
 ├─ middleware.ts
 ├─ next-env.d.ts
 ├─ next.config.ts
@@ -310,5 +338,7 @@ Ease-My_Tools-Next
 │  └─ web-app-manifest-512x512.png
 ├─ README.md
 ├─ tsconfig.json
+├─ tsconfig.tsbuildinfo
 └─ types
+   ├─ imagetracerjs.d.ts
    └─ next-auth.d.ts
