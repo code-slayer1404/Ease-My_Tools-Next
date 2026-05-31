@@ -12,6 +12,8 @@ Ease-My_Tools-Next
 │  │  │     └─ route.ts
 │  │  ├─ compress
 │  │  │  └─ route.ts
+│  │  ├─ image-to-svg
+│  │  │  └─ route.ts
 │  │  ├─ page.tsx
 │  │  ├─ register
 │  │  │  └─ route.ts
