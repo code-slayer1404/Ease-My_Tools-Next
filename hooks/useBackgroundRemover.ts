@@ -1,91 +1,17 @@
-// import { useState, useEffect, useRef } from 'react';
-// import { BackgroundRemover } from '../utils/BackgroundRemover';
-
-// export interface ProcessingState {
-//     status: 'idle' | 'loading' | 'downloading' | 'processing' | 'completed' | 'error';
-//     message: string;
-//     progress: number;
-// }
-
-// export const useBackgroundRemover = () => {
-//     const [state, setState] = useState<ProcessingState>({
-//         status: 'idle',
-//         message: '',
-//         progress: 0,
-//     });
-//     const [resultUrl, setResultUrl] = useState<string | null>(null);
-
-//     // Storing the BackgroundRemover class instance in a persistent reference container
-//     // to ensure it survives React state re-renders without recreation.
-//     const engineRef = useRef<BackgroundRemover | null>(null);
-
-//     useEffect(() => {
-//         engineRef.current = new BackgroundRemover(
-//             (status, message, progress) => {
-//                 setState((prev) => {
-//                     let uiStatus = status as ProcessingState['status'];
-//                     let progressValue = prev.progress;
-
-//                     if (status === 'loading') {
-//                         progressValue = 5;
-//                     } else if (status === 'downloading') {
-//                         progressValue = progress ? Math.round(progress) : prev.progress;
-//                     } else if (status === 'processing') {
-//                         progressValue = 90;
-//                     } else if (status === 'ready') {
-//                         uiStatus = 'completed';
-//                         progressValue = 100;
-//                     } else if (status === 'error') {
-//                         progressValue = 0;
-//                     }
-
-//                     return {
-//                         status: uiStatus,
-//                         message: message || '',
-//                         progress: progressValue,
-//                     };
-//                 });
-//             },
-//             (transparentImgUrl) => {
-//                 setResultUrl(transparentImgUrl);
-//             }
-//         );
-
-//         return () => {
-//             engineRef.current?.terminate();
-//         };
-//     }, []);
-
-//     const removeBackground = (imageFile: File) => {
-//         setState({ status: 'loading', message: 'Analyzing local file buffers...', progress: 0 });
-//         setResultUrl(null);
-
-//         const reader = new FileReader();
-//         reader.onload = () => {
-//             if (typeof reader.result === 'string') {
-//                 engineRef.current?.process(reader.result);
-//             }
-//         };
-//         reader.readAsDataURL(imageFile);
-//     };
-
-//     const resetState = () => {
-//         setState({ status: 'idle', message: '', progress: 0 });
-//         setResultUrl(null);
-//     };
-
-//     return {
-//         removeBackground,
-//         resetState,
-//         state,
-//         resultUrl,
-//     };
-// };
-
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+
+export interface ProcessedItem {
+    id: string;
+    fileName: string;
+    status: 'queued' | 'loading' | 'downloading' | 'processing' | 'completed' | 'error';
+    message: string;
+    progress: number;
+    resultUrl: string | null;
+    originalUrl: string | null;
+    error?: string;
+}
 
 export interface RemoverState {
     status: 'idle' | 'loading' | 'downloading' | 'processing' | 'completed' | 'error';
@@ -94,38 +20,54 @@ export interface RemoverState {
 }
 
 export function useBackgroundRemover() {
-    const [state, setState] = useState<RemoverState>({
-        status: 'idle',
-        message: '',
-        progress: 0,
-    });
+    const [queue, setQueue] = useState<ProcessedItem[]>([]);
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const [state, setState] = useState<RemoverState>({ status: 'idle', message: '', progress: 0 });
     const [resultUrl, setResultUrl] = useState<string | null>(null);
+
     const workerRef = useRef<Worker | null>(null);
+    const filesMapRef = useRef<Map<string, File>>(new Map());
+    const currentProcessingIdRef = useRef<string | null>(null);
+    const activeInputUrlRef = useRef<string | null>(null);
+    const queueRef = useRef<ProcessedItem[]>([]);
 
     useEffect(() => {
-        // Spin up the background thread configuration
+        queueRef.current = queue;
+
+        if (queue.length === 1) {
+            const item = queue[0];
+            setState({
+                status: item.status === 'queued' ? 'loading' : (item.status as any),
+                message: item.message,
+                progress: item.progress
+            });
+            setResultUrl(item.resultUrl);
+        }
+    }, [queue]);
+
+    useEffect(() => {
         workerRef.current = new Worker(
             new URL('../workers/image-ai.worker.ts', import.meta.url),
             { type: 'module' }
         );
 
         workerRef.current.onmessage = (e: MessageEvent) => {
-            const { status, message, progress, bitmap, error } = e.data;
+            const { status, id, bitmap, error, message, progress } = e.data;
 
             switch (status) {
-                case 'downloading':
                 case 'loading':
+                case 'downloading':
                 case 'processing':
-                    setState({
-                        status: status,
-                        message: message || 'Analyzing data layers...',
-                        progress: progress || 0,
-                    });
+                    setQueue((prev) =>
+                        prev.map((item) =>
+                            item.id === id ? { ...item, status, message: message || 'Processing...', progress: progress || 0 } : item
+                        )
+                    );
                     break;
 
                 case 'complete':
                     if (bitmap) {
-                        // Receive the zero-copy bitmap directly from the worker with zero loop calculations
                         const hostCanvas = document.createElement('canvas');
                         hostCanvas.width = bitmap.width;
                         hostCanvas.height = bitmap.height;
@@ -133,17 +75,25 @@ export function useBackgroundRemover() {
 
                         if (ctx) {
                             ctx.drawImage(bitmap, 0, 0);
-                            bitmap.close(); // Purge resources immediately to prevent memory leaks
+                            bitmap.close();
 
                             hostCanvas.toBlob((blob) => {
                                 if (blob) {
                                     const url = URL.createObjectURL(blob);
-                                    setResultUrl(url);
-                                    setState({
-                                        status: 'completed', // Map 'complete' seamlessly to the UI component state expectation
-                                        message: 'Matte isolation completed smoothly.',
-                                        progress: 100,
-                                    });
+
+                                    // Retain original source url context for localized manual brush overlays
+                                    const rawFile = filesMapRef.current.get(id);
+                                    const origUrl = rawFile ? URL.createObjectURL(rawFile) : null;
+
+                                    setQueue((prev) =>
+                                        prev.map((item) =>
+                                            item.id === id
+                                                ? { ...item, status: 'completed', message: 'Success', progress: 100, resultUrl: url, originalUrl: origUrl }
+                                                : item
+                                        )
+                                    );
+                                    currentProcessingIdRef.current = null;
+                                    setTimeout(() => processNextQueueItem(), 0);
                                 }
                             }, 'image/png');
                         }
@@ -151,44 +101,118 @@ export function useBackgroundRemover() {
                     break;
 
                 case 'error':
-                    setState({
-                        status: 'error',
-                        message: error || 'Execution pipeline error.',
-                        progress: 0,
-                    });
+                    setQueue((prev) =>
+                        prev.map((item) =>
+                            item.id === id
+                                ? { ...item, status: 'error', message: 'Error encountered.', error: error || 'Pipeline failed.' }
+                                : item
+                        )
+                    );
+                    currentProcessingIdRef.current = null;
+                    setTimeout(() => processNextQueueItem(), 0);
                     break;
             }
         };
 
         return () => {
-            if (workerRef.current) {
-                workerRef.current.terminate();
-            }
+            if (workerRef.current) workerRef.current.terminate();
         };
     }, []);
 
-    const removeBackground = (file: File) => {
-        if (!workerRef.current) return;
+    const processNextQueueItem = () => {
+        if (!workerRef.current || currentProcessingIdRef.current) return;
 
-        setState({
-            status: 'loading',
-            message: 'Initializing neural background processing runtime...',
-            progress: 5,
+        const nextItem = queueRef.current.find((item) => item.status === 'queued');
+        if (!nextItem) {
+            setIsProcessing(false);
+            return;
+        }
+
+        setIsProcessing(true);
+        currentProcessingIdRef.current = nextItem.id;
+
+        setQueue((prev) =>
+            prev.map((item) =>
+                item.id === nextItem.id ? { ...item, status: 'loading', message: 'Spawning pipelines...' } : item
+            )
+        );
+
+        const file = filesMapRef.current.get(nextItem.id);
+        if (file) {
+            const sourceUrl = URL.createObjectURL(file);
+            activeInputUrlRef.current = sourceUrl;
+            workerRef.current.postMessage({ imageSrc: sourceUrl, id: nextItem.id });
+        } else {
+            currentProcessingIdRef.current = null;
+            setIsProcessing(false);
+        }
+    };
+
+    const removeBackground = (files: File | FileList | File[]) => {
+        let fileArray: File[] = [];
+        if (files instanceof File) {
+            fileArray = [files];
+        } else {
+            fileArray = Array.isArray(files) ? files : Array.from(files);
+        }
+
+        const newItems: ProcessedItem[] = fileArray.map((file) => {
+            const id = Math.random().toString(36).substring(2, 11);
+            filesMapRef.current.set(id, file);
+
+            return {
+                id,
+                fileName: file.name,
+                status: 'queued',
+                message: 'Waiting in queue...',
+                progress: 0,
+                resultUrl: null,
+                originalUrl: null,
+            };
         });
 
-        // Create a local blob URL for the worker to load efficiently
-        const sourceUrl = URL.createObjectURL(file);
+        setQueue((prev) => [...prev, ...newItems]);
+    };
 
-        workerRef.current.postMessage({
-            imageSrc: sourceUrl
-        });
+    useEffect(() => {
+        if (!isProcessing) {
+            processNextQueueItem();
+        }
+    }, [queue, isProcessing]);
+
+    const updateItemResultUrl = (id: string, newUrl: string) => {
+        setQueue((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, resultUrl: newUrl } : item))
+        );
     };
 
     const resetState = () => {
-        if (resultUrl) URL.revokeObjectURL(resultUrl);
-        setResultUrl(null);
+        queue.forEach((item) => {
+            if (item.resultUrl) URL.revokeObjectURL(item.resultUrl);
+            if (item.originalUrl) URL.revokeObjectURL(item.originalUrl);
+        });
+        filesMapRef.current.clear();
+        setQueue([]);
+        setIsProcessing(false);
+        currentProcessingIdRef.current = null;
         setState({ status: 'idle', message: '', progress: 0 });
+        setResultUrl(null);
     };
 
-    return { removeBackground, resetState, state, resultUrl };
+    const removeSingleFile = (id: string) => {
+        setQueue((prev) => {
+            const target = prev.find((item) => item.id === id);
+            if (target?.resultUrl) URL.revokeObjectURL(target.resultUrl);
+            if (target?.originalUrl) URL.revokeObjectURL(target.originalUrl);
+            filesMapRef.current.delete(id);
+            const filtered = prev.filter((item) => item.id !== id);
+            if (filtered.length === 0) {
+                setState({ status: 'idle', message: '', progress: 0 });
+                setResultUrl(null);
+            }
+            return filtered;
+        });
+    };
+
+    return { queue, removeBackground, isProcessing, resetState, removeSingleFile, state, resultUrl, updateItemResultUrl };
 }

@@ -1,136 +1,34 @@
-// import { env, AutoModel, AutoProcessor, RawImage } from '@huggingface/transformers';
-
-// // 1. Configure the caching pipeline properly before execution loops begin
-// env.allowLocalModels = false;
-// env.useBrowserCache = true;
-
-// // Force the WASM CPU engine to utilize all available physical cores if WebGPU is absent
-// if (env.backends?.onnx?.wasm) {
-//     env.backends.onnx.wasm.numThreads = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
-// }
-
-// let model: any = null;
-// let processor: any = null;
-// let activeDevice = 'wasm';
-
-// async function initializeEngine() {
-//     if (model && processor) {
-//         return { model, processor, device: activeDevice };
-//     }
-
-//     let device = 'wasm';
-//     if (typeof navigator !== 'undefined' && 'gpu' in navigator) {
-//         try {
-//             const adapter = await (navigator as any).gpu.requestAdapter();
-//             if (adapter) {
-//                 device = 'webgpu';
-//             }
-//         } catch (e) {
-//             console.warn("WebGPU adapter initialization bypassed. Falling back to multi-threaded WASM.", e);
-//         }
-//     }
-
-//     activeDevice = device;
-
-//     // Use native fp16 weights (88MB) on WebGPU, or full precision fp32 weights (176MB) on WASM CPU paths
-//     const preferredDtype = activeDevice === 'webgpu' ? 'fp16' : 'fp32';
-
-//     if (!model) {
-//         // briaai/RMBG-1.4 includes a standard config.json now—we do not need to pass manual overrides
-//         model = await AutoModel.from_pretrained('briaai/RMBG-1.4', {
-//             device: activeDevice,
-//             dtype: preferredDtype,
-//             progress_callback: (data: any) => {
-//                 if (data.status === 'progress') {
-//                     self.postMessage({
-//                         status: 'downloading',
-//                         progress: data.progress,
-//                         message: `Loading engine weights (${activeDevice.toUpperCase()} - ${preferredDtype}): ${Math.round(data.progress)}%`
-//                     });
-//                 }
-//             }
-//         });
-//     }
-
-//     if (!processor) {
-//         processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4');
-//     }
-
-//     return { model, processor, device: activeDevice };
-// }
-
-// self.onmessage = async (event: MessageEvent) => {
-//     const { imageSrc } = event.data;
-//     if (!imageSrc) return;
-
-//     try {
-//         self.postMessage({ status: 'loading', message: 'Checking engine local cache structures...' });
-
-//         const { model, processor, device } = await initializeEngine();
-
-//         self.postMessage({
-//             status: 'processing',
-//             message: `Processing neural tensor channels via local ${device.toUpperCase()}...`
-//         });
-
-//         const image = await RawImage.fromURL(imageSrc);
-//         const { pixel_values } = await processor(image);
-
-//         const { output } = await model({ input: pixel_values });
-
-//         const alphaMatte = await RawImage.fromTensor(
-//             output[0].mul(255).to('uint8')
-//         ).resize(image.width, image.height);
-
-//         // Transfer raw memory array allocations across threads instantly without copying data
-//         self.postMessage({
-//             status: 'complete',
-//             maskData: alphaMatte.data,
-//             width: image.width,
-//             height: image.height
-//         }, [alphaMatte.data.buffer]);
-
-//     } catch (error: any) {
-//         self.postMessage({ status: 'error', error: error.message || error });
-//     }
-// };
-
 import { env, AutoModel, AutoProcessor, RawImage } from '@huggingface/transformers';
 
-// Configure the caching pipeline properly before execution loops begin
 env.allowLocalModels = false;
-env.useBrowserCache = true;
-
-// Force the WASM CPU engine to utilize all available physical cores if WebGPU is absent
-if (env.backends?.onnx?.wasm) {
-    env.backends.onnx.wasm.numThreads = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
-}
 
 let model: any = null;
 let processor: any = null;
 let activeDevice = 'wasm';
 
 async function initializeEngine() {
-    if (model && processor) {
-        return { model, processor, device: activeDevice };
-    }
-
     let device = 'wasm';
+    let supportsF16 = false;
+
     if (typeof navigator !== 'undefined' && 'gpu' in navigator) {
         try {
-            const adapter = await (navigator as any).gpu.requestAdapter();
+            const adapter = await navigator.gpu.requestAdapter();
             if (adapter) {
                 device = 'webgpu';
+                // Verify if the hardware profile supports 16-bit float shaders
+                if (adapter.features?.has('shader-f16')) {
+                    supportsF16 = true;
+                }
             }
         } catch (e) {
-            console.warn("WebGPU adapter initialization bypassed. Falling back to multi-threaded WASM.", e);
+            console.warn("WebGPU not available, using WASM", e);
         }
     }
 
     activeDevice = device;
-
-    // Use native fp16 weights (88MB) on WebGPU, or full precision fp32 weights (176MB) on WASM CPU paths
-    const preferredDtype = activeDevice === 'webgpu' ? 'fp16' : 'fp32';
+    // Fix: Fall back gracefully to fp32 if WebGPU is available but missing shader-f16 
+    // to prevent the pipeline initializer from deadlocking.
+    const preferredDtype = (activeDevice === 'webgpu' && supportsF16) ? 'fp16' : 'fp32';
 
     if (!model) {
         model = await AutoModel.from_pretrained('briaai/RMBG-1.4', {
@@ -141,7 +39,7 @@ async function initializeEngine() {
                     self.postMessage({
                         status: 'downloading',
                         progress: data.progress,
-                        message: `Loading engine weights (${activeDevice.toUpperCase()} - ${preferredDtype}): ${Math.round(data.progress)}%`
+                        message: `Loading model weights (${activeDevice.toUpperCase()}): ${Math.round(data.progress)}%`
                     });
                 }
             }
@@ -155,67 +53,66 @@ async function initializeEngine() {
     return { model, processor, device: activeDevice };
 }
 
-self.onmessage = async (event: MessageEvent) => {
-    const { imageSrc } = event.data;
+self.onmessage = async (e: MessageEvent) => {
+    const { imageSrc, id } = e.data;
     if (!imageSrc) return;
 
     try {
-        self.postMessage({ status: 'loading', message: 'Checking engine local cache structures...', progress: 10 });
+        self.postMessage({ id, status: 'loading', message: 'Spawning pipelines...' });
+        const { device } = await initializeEngine();
 
-        const { model, processor, device } = await initializeEngine();
+        self.postMessage({ id, status: 'processing', message: 'Extracting subject...' });
 
-        self.postMessage({
-            status: 'processing',
-            message: `Processing neural tensor channels via local ${device.toUpperCase()}...`,
-            progress: 50
-        });
-
-        // 1. Run inference via Hugging Face Transformers
+        // Load image
         const image = await RawImage.fromURL(imageSrc);
+
+        // Preprocess image
         const { pixel_values } = await processor(image);
+
+        // Predict alpha matte
         const { output } = await model({ input: pixel_values });
 
+        // Resize mask to original image size
         const alphaMatte = await RawImage.fromTensor(
             output[0].mul(255).to('uint8')
         ).resize(image.width, image.height);
 
-        self.postMessage({ status: 'processing', message: 'Compositing alpha channels in background memory...', progress: 90 });
+        // Create an offscreen canvas to composition the image with transparent background
+        const canvas = new OffscreenCanvas(image.width, image.height);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('Could not get 2D context');
 
-        // 2. Background Compositing Pipeline (Moves loop completely off the main thread)
-        const response = await fetch(imageSrc);
-        const blob = await response.blob();
-        const originalBitmap = await createImageBitmap(blob);
+        // Draw original image
+        const imgBitmap = await createImageBitmap(await fetch(imageSrc).then(r => r.blob()));
+        ctx.drawImage(imgBitmap, 0, 0);
 
-        const offscreen = new OffscreenCanvas(image.width, image.height);
-        const osCtx = offscreen.getContext('2d');
-        if (!osCtx) throw new Error('Failed to claim background canvas allocation context.');
+        // Get image data
+        const imgData = ctx.getImageData(0, 0, image.width, image.height);
 
-        // Draw the full baseline source image
-        osCtx.drawImage(originalBitmap, 0, 0);
-        originalBitmap.close(); // Immediately purge source bitmap to save memory
-
-        // Inject alpha channel transparent matte mappings directly
-        const imgData = osCtx.getImageData(0, 0, image.width, image.height);
-        const pixels = imgData.data;
-        const mask = alphaMatte.data;
-
-        for (let i = 0; i < mask.length; i++) {
-            pixels[i * 4 + 3] = mask[i]; // Bind raw transparency values directly inside worker
+        // Apply alpha matte
+        for (let i = 0; i < imgData.data.length; i += 4) {
+            imgData.data[i + 3] = alphaMatte.data[i / 4];
         }
 
-        osCtx.putImageData(imgData, 0, 0);
+        // Put image data back
+        ctx.putImageData(imgData, 0, 0);
 
-        // 3. Extract as a completely standalone zero-copy transferable reference
-        const outputBitmap = offscreen.transferToImageBitmap();
+        // Convert to ImageBitmap to transfer back to main thread
+        const bitmap = canvas.transferToImageBitmap();
 
-        // Pass ownership of the compiled bitmap image to the main thread instantly
         self.postMessage({
+            id,
             status: 'complete',
-            bitmap: outputBitmap,
-            progress: 100
-        }, [outputBitmap]);
+            bitmap,
+            device
+        }, [bitmap]);
 
     } catch (error: any) {
-        self.postMessage({ status: 'error', error: error.message || error });
+        console.error("Worker Error:", error);
+        self.postMessage({
+            id,
+            status: 'error',
+            message: error.message || 'Failed to process image'
+        });
     }
 };
