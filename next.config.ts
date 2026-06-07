@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
+    // Allows the worker engine to handle complex binary structures safely
+    serverExternalPackages: ['@huggingface/transformers'],
 };
 
 export default nextConfig;
