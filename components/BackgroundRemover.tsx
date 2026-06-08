@@ -1,13 +1,21 @@
 'use client';
 
-import React, { ChangeEvent, DragEvent, useState, useRef, useEffect } from 'react';
+import React, { ChangeEvent, DragEvent, useState, useEffect, useRef } from 'react';
 import { useBackgroundRemover, ProcessedItem } from '../hooks/useBackgroundRemover';
-import { Upload, Download, RefreshCw, Layers, CheckCircle2, AlertCircle, Loader2, Trash2, Sliders, Undo2, Redo2, Brush, Eraser, ArrowLeft } from 'lucide-react';
+import { Upload, Download, RefreshCw, Layers, CheckCircle2, AlertCircle, Loader2, Trash2, Sliders, Undo2, Redo2, Brush, Eraser, ArrowLeft, Package } from 'lucide-react';
 
 export default function BackgroundRemover() {
-    const { queue, removeBackground, isProcessing, resetState, removeSingleFile, updateItemResultUrl } = useBackgroundRemover();
+    const {
+        queue,
+        removeBackground,
+        isProcessing,
+        resetState,
+        removeSingleFile,
+        updateItemResultUrl,
+        engine,
+        downloadAllCompleted,
+    } = useBackgroundRemover();
 
-    // State to track which item is currently being focused for manual canvas editing
     const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,13 +37,11 @@ export default function BackgroundRemover() {
     const completedItems = queue.filter((i) => i.status === 'completed').length;
     const macroProgress = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
 
-    // Fall back to auto-selecting the only item if there's exactly one file uploaded
     const isSingleView = totalItems === 1;
     const activeItem = isSingleView
         ? queue[0]
         : queue.find((item) => item.id === selectedItemId);
 
-    // Auto-clear selection state if the focused item gets removed from the workbench
     useEffect(() => {
         if (selectedItemId && !queue.some(item => item.id === selectedItemId)) {
             setSelectedItemId(null);
@@ -44,8 +50,7 @@ export default function BackgroundRemover() {
 
     return (
         <div className="w-full max-w-7xl mx-auto p-6 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-200 selection:bg-indigo-500/30">
-
-            {/* Upper Control Bar */}
+            {/* Header */}
             <div className="flex flex-wrap items-center justify-between mb-8 pb-5 border-b border-slate-200 dark:border-slate-800 gap-4">
                 <div className="flex items-center space-x-4">
                     <div className="p-3 bg-gradient-to-tr from-indigo-600 to-violet-600 text-white rounded-2xl shadow-lg shadow-indigo-500/20">
@@ -53,30 +58,66 @@ export default function BackgroundRemover() {
                     </div>
                     <div>
                         <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Neural Isolation Studio</h1>
-                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Hardware accelerated WebGPU client-side background eraser layer.</p>
+                        <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                            Hardware accelerated client-side background eraser layer.
+                        </p>
                     </div>
                 </div>
 
-                {totalItems > 0 && (
-                    <div className="flex items-center gap-3">
-                        <label className="px-5 py-2.5 text-xs font-black tracking-wider uppercase text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 rounded-xl transition-all cursor-pointer shadow-md shadow-indigo-600/10">
-                            Upload More Files
-                            <input type="file" multiple accept="image/*" className="hidden" onChange={handleFileChange} />
-                        </label>
-                        <button
-                            onClick={() => {
-                                resetState();
-                                setSelectedItemId(null);
-                            }}
-                            className="px-5 py-2.5 text-xs font-black tracking-wider uppercase text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 rounded-xl transition-colors border border-rose-200/60 dark:border-rose-900/30"
-                        >
-                            Reset Workbench
-                        </button>
-                    </div>
-                )}
+                <div className="flex items-center gap-3">
+                    {engine.device && (
+                        <span className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-black uppercase rounded-full border ${engine.device === 'webgpu'
+                                ? 'bg-violet-50 dark:bg-violet-950/30 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                            }`}>
+                            {engine.device === 'webgpu' ? '⚡ WebGPU' : '🧠 WASM'}
+                        </span>
+                    )}
+                    {totalItems > 0 && (
+                        <>
+                            <label className="px-5 py-2.5 text-xs font-black tracking-wider uppercase text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 rounded-xl transition-all cursor-pointer shadow-md shadow-indigo-600/10">
+                                Upload More Files
+                                <input type="file" multiple accept="image/*" className="hidden" onChange={handleFileChange} />
+                            </label>
+                            {completedItems > 0 && (
+                                <button
+                                    onClick={downloadAllCompleted}
+                                    className="px-5 py-2.5 text-xs font-black tracking-wider uppercase text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 rounded-xl transition-all shadow-md shadow-emerald-600/10 flex items-center gap-2"
+                                >
+                                    <Package className="w-4 h-4" /> Download All ({completedItems})
+                                </button>
+                            )}
+                            <button
+                                onClick={() => {
+                                    resetState();
+                                    setSelectedItemId(null);
+                                }}
+                                className="px-5 py-2.5 text-xs font-black tracking-wider uppercase text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/20 hover:bg-rose-100 dark:hover:bg-rose-950/40 rounded-xl transition-colors border border-rose-200/60 dark:border-rose-900/30"
+                            >
+                                Reset
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
 
-            {/* Dropzone Landing View */}
+            {/* Engine loading bar */}
+            {engine.loading && (
+                <div className="mb-6 p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                            <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" />
+                            Downloading AI Model
+                        </span>
+                        <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{Math.round(engine.progress)}%</span>
+                    </div>
+                    <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 h-full rounded-full transition-all duration-300 ease-out" style={{ width: `${engine.progress}%` }} />
+                    </div>
+                </div>
+            )}
+
+            {/* Dropzone */}
             {totalItems === 0 && (
                 <div
                     onDragOver={handleDragOver}
@@ -94,13 +135,12 @@ export default function BackgroundRemover() {
 
             {totalItems > 0 && (
                 <div className="space-y-6">
-
-                    {/* Global Queue Progress Indicator */}
+                    {/* Global queue progress */}
                     <div className="p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-300 flex items-center gap-2">
                                 {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin text-indigo-600" /> : <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
-                                Pipeline Status: {completedItems} / {totalItems} Files Completed
+                                Pipeline: {completedItems} / {totalItems} Completed
                             </span>
                             <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">{macroProgress}%</span>
                         </div>
@@ -109,10 +149,8 @@ export default function BackgroundRemover() {
                         </div>
                     </div>
 
-                    {/* Conditional Workspaces */}
                     {activeItem ? (
                         <div className="space-y-4">
-                            {/* Navigation out of deep inspection workspace back to batch system */}
                             {!isSingleView && (
                                 <button
                                     onClick={() => setSelectedItemId(null)}
@@ -124,23 +162,25 @@ export default function BackgroundRemover() {
                             )}
                             <InteractiveCanvasEditor
                                 item={activeItem}
-                                onSaveMask={(newUrl) => updateItemResultUrl(activeItem.id, newUrl)}
+                                onSaveMask={(newUrl) => {
+                                    if (activeItem.resultUrl) URL.revokeObjectURL(activeItem.resultUrl);
+                                    updateItemResultUrl(activeItem.id, newUrl);
+                                }}
                             />
                         </div>
                     ) : (
-                        /* BATCH PRODUCTION GALLERY GRID VIEW */
+                        /* Batch gallery grid */
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             {queue.map((item) => (
                                 <div
                                     key={item.id}
                                     className={`relative border flex flex-col rounded-2xl overflow-hidden bg-white dark:bg-slate-900 transition-all shadow-sm ${item.status === 'loading' || item.status === 'processing' || item.status === 'downloading'
-                                        ? 'border-indigo-500 ring-2 ring-indigo-600/10 shadow-md'
-                                        : 'border-slate-200 dark:border-slate-800'
+                                            ? 'border-indigo-500 ring-2 ring-indigo-600/10 shadow-md'
+                                            : 'border-slate-200 dark:border-slate-800'
                                         }`}
                                 >
                                     <div className="relative aspect-square w-full bg-[linear-gradient(45deg,#e2e8f0_25%,transparent_25%),linear-gradient(-45deg,#e2e8f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#e2e8f0_75%),linear-gradient(-45deg,transparent_75%,#e2e8f0_75%)] bg-[size:10px_10px] bg-[position:0_0,0_5px,5px_-5px,-5px_0] dark:bg-slate-950 flex items-center justify-center p-3 border-b border-slate-100 dark:border-slate-800/60">
                                         {item.status === 'completed' && item.resultUrl ? (
-                                            // eslint-disable-next-line @next/next/no-img-element
                                             <img src={item.resultUrl} alt={item.fileName} className="max-h-full max-w-full object-scale-down rounded-lg shadow-sm" />
                                         ) : item.status === 'error' ? (
                                             <div className="flex flex-col items-center space-y-1 text-rose-500 p-4 text-center">
@@ -158,7 +198,7 @@ export default function BackgroundRemover() {
                                             </div>
                                         )}
 
-                                        {(item.status === 'processing' || item.status === 'downloading' || item.status === 'loading') && (
+                                        {(item.status === 'processing' || item.status === 'loading') && (
                                             <div className="absolute bottom-2 left-2 right-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm px-2 py-1 rounded-lg text-[9px] font-bold text-slate-600 dark:text-slate-300 flex items-center justify-between border border-slate-100 dark:border-slate-800 shadow-sm">
                                                 <span className="truncate max-w-[100px]">{item.message}</span>
                                                 <span className="font-black text-indigo-600">{item.progress}%</span>
@@ -193,11 +233,10 @@ export default function BackgroundRemover() {
                                                     <Sliders className="w-3.5 h-3.5" />
                                                 </button>
                                             )}
-
                                             {item.status === 'completed' && item.resultUrl && (
                                                 <a
                                                     href={item.resultUrl}
-                                                    download={`matte_${item.fileName.replace(/\.[^/.]+$/, "")}.png`}
+                                                    download={`matte_${item.fileName.replace(/\.[^/.]+$/, '')}.png`}
                                                     className="p-2 bg-white hover:bg-indigo-50 text-indigo-600 dark:bg-slate-800 dark:hover:bg-indigo-950/40 dark:text-indigo-400 border border-slate-200 dark:border-slate-700/60 rounded-xl transition-all shadow-sm"
                                                 >
                                                     <Download className="w-3.5 h-3.5" />
@@ -215,6 +254,7 @@ export default function BackgroundRemover() {
     );
 }
 
+/* ============ InteractiveCanvasEditor (unchanged, except for URL revocation handled in parent) ============ */
 interface EditorProps {
     item: ProcessedItem;
     onSaveMask: (newUrl: string) => void;
@@ -228,12 +268,8 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
     const [brushMode, setBrushMode] = useState<'remove' | 'restore'>('remove');
     const [brushSize, setBrushSize] = useState<number>(40);
     const [isDrawing, setIsDrawing] = useState(false);
-
-    // Real-time Canvas Display coordinates to scale and track high-contrast brush bounds
     const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
     const [displayScaleFactor, setDisplayScaleFactor] = useState<number>(1);
-
-    // Undo / Redo Memory Framework
     const [history, setHistory] = useState<ImageData[]>([]);
     const [historyIndex, setHistoryIndex] = useState<number>(-1);
 
@@ -241,8 +277,6 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
 
     useEffect(() => {
         if (!isLoaded) return;
-
-        // Safety Guard: Stop reactive component re-renders from wiping canvas/history arrays when selecting a new item
         if (initializedIdRef.current === item.id) return;
 
         const mainCanvas = canvasRef.current;
@@ -289,7 +323,6 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         origImg.onload = onAssetLoad;
     }, [isLoaded, item.id, item.resultUrl, item.originalUrl]);
 
-    // Recalculates canvas layout scaling variables dynamically for cursor tracking precision
     const recalculateDisplayScale = () => {
         const canvas = canvasRef.current;
         if (canvas) {
@@ -307,25 +340,18 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         const canvas = canvasRef.current;
         if (!canvas) return null;
         const rect = canvas.getBoundingClientRect();
-
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-
         return {
             x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top) * scaleY
+            y: (e.clientY - rect.top) * scaleY,
         };
     };
 
     const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
-        setCursorPos({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        });
-        if (isDrawing) {
-            draw(e);
-        }
+        setCursorPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+        if (isDrawing) draw(e);
     };
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -339,7 +365,6 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         const ctx = canvas?.getContext('2d');
         const oCanvas = originalCanvasRef.current;
         if (!canvas || !ctx || !oCanvas) return;
-
         const coords = getCoordinates(e);
         if (!coords) return;
 
@@ -373,7 +398,6 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
 
         const nextFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const updatedHistory = history.slice(0, historyIndex + 1);
-
         setHistory([...updatedHistory, nextFrame]);
         setHistoryIndex(updatedHistory.length);
 
@@ -419,18 +443,13 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-
-            {/* Primary Canvas Container Area */}
             <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm flex flex-col">
                 <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
                     <span className="text-xs font-bold tracking-wide text-slate-500 truncate max-w-md">{item.fileName}</span>
-                    <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-md">
-                        {item.status}
-                    </span>
+                    <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-md">{item.status}</span>
                 </div>
 
                 <div className="relative aspect-video w-full bg-[linear-gradient(45deg,#e2e8f0_25%,transparent_25%),linear-gradient(-45deg,#e2e8f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#e2e8f0_75%),linear-gradient(-45deg,transparent_75%,#e2e8f0_75%)] bg-[size:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0] dark:bg-slate-950 min-h-[440px] flex items-center justify-center p-6 overflow-hidden select-none">
-
                     <div className="relative group/canvas" onMouseEnter={recalculateDisplayScale}>
                         {item.status === 'completed' ? (
                             <canvas
@@ -439,7 +458,7 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
                                 onMouseMove={handleMouseMove}
                                 onMouseUp={stopDrawing}
                                 onMouseLeave={() => { stopDrawing(); setCursorPos(null); }}
-                                className="max-h-[500px] w-auto max-w-full object-contain rounded-xl shadow-md cursor-none"
+                                className="max-h-[500px] w-auto max-w-full rounded-xl shadow-md cursor-none"
                             />
                         ) : item.status === 'error' ? (
                             <div className="flex flex-col items-center space-y-2 text-rose-500 max-w-sm text-center">
@@ -457,7 +476,6 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
                             </div>
                         )}
 
-                        {/* Inverted high-contrast brush diameter indicator overlay */}
                         {cursorPos && item.status === 'completed' && (
                             <div
                                 className="pointer-events-none absolute rounded-full border border-white mix-blend-difference shadow-[0_0_0_1px_rgba(0,0,0,0.6)] transition-shadow duration-75"
@@ -475,54 +493,36 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
                 <canvas ref={originalCanvasRef} className="hidden" />
             </div>
 
-            {/* Manual Refinement Controls Panel */}
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm space-y-6">
                 <div>
                     <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center gap-2 mb-4">
                         <Sliders className="w-4 h-4" /> Workspace Refinement Lab
                     </h3>
 
-                    {/* Undo / Redo Control Strip */}
                     <div className="grid grid-cols-2 gap-2 mb-5">
-                        <button
-                            onClick={undo}
-                            disabled={historyIndex <= 0}
-                            className="flex items-center justify-center gap-2 py-2.5 px-4 border border-slate-200 dark:border-slate-800 bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 disabled:opacity-30 disabled:pointer-events-none text-xs font-black rounded-xl transition-all shadow-sm"
-                        >
+                        <button onClick={undo} disabled={historyIndex <= 0} className="flex items-center justify-center gap-2 py-2.5 px-4 border border-slate-200 dark:border-slate-800 bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 disabled:opacity-30 disabled:pointer-events-none text-xs font-black rounded-xl transition-all shadow-sm">
                             <Undo2 className="w-4 h-4" /> Undo Step
                         </button>
-                        <button
-                            onClick={redo}
-                            disabled={historyIndex >= history.length - 1}
-                            className="flex items-center justify-center gap-2 py-2.5 px-4 border border-slate-200 dark:border-slate-800 bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 disabled:opacity-30 disabled:pointer-events-none text-xs font-black rounded-xl transition-all shadow-sm"
-                        >
+                        <button onClick={redo} disabled={historyIndex >= history.length - 1} className="flex items-center justify-center gap-2 py-2.5 px-4 border border-slate-200 dark:border-slate-800 bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 disabled:opacity-30 disabled:pointer-events-none text-xs font-black rounded-xl transition-all shadow-sm">
                             <Redo2 className="w-4 h-4" /> Redo Step
                         </button>
                     </div>
 
-                    {/* Brush Operations Selection Group */}
                     <div className="flex flex-col gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-950 border border-slate-200/50 dark:border-slate-800/80 rounded-2xl mb-5">
                         <button
                             onClick={() => setBrushMode('remove')}
-                            className={`w-full flex items-center justify-center gap-2.5 py-3 px-4 text-xs font-black tracking-wide uppercase rounded-xl transition-all ${brushMode === 'remove'
-                                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md font-extrabold'
-                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-transparent'
-                                }`}
+                            className={`w-full flex items-center justify-center gap-2.5 py-3 px-4 text-xs font-black tracking-wide uppercase rounded-xl transition-all ${brushMode === 'remove' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md font-extrabold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-transparent'}`}
                         >
                             <Eraser className="w-4 h-4" /> Eraser (Remove Layer)
                         </button>
                         <button
                             onClick={() => setBrushMode('restore')}
-                            className={`w-full flex items-center justify-center gap-2.5 py-3 px-4 text-xs font-black tracking-wide uppercase rounded-xl transition-all ${brushMode === 'restore'
-                                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10 font-extrabold'
-                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-transparent'
-                                }`}
+                            className={`w-full flex items-center justify-center gap-2.5 py-3 px-4 text-xs font-black tracking-wide uppercase rounded-xl transition-all ${brushMode === 'restore' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/10 font-extrabold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 bg-transparent'}`}
                         >
                             <Brush className="w-4 h-4" /> Restore (Reveal Original)
                         </button>
                     </div>
 
-                    {/* Dynamic Brush Size Selection Slider */}
                     <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/60 rounded-2xl">
                         <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider">
                             <span className="text-slate-400 dark:text-slate-500">Brush Calibration</span>
@@ -544,11 +544,10 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
                     </div>
                 </div>
 
-                {/* Action Button */}
                 {item.status === 'completed' && item.resultUrl && (
                     <a
                         href={item.resultUrl}
-                        download={`matte_${item.fileName.replace(/\.[^/.]+$/, "")}.png`}
+                        download={`matte_${item.fileName.replace(/\.[^/.]+$/, '')}.png`}
                         className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-black text-sm tracking-wide rounded-xl shadow-lg shadow-indigo-600/20 active:scale-[0.99] transition-all text-center"
                     >
                         <Download className="w-4 h-4" /> Download Production Asset
