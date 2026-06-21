@@ -204,8 +204,9 @@ export default async function Page({
 
 				{/* Tool */}
 
-				<DynamicComponent />
-
+				<div className="safe-overflow">
+					<DynamicComponent />
+				</div>
 				{/* SEO Content */}
 
 				<ToolContent tool={tool} />

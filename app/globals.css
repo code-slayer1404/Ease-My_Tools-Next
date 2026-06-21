@@ -84,3 +84,10 @@
         min-height: 80vh;
     }
 }
+
+@layer utilities{
+    .safe-overflow .flex>*,
+        .safe-overflow .grid>* {
+            min-width: 0;
+        }
+}
