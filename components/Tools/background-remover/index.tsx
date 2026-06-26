@@ -303,6 +303,8 @@ function QueuePanel({
                         <div className="flex gap-3">
                             <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-xl bg-[linear-gradient(45deg,#e2e8f0_25%,transparent_25%),linear-gradient(-45deg,#e2e8f0_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#e2e8f0_75%),linear-gradient(-45deg,transparent_75%,#e2e8f0_75%)] bg-[length:16px_16px] bg-[position:0_0,0_8px,8px_-8px,-8px_0]">
                                 {item.resultUrl ? (
+                                    // Object URLs from local processing should not go through next/image.
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={item.resultUrl}
                                         alt=""
@@ -370,6 +372,7 @@ function EditorWorkspace({
     const [pointerMode, setPointerMode] = useState<PointerMode>("brush")
     const [history, setHistory] = useState({ canUndo: false, canRedo: false })
     const [drawerOpen, setDrawerOpen] = useState(false)
+    const activeInteractionRef = useRef<PointerMode | null>(null)
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -388,6 +391,7 @@ function EditorWorkspace({
         void engine.load(item.originalUrl, item.resultUrl)
         return () => {
             observer.disconnect()
+            engine.destroy()
             engineRef.current = null
         }
     }, [item.id, item.originalUrl, item.resultUrl])
@@ -449,12 +453,8 @@ function EditorWorkspace({
             onRedo={() => engineRef.current?.redo()}
             onReset={() => engineRef.current?.reset()}
             onFit={() => engineRef.current?.fitToScreen()}
-            onZoomIn={() =>
-                engineRef.current?.zoom(1.18, centerOf(canvasRef.current))
-            }
-            onZoomOut={() =>
-                engineRef.current?.zoom(0.84, centerOf(canvasRef.current))
-            }
+            onZoomIn={() => engineRef.current?.stepZoom("in")}
+            onZoomOut={() => engineRef.current?.stepZoom("out")}
             onDownload={download}
         />
     )
@@ -465,46 +465,65 @@ function EditorWorkspace({
                 <div className="absolute top-3 left-3 z-10 rounded-full bg-background/90 px-3 py-1 text-xs font-medium shadow">
                     {item.fileName}
                 </div>
+                <div className="absolute top-3 right-3 z-10 rounded-full bg-background/90 px-3 py-1 text-xs font-medium shadow">
+                    {pointerMode === "pan"
+                        ? "Pan mode"
+                        : `${tool} · ${brushSize}px`}
+                </div>
                 <canvas
                     ref={canvasRef}
-                    className="h-[calc(100vh-220px)] min-h-[460px] w-full cursor-crosshair touch-none lg:h-full"
+                    className={cn(
+                        "h-[calc(100vh-220px)] min-h-[460px] w-full touch-none lg:h-full",
+                        pointerMode === "pan"
+                            ? "cursor-grab active:cursor-grabbing"
+                            : "cursor-crosshair"
+                    )}
                     onWheel={(event) => {
                         event.preventDefault()
                         const rect = event.currentTarget.getBoundingClientRect()
-                        engineRef.current?.zoom(
-                            event.deltaY < 0 ? 1.12 : 0.88,
-                            {
-                                x: event.clientX - rect.left,
-                                y: event.clientY - rect.top,
-                            }
-                        )
+                        engineRef.current?.zoomBy(event.deltaY, {
+                            x: event.clientX - rect.left,
+                            y: event.clientY - rect.top,
+                        })
                     }}
                     onPointerDown={(event) => {
                         event.currentTarget.setPointerCapture(event.pointerId)
                         const point = canvasPoint(event)
-                        if (
+                        const mode =
                             pointerMode === "pan" ||
                             event.button === 1 ||
                             event.altKey
-                        )
-                            engineRef.current?.startPan(point)
+                                ? "pan"
+                                : "brush"
+                        activeInteractionRef.current = mode
+                        if (mode === "pan") engineRef.current?.startPan(point)
                         else engineRef.current?.startBrush(point)
                     }}
                     onPointerMove={(event) => {
                         const point = canvasPoint(event)
-                        engineRef.current?.moveBrush(point)
-                        engineRef.current?.movePan(point)
+                        if (activeInteractionRef.current === "brush") {
+                            engineRef.current?.moveBrush(point)
+                        }
+                        if (activeInteractionRef.current === "pan") {
+                            engineRef.current?.movePan(point)
+                        }
                     }}
                     onPointerUp={(event) => {
                         event.currentTarget.releasePointerCapture(
                             event.pointerId
                         )
-                        engineRef.current?.endBrush()
-                        engineRef.current?.endPan()
+                        if (activeInteractionRef.current === "brush") {
+                            engineRef.current?.endBrush()
+                        }
+                        if (activeInteractionRef.current === "pan") {
+                            engineRef.current?.endPan()
+                        }
+                        activeInteractionRef.current = null
                     }}
                     onPointerCancel={() => {
                         engineRef.current?.endBrush()
                         engineRef.current?.endPan()
+                        activeInteractionRef.current = null
                     }}
                 />
                 <div className="absolute inset-x-3 bottom-3 z-10 flex items-center justify-between gap-2 rounded-2xl border bg-background/95 p-2 shadow-xl lg:hidden">
@@ -645,8 +664,8 @@ function EditorControls(props: {
             </Button>
             <p className="text-xs text-muted-foreground">
                 Desktop shortcuts: E erase, R restore, Ctrl/⌘+Z undo,
-                Shift+Ctrl/⌘+Z redo. Use the wheel to zoom and Pan mode for drag
-                panning.
+                Shift+Ctrl/⌘+Z redo. Wheel zoom is damped; choose Pan mode or
+                hold Alt while dragging to move the image.
             </p>
         </div>
     )
@@ -703,9 +722,4 @@ function UploadButton({
             </label>
         </Button>
     )
-}
-
-function centerOf(canvas: HTMLCanvasElement | null) {
-    if (!canvas) return { x: 0, y: 0 }
-    return { x: canvas.clientWidth / 2, y: canvas.clientHeight / 2 }
 }

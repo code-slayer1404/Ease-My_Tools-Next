@@ -16,37 +16,47 @@ interface Point {
     y: number
 }
 
-const MIN_ZOOM = 0.15
-const MAX_ZOOM = 8
-const HISTORY_LIMIT = 24
+type HistorySnapshot = HTMLCanvasElement
+
+const MIN_ZOOM = 0.05
+const MAX_ZOOM = 6
+const HISTORY_LIMIT = 18
 
 export class BackgroundEditorEngine {
     private readonly canvas: HTMLCanvasElement
     private readonly ctx: CanvasRenderingContext2D
     private original: HTMLImageElement | null = null
     private result: HTMLImageElement | null = null
-    private maskCanvas: HTMLCanvasElement | null = null
-    private maskCtx: CanvasRenderingContext2D | null = null
+    private editCanvas: HTMLCanvasElement | null = null
+    private editCtx: CanvasRenderingContext2D | null = null
     private view: ViewState = { zoom: 1, offsetX: 0, offsetY: 0 }
-    private brush: BrushSettings = { size: 44, tool: "erase" }
+    private brush: BrushSettings = { size: 36, tool: "erase" }
     private drawing = false
     private panning = false
     private lastImagePoint: Point | null = null
     private lastScreenPoint: Point | null = null
-    private history: ImageData[] = []
+    private history: HistorySnapshot[] = []
     private historyIndex = -1
     private animationFrame = 0
+    private width = 1
+    private height = 1
+    private dpr = 1
     private onHistoryChange:
         | ((canUndo: boolean, canRedo: boolean) => void)
         | null = null
 
     constructor(canvas: HTMLCanvasElement) {
-        const context = canvas.getContext("2d", { alpha: true })
-        if (!context) {
-            throw new Error("Unable to initialize editor canvas")
-        }
+        const context = canvas.getContext("2d", { alpha: false })
+        if (!context) throw new Error("Unable to initialize editor canvas")
         this.canvas = canvas
         this.ctx = context
+    }
+
+    destroy() {
+        if (this.animationFrame) cancelAnimationFrame(this.animationFrame)
+        this.animationFrame = 0
+        this.onHistoryChange = null
+        this.history = []
     }
 
     setHistoryListener(listener: (canUndo: boolean, canRedo: boolean) => void) {
@@ -62,24 +72,19 @@ export class BackgroundEditorEngine {
 
         this.original = original
         this.result = result
-        this.maskCanvas = document.createElement("canvas")
-        this.maskCanvas.width = result.naturalWidth
-        this.maskCanvas.height = result.naturalHeight
-        this.maskCtx = this.maskCanvas.getContext("2d", {
-            willReadFrequently: true,
-        })
+        this.editCanvas = document.createElement("canvas")
+        this.editCanvas.width = result.naturalWidth
+        this.editCanvas.height = result.naturalHeight
+        this.editCtx = this.editCanvas.getContext("2d")
+        if (!this.editCtx) throw new Error("Unable to initialize edit canvas")
 
-        if (!this.maskCtx) {
-            throw new Error("Unable to initialize mask canvas")
-        }
-
-        this.maskCtx.clearRect(
+        this.editCtx.clearRect(
             0,
             0,
-            this.maskCanvas.width,
-            this.maskCanvas.height
+            this.editCanvas.width,
+            this.editCanvas.height
         )
-        this.maskCtx.drawImage(result, 0, 0)
+        this.editCtx.drawImage(result, 0, 0)
         this.history = []
         this.historyIndex = -1
         this.fitToScreen()
@@ -88,57 +93,67 @@ export class BackgroundEditorEngine {
     }
 
     resize(width: number, height: number) {
-        const ratio = window.devicePixelRatio || 1
-        this.canvas.width = Math.max(1, Math.floor(width * ratio))
-        this.canvas.height = Math.max(1, Math.floor(height * ratio))
-        this.canvas.style.width = `${width}px`
-        this.canvas.style.height = `${height}px`
-        this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0)
-        this.requestRender()
+        this.width = Math.max(1, Math.round(width))
+        this.height = Math.max(1, Math.round(height))
+        this.dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2))
+        this.canvas.width = Math.round(this.width * this.dpr)
+        this.canvas.height = Math.round(this.height * this.dpr)
+        this.canvas.style.width = `${this.width}px`
+        this.canvas.style.height = `${this.height}px`
+        if (this.editCanvas) this.fitToScreen()
+        else this.requestRender()
     }
 
     fitToScreen() {
-        if (!this.maskCanvas) return
-        const cssWidth = this.canvas.clientWidth || 1
-        const cssHeight = this.canvas.clientHeight || 1
+        if (!this.editCanvas) return
         const scale = Math.min(
-            cssWidth / this.maskCanvas.width,
-            cssHeight / this.maskCanvas.height
+            this.width / this.editCanvas.width,
+            this.height / this.editCanvas.height
         )
-        this.view.zoom = clamp(scale * 0.92, MIN_ZOOM, MAX_ZOOM)
+        this.view.zoom = clamp(scale * 0.9, MIN_ZOOM, MAX_ZOOM)
         this.view.offsetX =
-            (cssWidth - this.maskCanvas.width * this.view.zoom) / 2
+            (this.width - this.editCanvas.width * this.view.zoom) / 2
         this.view.offsetY =
-            (cssHeight - this.maskCanvas.height * this.view.zoom) / 2
+            (this.height - this.editCanvas.height * this.view.zoom) / 2
         this.requestRender()
     }
 
     setBrush(settings: BrushSettings) {
         this.brush = settings
-        this.requestRender()
     }
 
-    zoom(delta: number, center: Point) {
-        if (!this.maskCanvas) return
+    zoomBy(delta: number, center: Point) {
+        if (!this.editCanvas) return
         const before = this.screenToImage(center)
-        this.view.zoom = clamp(this.view.zoom * delta, MIN_ZOOM, MAX_ZOOM)
+        const normalizedDelta = clamp(delta, -600, 600)
+        const factor = Math.exp(-normalizedDelta * 0.0015)
+        this.view.zoom = clamp(this.view.zoom * factor, MIN_ZOOM, MAX_ZOOM)
         this.view.offsetX = center.x - before.x * this.view.zoom
         this.view.offsetY = center.y - before.y * this.view.zoom
         this.requestRender()
     }
 
+    stepZoom(direction: "in" | "out") {
+        this.zoomBy(direction === "in" ? -120 : 120, {
+            x: this.width / 2,
+            y: this.height / 2,
+        })
+    }
+
     startBrush(point: Point) {
-        if (!this.maskCtx) return
+        if (!this.editCtx || !this.editCanvas) return
         this.drawing = true
-        this.lastImagePoint = this.screenToImage(point)
-        this.paint(this.lastImagePoint, this.lastImagePoint)
+        this.lastImagePoint = this.clampImagePoint(this.screenToImage(point))
+        this.paintDot(this.lastImagePoint)
+        this.requestRender()
     }
 
     moveBrush(point: Point) {
         if (!this.drawing || !this.lastImagePoint) return
-        const next = this.screenToImage(point)
-        this.paint(this.lastImagePoint, next)
+        const next = this.clampImagePoint(this.screenToImage(point))
+        this.paintLine(this.lastImagePoint, next)
         this.lastImagePoint = next
+        this.requestRender()
     }
 
     endBrush() {
@@ -167,91 +182,109 @@ export class BackgroundEditorEngine {
     }
 
     undo() {
-        if (!this.maskCtx || this.historyIndex <= 0) return
+        if (!this.editCtx || this.historyIndex <= 0) return
         this.historyIndex -= 1
-        const snapshot = this.history[this.historyIndex]
-        if (!snapshot) return
-        this.maskCtx.putImageData(snapshot, 0, 0)
-        this.emitHistory()
-        this.requestRender()
+        this.restoreSnapshot()
     }
 
     redo() {
-        if (!this.maskCtx || this.historyIndex >= this.history.length - 1)
+        if (!this.editCtx || this.historyIndex >= this.history.length - 1)
             return
         this.historyIndex += 1
-        const snapshot = this.history[this.historyIndex]
-        if (!snapshot) return
-        this.maskCtx.putImageData(snapshot, 0, 0)
-        this.emitHistory()
-        this.requestRender()
+        this.restoreSnapshot()
     }
 
     reset() {
-        if (!this.maskCtx || !this.result || !this.maskCanvas) return
-        this.maskCtx.clearRect(
+        if (!this.editCtx || !this.result || !this.editCanvas) return
+        this.editCtx.clearRect(
             0,
             0,
-            this.maskCanvas.width,
-            this.maskCanvas.height
+            this.editCanvas.width,
+            this.editCanvas.height
         )
-        this.maskCtx.drawImage(this.result, 0, 0)
+        this.editCtx.drawImage(this.result, 0, 0)
         this.pushHistory()
         this.requestRender()
     }
 
     exportPng(): Promise<Blob> {
         return new Promise((resolve, reject) => {
-            if (!this.maskCanvas) {
+            if (!this.editCanvas) {
                 reject(new Error("No edited image available"))
                 return
             }
-            this.maskCanvas.toBlob((blob) => {
+            this.editCanvas.toBlob((blob) => {
                 if (blob) resolve(blob)
                 else reject(new Error("Unable to export PNG"))
             }, "image/png")
         })
     }
 
-    private paint(from: Point, to: Point) {
-        if (!this.maskCtx || !this.original) return
-        this.maskCtx.save()
-        this.maskCtx.lineCap = "round"
-        this.maskCtx.lineJoin = "round"
-        this.maskCtx.lineWidth = this.brush.size
-        this.maskCtx.beginPath()
-        this.maskCtx.moveTo(from.x, from.y)
-        this.maskCtx.lineTo(to.x, to.y)
+    private paintDot(point: Point) {
+        this.paintPath(point, point, true)
+    }
+
+    private paintLine(from: Point, to: Point) {
+        this.paintPath(from, to, false)
+    }
+
+    private paintPath(from: Point, to: Point, dotOnly: boolean) {
+        if (!this.editCtx || !this.original) return
+        const radius = this.brush.size / 2
+        this.editCtx.save()
+        this.editCtx.lineCap = "round"
+        this.editCtx.lineJoin = "round"
+        this.editCtx.lineWidth = this.brush.size
+
         if (this.brush.tool === "erase") {
-            this.maskCtx.globalCompositeOperation = "destination-out"
-            this.maskCtx.strokeStyle = "rgba(0,0,0,1)"
-            this.maskCtx.stroke()
+            this.editCtx.globalCompositeOperation = "destination-out"
+            this.editCtx.strokeStyle = "#000"
+            this.editCtx.fillStyle = "#000"
         } else {
-            this.maskCtx.globalCompositeOperation = "source-over"
-            this.maskCtx.strokeStyle =
-                this.maskCtx.createPattern(this.original, "no-repeat") ??
-                "transparent"
-            this.maskCtx.stroke()
+            this.editCtx.globalCompositeOperation = "source-over"
+            const pattern = this.editCtx.createPattern(
+                this.original,
+                "no-repeat"
+            )
+            this.editCtx.strokeStyle = pattern ?? "transparent"
+            this.editCtx.fillStyle = pattern ?? "transparent"
         }
-        this.maskCtx.restore()
-        this.requestRender()
+
+        if (dotOnly || distance(from, to) < 0.5) {
+            this.editCtx.beginPath()
+            this.editCtx.arc(to.x, to.y, radius, 0, Math.PI * 2)
+            this.editCtx.fill()
+        } else {
+            this.editCtx.beginPath()
+            this.editCtx.moveTo(from.x, from.y)
+            this.editCtx.lineTo(to.x, to.y)
+            this.editCtx.stroke()
+        }
+        this.editCtx.restore()
     }
 
     private pushHistory() {
-        if (!this.maskCtx || !this.maskCanvas) return
-        const snapshot = this.maskCtx.getImageData(
-            0,
-            0,
-            this.maskCanvas.width,
-            this.maskCanvas.height
-        )
+        if (!this.editCanvas) return
         this.history = this.history.slice(0, this.historyIndex + 1)
-        this.history.push(snapshot)
-        if (this.history.length > HISTORY_LIMIT) {
-            this.history.shift()
-        }
+        this.history.push(cloneCanvas(this.editCanvas))
+        if (this.history.length > HISTORY_LIMIT) this.history.shift()
         this.historyIndex = this.history.length - 1
         this.emitHistory()
+    }
+
+    private restoreSnapshot() {
+        if (!this.editCanvas || !this.editCtx) return
+        const snapshot = this.history[this.historyIndex]
+        if (!snapshot) return
+        this.editCtx.clearRect(
+            0,
+            0,
+            this.editCanvas.width,
+            this.editCanvas.height
+        )
+        this.editCtx.drawImage(snapshot, 0, 0)
+        this.emitHistory()
+        this.requestRender()
     }
 
     private emitHistory() {
@@ -259,6 +292,14 @@ export class BackgroundEditorEngine {
             this.historyIndex > 0,
             this.historyIndex < this.history.length - 1
         )
+    }
+
+    private clampImagePoint(point: Point): Point {
+        if (!this.editCanvas) return point
+        return {
+            x: clamp(point.x, 0, this.editCanvas.width),
+            y: clamp(point.y, 0, this.editCanvas.height),
+        }
     }
 
     private screenToImage(point: Point): Point {
@@ -277,40 +318,46 @@ export class BackgroundEditorEngine {
     }
 
     private render() {
-        const width = this.canvas.clientWidth || 1
-        const height = this.canvas.clientHeight || 1
-        this.ctx.clearRect(0, 0, width, height)
-        this.drawCheckerboard(width, height)
-        if (!this.maskCanvas) return
+        this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0)
+        this.ctx.clearRect(0, 0, this.width, this.height)
+        this.drawCheckerboard(this.width, this.height)
+        if (!this.editCanvas) return
+
         this.ctx.save()
+        this.ctx.translate(this.view.offsetX, this.view.offsetY)
+        this.ctx.scale(this.view.zoom, this.view.zoom)
         this.ctx.imageSmoothingEnabled = true
-        this.ctx.setTransform(
-            this.view.zoom,
-            0,
-            0,
-            this.view.zoom,
-            this.view.offsetX,
-            this.view.offsetY
-        )
-        this.ctx.shadowColor = "rgba(15, 23, 42, 0.22)"
-        this.ctx.shadowBlur = 24 / this.view.zoom
-        this.ctx.drawImage(this.maskCanvas, 0, 0)
+        this.ctx.shadowColor = "rgba(15, 23, 42, 0.25)"
+        this.ctx.shadowBlur = 18 / this.view.zoom
+        this.ctx.drawImage(this.editCanvas, 0, 0)
         this.ctx.restore()
     }
 
     private drawCheckerboard(width: number, height: number) {
-        const size = 18
+        const size = 16
         this.ctx.fillStyle = "#f8fafc"
         this.ctx.fillRect(0, 0, width, height)
         this.ctx.fillStyle = "#e2e8f0"
         for (let y = 0; y < height; y += size) {
             for (let x = 0; x < width; x += size) {
-                if ((x / size + y / size) % 2 === 0) {
+                if ((x / size + y / size) % 2 === 0)
                     this.ctx.fillRect(x, y, size, size)
-                }
             }
         }
     }
+}
+
+function cloneCanvas(source: HTMLCanvasElement) {
+    const copy = document.createElement("canvas")
+    copy.width = source.width
+    copy.height = source.height
+    const context = copy.getContext("2d")
+    context?.drawImage(source, 0, 0)
+    return copy
+}
+
+function distance(a: Point, b: Point) {
+    return Math.hypot(a.x - b.x, a.y - b.y)
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
