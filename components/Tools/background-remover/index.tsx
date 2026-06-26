@@ -478,17 +478,10 @@ function EditorWorkspace({
                             ? "cursor-grab active:cursor-grabbing"
                             : "cursor-crosshair"
                     )}
-                    onWheel={(event) => {
-                        event.preventDefault()
-                        const rect = event.currentTarget.getBoundingClientRect()
-                        engineRef.current?.zoomBy(event.deltaY, {
-                            x: event.clientX - rect.left,
-                            y: event.clientY - rect.top,
-                        })
-                    }}
                     onPointerDown={(event) => {
                         event.currentTarget.setPointerCapture(event.pointerId)
                         const point = canvasPoint(event)
+                        engineRef.current?.setCursor(point)
                         const mode =
                             pointerMode === "pan" ||
                             event.button === 1 ||
@@ -501,6 +494,7 @@ function EditorWorkspace({
                     }}
                     onPointerMove={(event) => {
                         const point = canvasPoint(event)
+                        engineRef.current?.setCursor(point)
                         if (activeInteractionRef.current === "brush") {
                             engineRef.current?.moveBrush(point)
                         }
@@ -520,10 +514,15 @@ function EditorWorkspace({
                         }
                         activeInteractionRef.current = null
                     }}
+                    onPointerEnter={(event) =>
+                        engineRef.current?.setCursor(canvasPoint(event))
+                    }
+                    onPointerLeave={() => engineRef.current?.setCursor(null)}
                     onPointerCancel={() => {
                         engineRef.current?.endBrush()
                         engineRef.current?.endPan()
                         activeInteractionRef.current = null
+                        engineRef.current?.setCursor(null)
                     }}
                 />
                 <div className="absolute inset-x-3 bottom-3 z-10 flex items-center justify-between gap-2 rounded-2xl border bg-background/95 p-2 shadow-xl lg:hidden">
@@ -664,8 +663,9 @@ function EditorControls(props: {
             </Button>
             <p className="text-xs text-muted-foreground">
                 Desktop shortcuts: E erase, R restore, Ctrl/⌘+Z undo,
-                Shift+Ctrl/⌘+Z redo. Wheel zoom is damped; choose Pan mode or
-                hold Alt while dragging to move the image.
+                Shift+Ctrl/⌘+Z redo. Scrolling never zooms the canvas; use the
+                zoom buttons. Choose Pan mode or hold Alt while dragging to move
+                the image.
             </p>
         </div>
     )

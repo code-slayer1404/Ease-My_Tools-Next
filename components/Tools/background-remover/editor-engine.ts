@@ -35,6 +35,7 @@ export class BackgroundEditorEngine {
     private panning = false
     private lastImagePoint: Point | null = null
     private lastScreenPoint: Point | null = null
+    private cursorPoint: Point | null = null
     private history: HistorySnapshot[] = []
     private historyIndex = -1
     private animationFrame = 0
@@ -120,6 +121,12 @@ export class BackgroundEditorEngine {
 
     setBrush(settings: BrushSettings) {
         this.brush = settings
+        this.requestRender()
+    }
+
+    setCursor(point: Point | null) {
+        this.cursorPoint = point
+        this.requestRender()
     }
 
     zoomBy(delta: number, center: Point) {
@@ -330,6 +337,45 @@ export class BackgroundEditorEngine {
         this.ctx.shadowColor = "rgba(15, 23, 42, 0.25)"
         this.ctx.shadowBlur = 18 / this.view.zoom
         this.ctx.drawImage(this.editCanvas, 0, 0)
+        this.ctx.restore()
+        this.drawBrushPreview()
+    }
+
+    private drawBrushPreview() {
+        if (!this.cursorPoint || !this.editCanvas) return
+        const imagePoint = this.screenToImage(this.cursorPoint)
+        if (
+            imagePoint.x < 0 ||
+            imagePoint.y < 0 ||
+            imagePoint.x > this.editCanvas.width ||
+            imagePoint.y > this.editCanvas.height
+        ) {
+            return
+        }
+
+        const radius = Math.max(4, (this.brush.size * this.view.zoom) / 2)
+        this.ctx.save()
+        this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0)
+        this.ctx.beginPath()
+        this.ctx.arc(
+            this.cursorPoint.x,
+            this.cursorPoint.y,
+            radius,
+            0,
+            Math.PI * 2
+        )
+        this.ctx.lineWidth = 2
+        this.ctx.strokeStyle =
+            this.brush.tool === "erase" ? "#ef4444" : "#22c55e"
+        this.ctx.fillStyle =
+            this.brush.tool === "erase"
+                ? "rgba(239,68,68,0.10)"
+                : "rgba(34,197,94,0.10)"
+        this.ctx.fill()
+        this.ctx.stroke()
+        this.ctx.setLineDash([5, 4])
+        this.ctx.strokeStyle = "rgba(15, 23, 42, 0.75)"
+        this.ctx.stroke()
         this.ctx.restore()
     }
 
