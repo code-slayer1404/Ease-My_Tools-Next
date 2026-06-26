@@ -19,7 +19,7 @@ export const background_remover: Tool = {
         "graphics",
         "isolation",
     ],
-    component: () => import("@/components/Tools/remove-background"),
+    component: () => import("@/components/Tools/background-remover"),
     seo: {
         title: "Remove Background | Remove Photo Backgrounds Online",
         description:
