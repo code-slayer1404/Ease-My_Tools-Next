@@ -1,4 +1,3 @@
-import NavButtons from "../../NavButtons"
 import styles from "./styles.module.css"
 
 type ToolHeroProps = {
@@ -11,7 +10,6 @@ export default function ToolHero({ tool }: ToolHeroProps) {
     }
     return (
         <section className={styles.toolHero}>
-            <NavButtons></NavButtons>
             <div className={styles.heroCard}>
                 <h1 className={styles.heroTitle}>
                     {tool.seoContent?.h1 || tool.name}

@@ -12,13 +12,7 @@ export default function NavButtons() {
                 className={styles["nav-button"]}
                 onClick={() => router.back()}
             >
-                ← Back
-            </button>
-            <button
-                className={styles["nav-button"]}
-                onClick={() => router.forward()}
-            >
-                Forward →
+                Go Back
             </button>
         </div>
     )

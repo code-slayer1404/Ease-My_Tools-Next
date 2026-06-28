@@ -36,7 +36,7 @@ export default function BenefitsSection() {
         Kept the exact same container pattern as FeaturedTools:
         Clamped mobile width (-10%), unlocks to full screen-2xl on desktop.
       */}
-            <div className="mx-auto max-w-[340px] px-3 sm:max-w-screen-2xl sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-[360px] px-3 sm:max-w-screen-2xl sm:px-6 lg:px-8">
                 <h2 className="text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                     Why Choose EaseMyTools?
                 </h2>
@@ -45,7 +45,7 @@ export default function BenefitsSection() {
                     {benefits.map((benefit, index) => (
                         <Card
                             key={index}
-                            className="group relative flex h-full w-full flex-col rounded-2xl border-border/50 bg-card/80 p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 dark:hover:shadow-primary/5"
+                            className="group relative flex h-full w-full flex-col rounded-2xl border-border/50 bg-card/80 p-8 outline-1 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 dark:hover:shadow-primary/5"
                         >
                             <CardHeader className="flex flex-col items-center p-0 pb-4">
                                 {/* Bigger icon (text-5xl = 3rem) exactly like the original */}

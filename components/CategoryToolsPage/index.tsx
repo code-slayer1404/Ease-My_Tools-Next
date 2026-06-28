@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import styles from "./styles.module.css"
-import NavButtons from "../NavButtons"
 
 import { CATEGORIES } from "../../data/featuredCategories"
 import { getToolsByTag } from "../../data/registry"
@@ -32,7 +31,6 @@ const CategoryToolsPage = ({
         return (
             <div className={styles.categoryToolsPage}>
                 <div className={styles.categoryHeader}>
-                    <NavButtons />
                     <h1>Category Not Found</h1>
                     <p>
                         {'The category "'}
@@ -54,7 +52,6 @@ const CategoryToolsPage = ({
     return (
         <div className={styles.categoryToolsPage}>
             <div className={styles.categoryHeader}>
-                <NavButtons></NavButtons>
                 <h1>{category?.title ?? "Tools"}</h1>
                 <p>{categoryTools.length} tools available</p>
             </div>

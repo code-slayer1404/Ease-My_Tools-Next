@@ -163,7 +163,7 @@
 @layer components {
     .main-content {
         /* Ensures the footer stays at the bottom even if content is loading */
-        min-height: 80vh;
+        min-height: 50vh;
     }
 }
 

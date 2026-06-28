@@ -24,8 +24,8 @@ const Header = () => {
     const currentWord = words[index] || words[0]
 
     return (
-        <section className="relative z-10 flex min-h-[35vh] flex-col items-center justify-center px-4 py-8 text-center sm:min-h-[40vh]">
-            <h1 className="text-3xl leading-tight font-bold tracking-tight text-foreground sm:text-5xl">
+        <section className="relative z-10 mt-8 flex flex-col items-center justify-center px-4 py-8 text-center">
+            <h1 className="text-[38px] leading-tight font-bold tracking-tight text-foreground sm:text-6xl">
                 Free Tools to Simplify{" "}
                 {/* 
           Fixed-height container for the rotating word.
@@ -39,7 +39,7 @@ const Header = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
-                            className="rounded-md px-3 py-1 whitespace-nowrap text-white shadow-sm"
+                            className="round-ed-md px-3 py-1 whitespace-nowrap text-white shadow-sm"
                             style={{ backgroundColor: currentWord.color }}
                         >
                             {currentWord.text}
@@ -48,7 +48,7 @@ const Header = () => {
                 </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-base text-muted-foreground opacity-90 sm:text-lg">
+            <p className="mt-6 max-w-2xl text-lg text-muted-foreground opacity-90 sm:text-2xl">
                 Smart online tools to edit, convert, and compress your PDFs,
                 videos, and images instantly
             </p>
