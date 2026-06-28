@@ -694,6 +694,15 @@
 //     )
 // }
 
+
+
+
+
+
+
+
+
+
 // components/BackgroundRemover.tsx
 "use client"
 
@@ -1042,7 +1051,7 @@ export default function BackgroundRemover() {
     )
 }
 
-/* ============ InteractiveCanvasEditor (Optimised Mobile‑Proof Version) ============ */
+/* ============ InteractiveCanvasEditor – Blob‑Based History ============ */
 interface EditorProps {
     item: ProcessedItem
     onSaveMask: (newUrl: string) => void
@@ -1058,10 +1067,11 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
     const [isDrawing, setIsDrawing] = useState(false)
     const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null)
     const [displayScaleFactor, setDisplayScaleFactor] = useState<number>(1)
-    const [history, setHistory] = useState<ImageData[]>([])
-    const [historyIndex, setHistoryIndex] = useState<number>(-1)
 
-    const MAX_HISTORY = 20 // Hard cap for mobile memory safety
+    // History stored as blob URLs (PNG compressed)
+    const [history, setHistory] = useState<string[]>([])
+    const [historyIndex, setHistoryIndex] = useState<number>(-1)
+    const MAX_HISTORY = 50   // safe with blob compression
 
     const isLoaded = item.status === "completed" && item.resultUrl && item.originalUrl
 
@@ -1076,16 +1086,27 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         }, 300)
     )
 
-    // Cleanup debounce on unmount
+    // Cleanup debounce and blob URLs on unmount
     useEffect(() => {
         return () => {
             saveMaskDebounced.current.cancel?.()
+            history.forEach(url => URL.revokeObjectURL(url))
+        }
+    }, [history])
+
+    // 🟢 Moved BEFORE the image-loading useEffect
+    const recalculateDisplayScale = useCallback(() => {
+        const canvas = canvasRef.current
+        if (canvas) {
+            const rect = canvas.getBoundingClientRect()
+            setDisplayScaleFactor(rect.width / canvas.width)
         }
     }, [])
 
     // Throttle drawing with requestAnimationFrame
     const drawRAF = useRef<number | null>(null)
 
+    // --- Load images and initialise canvas ---
     useEffect(() => {
         if (!isLoaded) return
         if (initializedIdRef.current === item.id) return
@@ -1094,8 +1115,8 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         const origCanvas = originalCanvasRef.current
         if (!mainCanvas || !origCanvas) return
 
-        const ctx = mainCanvas.getContext("2d", { willReadFrequently: true })
-        const oCtx = origCanvas.getContext("2d", { willReadFrequently: true })
+        const ctx = mainCanvas.getContext("2d")
+        const oCtx = origCanvas.getContext("2d")
         if (!ctx || !oCtx) return
 
         const baseImg = new Image()
@@ -1116,12 +1137,17 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
                 oCtx.clearRect(0, 0, origCanvas.width, origCanvas.height)
                 oCtx.drawImage(origImg, 0, 0)
 
-                const initialFrame = ctx.getImageData(0, 0, mainCanvas.width, mainCanvas.height)
-                setHistory([initialFrame])
-                setHistoryIndex(0)
-                initializedIdRef.current = item.id
+                // Save initial state as a compressed blob URL
+                mainCanvas.toBlob((blob) => {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob)
+                        setHistory([url])
+                        setHistoryIndex(0)
+                    }
+                }, "image/png")
 
-                recalculateDisplayScale()
+                initializedIdRef.current = item.id
+                recalculateDisplayScale()  // ✅ now defined
             }
         }
 
@@ -1132,21 +1158,13 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
 
         baseImg.onload = onAssetLoad
         origImg.onload = onAssetLoad
-    }, [isLoaded, item.id, item.resultUrl, item.originalUrl])
-
-    const recalculateDisplayScale = () => {
-        const canvas = canvasRef.current
-        if (canvas) {
-            const rect = canvas.getBoundingClientRect()
-            setDisplayScaleFactor(rect.width / canvas.width)
-        }
-    }
+    }, [isLoaded, item.id, item.resultUrl, item.originalUrl, recalculateDisplayScale])
 
     // Cleanup resize listener
     useEffect(() => {
         window.addEventListener("resize", recalculateDisplayScale)
         return () => window.removeEventListener("resize", recalculateDisplayScale)
-    }, [])
+    }, [recalculateDisplayScale])
 
     // ---- Drawing logic ----
     const draw = useCallback((e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -1210,25 +1228,31 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         setIsDrawing(false)
 
         const canvas = canvasRef.current
-        const ctx = canvas?.getContext("2d")
-        if (!canvas || !ctx) return
+        if (!canvas) return
 
-        // Capture frame
-        const nextFrame = ctx.getImageData(0, 0, canvas.width, canvas.height)
+        // Capture current canvas as compressed PNG blob and add to history
+        canvas.toBlob((blob) => {
+            if (!blob) return
+            const url = URL.createObjectURL(blob)
 
-        // Update history with cap
-        let updatedHistory = [...history.slice(0, historyIndex + 1), nextFrame]
-        if (updatedHistory.length > MAX_HISTORY) {
-            updatedHistory.shift()
-            setHistoryIndex(prev => Math.max(0, prev - 1))
-        } else {
-            setHistoryIndex(updatedHistory.length - 1)
-        }
-        setHistory(updatedHistory)
+            setHistory(prev => {
+                // Slice up to current index + 1, then append new state
+                let updated = [...prev.slice(0, historyIndex + 1), url]
+                if (updated.length > MAX_HISTORY) {
+                    // Revoke oldest URL before discarding
+                    URL.revokeObjectURL(updated[0])
+                    updated = updated.slice(1)
+                    setHistoryIndex(prevIdx => Math.max(0, prevIdx - 1))
+                } else {
+                    setHistoryIndex(updated.length - 1)
+                }
+                return updated
+            })
 
-        // Debounced save
-        saveMaskDebounced.current(canvas)
-    }, [isDrawing, history, historyIndex])
+            // Also update the parent via debounced save
+            saveMaskDebounced.current(canvas)
+        }, "image/png")
+    }, [isDrawing, historyIndex, saveMaskDebounced])
 
     const handlePointerLeave = useCallback(() => {
         setCursorPos(null)
@@ -1240,15 +1264,23 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
         const ctx = canvas?.getContext("2d")
         if (!canvas || !ctx) return
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.putImageData(history[index], 0, 0)
+        const url = history[index]
+        if (!url) return
 
-        canvas.toBlob((blob) => {
-            if (blob) {
-                const revisedUrl = URL.createObjectURL(blob)
-                onSaveMask(revisedUrl)
-            }
-        }, "image/png")
+        const img = new Image()
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            ctx.drawImage(img, 0, 0)
+
+            // Sync the parent with the restored state
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const revisedUrl = URL.createObjectURL(blob)
+                    onSaveMask(revisedUrl)
+                }
+            }, "image/png")
+        }
+        img.src = url
     }, [history, onSaveMask])
 
     const undo = useCallback(() => {
@@ -1391,7 +1423,7 @@ function InteractiveCanvasEditor({ item, onSaveMask }: EditorProps) {
                                 value={[brushSize]}
                                 onValueChange={(val) => setBrushSize(val[0])}
                                 min={2}
-                                max={500}   // <--- increased max brush size
+                                max={500}
                                 step={1}
                                 className="py-1"
                             />

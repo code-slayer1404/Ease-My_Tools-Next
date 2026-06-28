@@ -119,7 +119,8 @@ const DataUriGenerator = () => {
                 <Image
                     src={dataUri}
                     alt="Preview"
-                    fill
+                    height={100}
+                    width={100}
                     className={styles["image-preview"]}
                 />
             )

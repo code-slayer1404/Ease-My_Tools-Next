@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react"
 import styles from "./styles.module.css"
+import NextImage from "next/image"
 
 type Mode = "encode" | "decode"
 type FileType = "text" | "image" | "binary"
@@ -718,11 +719,18 @@ const Base64Converter = () => {
                 >
                     {fileInfo?.previewUrl && fileType === "image" ? (
                         <div className={styles.imagePreviewContainer}>
-                            <img
+                            <NextImage
                                 src={fileInfo.previewUrl}
+                                height={100}
+                                width={100}
                                 alt="Preview"
                                 className={styles.imagePreview}
                             />
+                            {/* <img
+                                src={fileInfo.previewUrl}
+                                alt="Preview"
+                                className={styles.imagePreview}
+                            /> */}
                             <div className={styles.imageOverlay}>
                                 <span>Click or drag to change</span>
                             </div>
@@ -919,14 +927,24 @@ const Base64Converter = () => {
                             </div>
 
                             <div className={styles.imagePreviewWrapper}>
-                                <img
+                                <NextImage
                                     src={decodeResult.data}
+                                    height={100}
+                                    width={100}
                                     alt="Decoded"
                                     className={styles.decodedImage}
                                     onError={(e) => {
                                         e.currentTarget.style.display = "none"
                                     }}
                                 />
+                                {/* <img
+                                    src={decodeResult.data}
+                                    alt="Decoded"
+                                    className={styles.decodedImage}
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = "none"
+                                    }}
+                                /> */}
                             </div>
                         </div>
 

@@ -92,7 +92,7 @@ export default function FeaturedTools() {
 
                                     <Button
                                         variant="outline"
-                                        className="mt-6 w-full min-w-[140px] text-base text-primary transition-colors hover:bg-blue-500 hover:text-primary-foreground sm:w-auto dark:hover:bg-blue-500"
+                                        className="mt-6  min-w-[140px] p-4 text-base text-primary transition-colors hover:bg-blue-500 hover:text-primary-foreground sm:w-auto dark:hover:bg-blue-500"
                                     >
                                         Use Tool &rarr;
                                     </Button>
