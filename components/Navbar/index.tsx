@@ -93,7 +93,7 @@ const Navbar = () => {
     }
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-gray-400/90 bg-gray-200/80 shadow-2xl backdrop-blur-md transition-colors duration-300 dark:border-gray-700/90 dark:bg-gray-950/80">
+        <header className="sticky top-0 z-50 w-full border-b border-gray-400/90 bg-gray-200/80 shadow-2xl shadow-gray-400 backdrop-blur-md transition-colors duration-300 dark:border-gray-700/90 dark:bg-gray-950/80 dark:shadow-none">
             {/* 
         Used arbitrary values [..] on the `lg:` prefix to simulate 
         a 16px root font-size on desktop ONLY for this navbar.

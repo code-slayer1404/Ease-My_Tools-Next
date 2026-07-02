@@ -49,7 +49,7 @@ const featuredTools: FeaturedTool[] = [
 
 export default function FeaturedTools() {
     return (
-        <section className="bg-muted/30 py-16 dark:bg-slate-900/50">
+        <section className="bg-background py-16 dark:bg-background">
             {/* 
         FIX: Explicitly set max-w-[340px] for mobile to reduce card width by ~10-15%,
         while still expanding to max-w-screen-2xl on desktop.

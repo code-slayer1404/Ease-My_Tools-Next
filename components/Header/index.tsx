@@ -24,7 +24,7 @@ const Header = () => {
     const currentWord = words[index] || words[0]
 
     return (
-        <section className="relative z-10 mt-8 flex flex-col items-center justify-center px-4 py-8 text-center">
+        <section className="bg-background relative z-10 mt-8 flex flex-col items-center justify-center px-4 py-8 text-center">
             <h1 className="text-[38px] leading-tight font-bold tracking-tight text-foreground sm:text-6xl">
                 Free Tools to Simplify{" "}
                 {/* 

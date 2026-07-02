@@ -31,7 +31,7 @@ const benefits: Benefit[] = [
 
 export default function BenefitsSection() {
     return (
-        <section className="bg-muted/30 py-16 dark:bg-slate-900/50">
+        <section className="bg-background py-16 dark:bg-background">
             {/* 
         Kept the exact same container pattern as FeaturedTools:
         Clamped mobile width (-10%), unlocks to full screen-2xl on desktop.

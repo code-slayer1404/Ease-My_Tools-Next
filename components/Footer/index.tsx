@@ -112,6 +112,15 @@
 
 // export default Footer
 
+
+
+
+
+
+
+
+
+
 "use client"
 
 import Link from "next/link"
@@ -345,14 +354,14 @@ const Footer = () => {
                         >
                             <FaInstagram className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
                         </Link>
-                        <Link
+                        {/* <Link
                             href="https://tiktok.com/@easemytools"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="TikTok"
                         >
                             <FaTiktok className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
-                        </Link>
+                        </Link> */}
                     </div>
 
                     <p className="text-sm text-muted-foreground">
