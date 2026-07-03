@@ -22,7 +22,7 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     // Pura section screen height le iske liye min-h-screen add kiya hai
-    <div className="flex bg-background mt-7">
+    <div className="flex bg-background mt-1">
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-900">
         {/* Animated background */}
