@@ -47,6 +47,10 @@
 
 // export default TestimonialsSection
 
+
+
+
+
 import { Card, CardContent } from "@/components/ui/card"
 
 const TestimonialsSection = () => {
@@ -66,15 +70,20 @@ const TestimonialsSection = () => {
             name: "Content Creator",
             role: "Photographer",
         },
+        {
+            text: "Instant Markdown rendering — supports text styling, quotes, lists, and code.",
+            name: "Content Editor",
+            role: "Editor",
+        },
     ]
 
     return (
         <section className="bg-background py-16">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 sm:max-w-screen-2xl">
                 <h2 className="mb-10 text-center text-3xl font-bold">
                     What Users Say
                 </h2>
-                <div className="grid gap-6 md:grid-cols-3">
+                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                     {testimonials.map((testimonial, index) => (
                         <Card
                             key={index}
@@ -102,3 +111,12 @@ const TestimonialsSection = () => {
 }
 
 export default TestimonialsSection
+
+
+
+
+
+
+
+
+

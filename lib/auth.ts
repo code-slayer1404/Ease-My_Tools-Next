@@ -25,3 +25,5 @@ export async function requirePremium() {
 
     return session
 }
+
+export { authOptions }
