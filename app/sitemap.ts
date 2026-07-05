@@ -24,11 +24,11 @@ const STATIC_ROUTES = [
         changeFrequency: "daily" as const,
     },
 
-    {
-        path: "/blog",
-        priority: 0.8,
-        changeFrequency: "weekly" as const,
-    },
+    // {
+    //     path: "/blog",
+    //     priority: 0.8,
+    //     changeFrequency: "weekly" as const,
+    // },
 
 ]
 
