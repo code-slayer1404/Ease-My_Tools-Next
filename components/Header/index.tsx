@@ -34,21 +34,21 @@ const Header = () => {
                 <span className="inline-flex h-[1.4em] min-w-[120px] items-center justify-center align-middle sm:min-w-[160px]">
                     <AnimatePresence mode="wait">
                         <motion.span
-                            key={currentWord.text}
+                            key={currentWord?.text}
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ duration: 0.4, ease: "easeOut" }}
                             className="round-ed-md px-3 py-1 whitespace-nowrap text-white shadow-sm"
-                            style={{ backgroundColor: currentWord.color }}
+                            style={{ backgroundColor: currentWord?.color }}
                         >
-                            {currentWord.text}
+                            {currentWord?.text}
                         </motion.span>
                     </AnimatePresence>
                 </span>
             </h1>
 
-            <p className="mt-6 max-w-2xl text-lg text-muted-foreground opacity-90 sm:text-2xl">
+            <p className="mt-6 max-w-2xl italic text-lg text-muted-foreground opacity-90 sm:text-xl">
                 Smart online tools to edit, convert, and compress your PDFs,
                 videos, and images instantly
             </p>

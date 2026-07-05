@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { signIn } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
 export default function SocialButtons() {
   const buttons = [
@@ -51,7 +52,7 @@ export default function SocialButtons() {
       {buttons.map((button) => (
         <motion.button
           key={button.name}
-          onClick={() => signIn("google")}
+          onClick={() => signIn("google",{callbackUrl:"/"})}
           
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}

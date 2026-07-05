@@ -48,13 +48,11 @@ export default function LoginForm() {
     const result = await signIn("credentials", {
         email,
         password,
-        redirect: false,
-    })
+        callbackUrl:"/"
+    },)
     
     setIsLoading(false)
     
-    // Handle successful login
-    window.location.href = '/dashboard'
   }
 
   return (

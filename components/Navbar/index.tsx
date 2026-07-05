@@ -156,13 +156,18 @@ const Navbar = () => {
                             </DropdownMenuTrigger>
 
                             <DropdownMenuContent
-                                align="end"
+                                align="center"
                                 sideOffset={8}
                                 className="w-56 rounded-xl border border-gray-200/60 bg-white p-1.5 shadow-xl lg:w-[224px] dark:border-gray-800 dark:bg-gray-900"
                             >
                                 <div className="mb-1 truncate border-b border-gray-100 px-3 py-2 text-xs font-medium text-gray-400 lg:text-[12px] dark:border-gray-800">
-                                    {session.user?.email}
+                                    {session.user?.name}
                                 </div>
+
+                                <div className="mb-1 truncate border-b border-gray-100 px-3 py-2 text-xs font-medium text-gray-400 lg:text-[12px] dark:border-gray-800">
+                                <Link href={"/dashboard"}>Dashboard</Link>
+                                </div>
+
                                 <DropdownMenuItem asChild>
                                     <button
                                         onClick={() => signOut()}

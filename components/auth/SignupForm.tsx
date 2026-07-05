@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Eye, EyeOff, Mail, Lock, User, Building } from "lucide-react"
-import { signIn } from "next-auth/react"
 
 export default function SignupForm() {
     const [showPassword, setShowPassword] = useState(false)
@@ -90,15 +89,9 @@ export default function SignupForm() {
         const data = await res.json()
 
         setIsLoading(false)
-        if (res.ok) {
-            window.location.href = "/login"
-        } else {
-            console.log(data.message || "Something went wrong")
-        }
-
-
+    
         // Handle successful signup
-        window.location.href = "/dashboard"
+        window.location.href = "/"
     }
 
     const getPasswordStrength = (password: string) => {
