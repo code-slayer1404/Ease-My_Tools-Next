@@ -42,7 +42,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ======================================================
 
     const staticPages = STATIC_ROUTES.map((route) => ({
-        url: `${BASE_URL}${route.path}`,
+        // url: `${BASE_URL}${route.path}`,
+        url: new URL(route.path || "/", BASE_URL).toString(),
 
         lastModified: LAST_MODIFIED,
 
@@ -56,13 +57,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ======================================================
 
     const categoryPages = CATEGORIES.map((category) => ({
-        url: `${BASE_URL}${category.link}`,
+        // url: `${BASE_URL}${category.link}`,
+        url: new URL(category.link, BASE_URL).toString(),
 
         lastModified: LAST_MODIFIED,
 
         changeFrequency: "weekly" as const,
 
-        priority: 0.85,
+        priority: 0.9,
     }))
 
     // ======================================================
@@ -70,7 +72,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ======================================================
 
     const toolPages = getAllTools().map((tool) => ({
-        url: `${BASE_URL}/tools/tool/${tool.slug}`,
+        // url: `${BASE_URL}/tools/tool/${tool.slug}`,
+        url: new URL(`/tools/tool/${tool.slug}`, BASE_URL).toString(),
 
         lastModified: LAST_MODIFIED,
 
