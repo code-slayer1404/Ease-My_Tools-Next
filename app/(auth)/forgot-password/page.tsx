@@ -130,9 +130,6 @@ export default function ForgotPasswordPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <Link href="/" className="inline-block mb-12">
-              <span className="text-3xl font-bold text-white">EaseMyTools</span>
-            </Link>
 
             <h1 className="text-4xl xl:text-5xl font-bold text-white mb-6 leading-tight">
               Account Access
