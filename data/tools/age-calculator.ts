@@ -27,7 +27,7 @@ export const age_calculator: Tool = {
     },
     seoContent: {
         h1: "Age Calculator",
-        intro: "Find your exact age in years, months, and days from your birth date.",
+        intro: "Calculate your exact age, zodiac sign, and compare with a friend.",
         howToUse: [
             "Enter your birth date.",
             "Click calculate.",

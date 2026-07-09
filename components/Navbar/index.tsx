@@ -103,7 +103,7 @@ const Navbar = () => {
                 {/* Brand Logo - scales to 24px on desktop */}
                 <Link
                     href="/"
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-xl font-extrabold tracking-tight text-transparent transition-transform select-none active:scale-98 lg:text-[24px]"
+                    className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-xl font-extrabold tracking-tight text-transparent transition-transform select-none active:scale-98 lg:text-[24px]"
                 >
                     EaseMyTools
                 </Link>
@@ -165,7 +165,7 @@ const Navbar = () => {
                                 </div>
 
                                 <div className="mb-1 truncate border-b border-gray-100 px-3 py-2 text-xs font-medium text-gray-400 lg:text-[12px] dark:border-gray-800">
-                                <Link href={"/dashboard"}>Dashboard</Link>
+                                    <Link href={"/dashboard"}>Dashboard</Link>
                                 </div>
 
                                 <DropdownMenuItem asChild>
