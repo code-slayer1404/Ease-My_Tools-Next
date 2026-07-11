@@ -17,9 +17,8 @@ export default function ToolHero({ tool }: ToolHeroProps) {
                 
                 <h1
                     className={cn(
-                        "mx-auto max-w-3xl text-3xl font-extrabold tracking-tight text-blue-600",
+                        "mx-auto max-w-3xl text-3xl font-extrabold tracking-tight text-blue-500",
                         "sm:text-4xl md:text-5xl lg:text-6xl",
-                        "dark:text-blue-400"
                     )}
                 >
                     {title}
@@ -28,9 +27,10 @@ export default function ToolHero({ tool }: ToolHeroProps) {
                 {description && (
                     <p
                         className={cn(
-                            "mx-auto mt-4 max-w-4xl text-base text-slate-600",
+                            "mx-auto mt-4 max-w-xs text-base text-slate-600",
                             "sm:text-lg md:text-lg",
-                            "dark:text-slate-300"
+                            "dark:text-slate-300",
+                            "sm:max-w-4xl"
                         )}
                     >
                         {description}

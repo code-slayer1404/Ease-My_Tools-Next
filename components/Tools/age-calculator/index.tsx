@@ -21,6 +21,8 @@ import {
     Wind,
     Droplets,
 } from "lucide-react"
+import { ToolHeroProps } from "@/types/tool"
+import ToolHero from "@/components/tool-page-helpers/ToolHero"
 
 /* ------------------------------------------------------------------ */
 /*  Types & Data (unchanged)                                          */
@@ -362,7 +364,7 @@ const InputWithIcon: React.FC<{
 /*  Main Component                                                    */
 /* ------------------------------------------------------------------ */
 
-const AgeCalculator: React.FC = () => {
+const AgeCalculator: React.FC<ToolHeroProps> = ({tool}) => {
     // -- state --
     const [birthDate, setBirthDate] = useState("")
     const [birthTime, setBirthTime] = useState("")
@@ -645,16 +647,9 @@ const AgeCalculator: React.FC = () => {
     return (
         <div className="flex justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4 py-10 text-slate-900 sm:px-6 lg:py-12 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100">
             <div className="w-full max-w-5xl space-y-8">
-                {/* Header
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
-                        Age & Astrology Calculator
-                    </h1>
-                    <p className="mt-2 text-slate-500 dark:text-slate-400">
-                        Calculate your precise age, discover your zodiac signs,
-                        and compare ages with a friend.
-                    </p>
-                </div> */}
+                {/* { Header} */}
+                <ToolHero tool={tool}></ToolHero>
+
 
                 {/* Mode Tabs */}
                 <div className="flex justify-center">

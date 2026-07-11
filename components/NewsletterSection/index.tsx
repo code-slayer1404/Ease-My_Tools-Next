@@ -30,6 +30,7 @@ const NewsletterSection = () => {
                                 type="email"
                                 placeholder={"Enter your email"}
                                 value={email}
+                                // className="md:ml-5"
                                 onChange={(
                                     e: React.ChangeEvent<HTMLInputElement>
                                 ) => setEmail(e.target.value)}
