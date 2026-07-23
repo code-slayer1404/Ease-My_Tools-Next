@@ -1,5 +1,7 @@
 "use client"
 
+import ToolHero from "@/components/tool-page-helpers/ToolHero"
+import { ToolHeroProps } from "@/types/tool"
 import React, { useState, useCallback } from "react"
 
 /* ---------- tiny xml helpers ---------- */
@@ -172,7 +174,7 @@ const Stat: React.FC<{
 
 /* ---------- main tool ---------- */
 
-export default function XmlTool() {
+export default function XmlTool({tool}:ToolHeroProps) {
     const [xml, setXml] = useState("")
     const [indent, setIndent] = useState(2)
     const [mode, setMode] = useState<"format" | "minify" | "tree">("format")
@@ -290,7 +292,8 @@ export default function XmlTool() {
 
     return (
         <div className="flex justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 px-3 py-8 text-slate-900 sm:px-4 sm:py-10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100">
-            <div className="w-full max-w-6xl">
+            <div className="w-full max-w-7xl">
+                <ToolHero tool={tool}></ToolHero>
                 <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-white/80 shadow-xl shadow-slate-200/40 backdrop-blur-sm dark:border-slate-800/60 dark:bg-slate-900/80 dark:shadow-black/30">
                     {/* Toolbar */}
                     <div className="flex flex-wrap items-center justify-between gap-1 border-b-2 border-slate-300/90 bg-slate-100/50 px-2 py-2 shadow-sm backdrop-blur-sm sm:gap-2 sm:px-5 sm:py-3 dark:border-slate-600/80 dark:bg-slate-800/40 dark:shadow-black/10">
