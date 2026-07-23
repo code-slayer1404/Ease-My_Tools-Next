@@ -193,11 +193,11 @@ export default function ForgotPasswordPage() {
           className="w-full max-w-md"
         >
           {/* Mobile Logo */}
-          <div className="lg:hidden mb-8">
+          {/* <div className="lg:hidden mb-8">
             <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               EaseMyTools
             </Link>
-          </div>
+          </div> */}
 
           <ForgotPasswordForm />
         </motion.div>

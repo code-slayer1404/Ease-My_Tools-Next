@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import { ToolHeroProps } from "../../../types/tool"
+import ToolHero from "../../tool-page-helpers/ToolHero"
 
 type FormatType =
     | "bold"
@@ -18,15 +20,12 @@ type FormatType =
     | "link"
     | "quote"
 
-const WordCounterEditor: React.FC = () => {
-    const [text, setText] =
-        useState<string>(`# Welcome to the Word Counter & Editor
+export default function WordCounterEditor({ tool }: ToolHeroProps) {
+    const [text, setText] = useState<string>(`# Welcome to the Word Counter & Editor
 
 ## Markdown is also supported`)
 
-    const [previewMode, setPreviewMode] = useState<
-        "edit" | "preview" | "split"
-    >("split")
+    const [previewMode, setPreviewMode] = useState<"edit" | "preview" | "split">("split")
     const [stats, setStats] = useState({
         words: 0,
         charsWithSpaces: 0,
@@ -36,21 +35,25 @@ const WordCounterEditor: React.FC = () => {
         readingTime: 0,
     })
     const [isCopied, setIsCopied] = useState(false)
-    const [history, setHistory] = useState<string[]>([])
-    const [historyIndex, setHistoryIndex] = useState(-1)
+    const [history, setHistory] = useState<string[]>([`# Welcome to the Word Counter & Editor
+
+## Markdown is also supported`])
+    const [historyIndex, setHistoryIndex] = useState(0)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
+    const isHistoryChange = useRef(false)
 
-    // History
-    useEffect(() => {
-        if (text !== history[historyIndex]) {
-            const newHistory = history.slice(0, historyIndex + 1)
-            newHistory.push(text)
-            setHistory(newHistory)
-            setHistoryIndex(newHistory.length - 1)
+    const updateTextAndHistory = (newText: string) => {
+        setText(newText)
+        if (isHistoryChange.current) {
+            isHistoryChange.current = false
+            return
         }
-    }, [text])
+        const updatedHistory = history.slice(0, historyIndex + 1)
+        updatedHistory.push(newText)
+        setHistory(updatedHistory)
+        setHistoryIndex(updatedHistory.length - 1)
+    }
 
-    // Statistics
     useEffect(() => {
         if (!text.trim()) {
             setStats({
@@ -91,7 +94,7 @@ const WordCounterEditor: React.FC = () => {
             selectedText +
             after +
             text.substring(end)
-        setText(newText)
+        updateTextAndHistory(newText)
         setTimeout(() => {
             textarea.focus()
             const newCursorPos = start + before.length + selectedText.length
@@ -145,14 +148,19 @@ const WordCounterEditor: React.FC = () => {
 
     const undo = () => {
         if (historyIndex > 0) {
-            setHistoryIndex(historyIndex - 1)
-            setText(history[historyIndex - 1])
+            isHistoryChange.current = true
+            const nextIndex = historyIndex - 1
+            setHistoryIndex(nextIndex)
+            setText(history[nextIndex] || "")
         }
     }
+
     const redo = () => {
         if (historyIndex < history.length - 1) {
-            setHistoryIndex(historyIndex + 1)
-            setText(history[historyIndex + 1])
+            isHistoryChange.current = true
+            const nextIndex = historyIndex + 1
+            setHistoryIndex(nextIndex)
+            setText(history[nextIndex] || "")
         }
     }
 
@@ -165,11 +173,15 @@ const WordCounterEditor: React.FC = () => {
             console.error(err)
         }
     }
+
     const clearText = () => {
-        if (confirm("Clear all text?")) setText("")
+        if (confirm("Clear all text?")) {
+            updateTextAndHistory("")
+        }
     }
+
     const downloadText = () => {
-        const blob = new Blob([text], { type: "text/plain" })
+        const blob = new Blob([text], { type: "text/markdown" })
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
@@ -178,7 +190,6 @@ const WordCounterEditor: React.FC = () => {
         URL.revokeObjectURL(url)
     }
 
-    // Custom markdown preview styles (identical to MarkdownPreviewer)
     const previewStyles = `
     .markdown-body {
       font-size: 0.9rem;
@@ -200,30 +211,12 @@ const WordCounterEditor: React.FC = () => {
     .markdown-body pre code { background: transparent; padding: 0; }
     .markdown-body blockquote { border-left: 4px solid #94a3b8; padding-left: 1rem; color: #475569; margin-bottom: 0.75rem; }
     .dark .markdown-body blockquote { border-left-color: #64748b; color: #94a3b8; }
-    .markdown-body ul {
-      list-style: disc;
-      padding-left: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-    .markdown-body ol {
-      list-style: decimal;
-      padding-left: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-    .markdown-body li {
-      margin-bottom: 0.25rem;
-    }
-    .markdown-body ul ul {
-      list-style: circle;
-      margin-bottom: 0;
-    }
-    .markdown-body ul ul ul {
-      list-style: square;
-    }
-    .markdown-body ol ol {
-      list-style: lower-alpha;
-      margin-bottom: 0;
-    }
+    .markdown-body ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+    .markdown-body ol { list-style: decimal; padding-left: 1.5rem; margin-bottom: 0.75rem; }
+    .markdown-body li { margin-bottom: 0.25rem; }
+    .markdown-body ul ul { list-style: circle; margin-bottom: 0; }
+    .markdown-body ul ul ul { list-style: square; }
+    .markdown-body ol ol { list-style: lower-alpha; margin-bottom: 0; }
     .markdown-body table { width: 100%; border-collapse: collapse; margin-bottom: 0.75rem; }
     .markdown-body th, .markdown-body td { border: 1px solid #cbd5e1; padding: 0.4rem 0.6rem; text-align: left; }
     .dark .markdown-body th, .dark .markdown-body td { border-color: #334155; }
@@ -245,245 +238,81 @@ const WordCounterEditor: React.FC = () => {
   `
 
     return (
-        <div className="flex justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 px-3 py-8 text-slate-900 sm:px-4 sm:py-10 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100">
-            <div className="w-full max-w-7xl">
+        <div className="flex min-h-screen justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 px-4 py-10 text-slate-900 sm:px-6 lg:py-12 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 dark:text-slate-100">
+            <div className="w-full max-w-7xl space-y-8">
+                <ToolHero tool={tool} />
+
                 <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/80 shadow-xl shadow-slate-200/40 backdrop-blur-sm dark:border-slate-800/60 dark:bg-slate-900/80 dark:shadow-black/30">
                     <div className="space-y-5 p-5 sm:p-6">
-                        {/* Toolbar */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-slate-300/90 bg-slate-100/50 px-3 py-2 shadow-sm backdrop-blur-sm sm:px-5 sm:py-3 dark:border-slate-600/80 dark:bg-slate-800/40 dark:shadow-black/10">
+                        <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-300/90 bg-slate-100/50 px-3 py-2 shadow-sm backdrop-blur-sm sm:px-5 sm:py-3 dark:border-slate-600/80 dark:bg-slate-800/40 dark:shadow-black/10 rounded-xl">
                             <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                                <button
-                                    onClick={() => insertFormat("bold")}
-                                    className="rounded-lg px-2.5 py-1 text-sm font-bold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Bold"
-                                >
-                                    B
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("italic")}
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 italic hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Italic"
-                                >
-                                    I
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("underline")}
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 underline hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Underline"
-                                >
-                                    U
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        insertFormat("strikethrough")
-                                    }
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 line-through hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Strikethrough"
-                                >
-                                    S
-                                </button>
+                                <button onClick={() => insertFormat("bold")} className="rounded-lg px-2.5 py-1 text-sm font-bold text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Bold">B</button>
+                                <button onClick={() => insertFormat("italic")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 italic hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Italic">I</button>
+                                <button onClick={() => insertFormat("underline")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 underline hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Underline">U</button>
+                                <button onClick={() => insertFormat("strikethrough")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 line-through hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Strikethrough">S</button>
                                 <div className="mx-0.5 h-5 w-px bg-slate-300 dark:bg-slate-700" />
-                                <button
-                                    onClick={() => insertFormat("heading1")}
-                                    className="rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Heading 1"
-                                >
-                                    H1
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("heading2")}
-                                    className="rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Heading 2"
-                                >
-                                    H2
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("heading3")}
-                                    className="rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Heading 3"
-                                >
-                                    H3
-                                </button>
+                                <button onClick={() => insertFormat("heading1")} className="rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Heading 1">H1</button>
+                                <button onClick={() => insertFormat("heading2")} className="rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Heading 2">H2</button>
+                                <button onClick={() => insertFormat("heading3")} className="rounded-lg px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Heading 3">H3</button>
                                 <div className="mx-0.5 h-5 w-px bg-slate-300 dark:bg-slate-700" />
-                                <button
-                                    onClick={() => insertFormat("listBullet")}
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Bullet list"
-                                >
-                                    •
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("listNumbered")}
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Numbered list"
-                                >
-                                    1.
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("code")}
-                                    className="rounded-lg px-2.5 py-1 font-mono text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Inline code"
-                                >
-                                    &lt;/&gt;
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("link")}
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Link"
-                                >
-                                    🔗
-                                </button>
-                                <button
-                                    onClick={() => insertFormat("quote")}
-                                    className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Quote"
-                                >
-                                    “
-                                </button>
+                                <button onClick={() => insertFormat("listBullet")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Bullet list">•</button>
+                                <button onClick={() => insertFormat("listNumbered")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Numbered list">1.</button>
+                                <button onClick={() => insertFormat("code")} className="rounded-lg px-2.5 py-1 font-mono text-sm text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Inline code">&lt;/&gt;</button>
+                                <button onClick={() => insertFormat("link")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Link">🔗</button>
+                                <button onClick={() => insertFormat("quote")} className="rounded-lg px-2.5 py-1 text-sm text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Quote">“</button>
                                 <div className="mx-0.5 h-5 w-px bg-slate-300 dark:bg-slate-700" />
-                                <button
-                                    onClick={undo}
-                                    className="rounded-lg px-3 py-1 font-mono text-base text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Undo"
-                                >
-                                    ↶
-                                </button>
-                                <button
-                                    onClick={redo}
-                                    className="rounded-lg px-3 py-1 font-mono text-base text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Redo"
-                                >
-                                    ↷
-                                </button>
-                                <button
-                                    onClick={copyText}
-                                    className="rounded-lg px-3 py-1 text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
-                                    title="Copy"
-                                >
-                                    {isCopied ? "✓" : "⎘"}
-                                </button>
-                                <button
-                                    onClick={downloadText}
-                                    className="rounded-lg px-3 py-1 text-base text-emerald-600 hover:bg-emerald-100 dark:text-emerald-400 dark:hover:bg-emerald-900/40"
-                                    title="Download"
-                                >
-                                    ↓
-                                </button>
-                                <button
-                                    onClick={clearText}
-                                    className="rounded-lg px-3 py-1 text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/20"
-                                    title="Clear"
-                                >
-                                    ✕
-                                </button>
+                                <button onClick={undo} disabled={historyIndex <= 0} className="rounded-lg px-3 py-1 font-mono text-base text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800 disabled:opacity-35" title="Undo">↶</button>
+                                <button onClick={redo} disabled={historyIndex >= history.length - 1} className="rounded-lg px-3 py-1 font-mono text-base text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800 disabled:opacity-35" title="Redo">↷</button>
+                                <button onClick={copyText} className="rounded-lg px-3 py-1 text-sm text-slate-700 hover:bg-slate-200/60 dark:text-slate-300 dark:hover:bg-slate-800" title="Copy">{isCopied ? "✓" : "⎘"}</button>
+                                <button onClick={downloadText} className="rounded-lg px-3 py-1 text-base text-emerald-600 hover:bg-emerald-100 dark:text-emerald-400 dark:hover:bg-emerald-900/40" title="Download">↓</button>
+                                <button onClick={clearText} className="rounded-lg px-3 py-1 text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/20" title="Clear">✕</button>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                    {stats.words} words
-                                </span>
-                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                    {stats.charsWithSpaces} chars
-                                </span>
+                            <div className="flex items-center gap-3 font-mono text-xs text-slate-400 select-none">
+                                <span>{stats.words} words</span>
+                                <span>{stats.charsWithSpaces} chars</span>
                             </div>
                         </div>
 
-                        {/* Mobile view mode tabs */}
                         <div className="flex border-b border-slate-200/80 lg:hidden dark:border-slate-800/60">
-                            <button
-                                onClick={() => setPreviewMode("edit")}
-                                className={`flex-1 py-2 text-center text-sm font-medium transition ${
-                                    previewMode === "edit"
-                                        ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                                        : "text-slate-500 dark:text-slate-400"
-                                }`}
-                            >
-                                ✏️ Edit
-                            </button>
-                            <button
-                                onClick={() => setPreviewMode("preview")}
-                                className={`flex-1 py-2 text-center text-sm font-medium transition ${
-                                    previewMode === "preview"
-                                        ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                                        : "text-slate-500 dark:text-slate-400"
-                                }`}
-                            >
-                                👁️ Preview
-                            </button>
-                            <button
-                                onClick={() => setPreviewMode("split")}
-                                className={`flex-1 py-2 text-center text-sm font-medium transition ${
-                                    previewMode === "split"
-                                        ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                                        : "text-slate-500 dark:text-slate-400"
-                                }`}
-                            >
-                                📄 Split
-                            </button>
+                            <button onClick={() => setPreviewMode("edit")} className={`flex-1 py-2.5 text-center text-sm font-medium transition ${previewMode === "edit" ? "border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400" : "text-slate-500 dark:text-slate-400"}`}>✏️ Edit</button>
+                            <button onClick={() => setPreviewMode("preview")} className={`flex-1 py-2.5 text-center text-sm font-medium transition ${previewMode === "preview" ? "border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400" : "text-slate-500 dark:text-slate-400"}`}>👁️ Preview</button>
+                            <button onClick={() => setPreviewMode("split")} className={`flex-1 py-2.5 text-center text-sm font-medium transition ${previewMode === "split" ? "border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400" : "text-slate-500 dark:text-slate-400"}`}>📄 Split</button>
                         </div>
 
-                        {/* Main area – editor & preview */}
                         <div className="flex flex-col lg:flex-row lg:gap-5">
-                            {/* Editor panel */}
-                            {(previewMode === "edit" ||
-                                previewMode === "split") && (
-                                <div
-                                    className={`w-full ${
-                                        previewMode === "split"
-                                            ? "lg:w-1/2"
-                                            : ""
-                                    }`}
-                                >
-                                    <div className="rounded-xl border border-slate-300 bg-white/50 dark:border-slate-700 dark:bg-slate-900/50">
-                                        <div className="border-b border-slate-200 bg-slate-100/80 px-4 py-2 dark:border-slate-700 dark:bg-slate-800/50">
-                                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
-                                                ✏️ Editor
-                                            </span>
+                            {(previewMode === "edit" || previewMode === "split") && (
+                                <div className={`w-full ${previewMode === "split" ? "lg:w-1/2" : ""}`}>
+                                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                                        <div className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 px-4 py-2 dark:bg-slate-950/20 rounded-t-xl">
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">✏️ Editor Canvas</span>
                                         </div>
                                         <textarea
                                             ref={textareaRef}
                                             value={text}
-                                            onChange={(e) =>
-                                                setText(e.target.value)
-                                            }
-                                            className="custom-scrollbar h-[360px] w-full resize-none rounded-b-xl bg-transparent p-5 font-mono text-sm leading-relaxed text-slate-800 focus:outline-none dark:text-slate-100"
+                                            onChange={(e) => updateTextAndHistory(e.target.value)}
+                                            className="custom-scrollbar h-[380px] w-full resize-none rounded-b-xl bg-transparent p-5 font-mono text-xs leading-relaxed text-slate-800 focus:outline-none dark:text-slate-100"
                                             placeholder="Write your content here... (Markdown supported)"
                                         />
                                     </div>
                                 </div>
                             )}
 
-                            {/* Live Preview panel – with markdown-body styles */}
-                            {(previewMode === "preview" ||
-                                previewMode === "split") && (
-                                <div
-                                    className={`w-full ${
-                                        previewMode === "split"
-                                            ? "lg:w-1/2"
-                                            : ""
-                                    } ${previewMode === "split" ? "mt-5 lg:mt-0" : ""}`}
-                                >
-                                    <div className="rounded-xl border border-slate-300 bg-white/50 dark:border-slate-700 dark:bg-slate-900/50">
-                                        <div className="border-b border-slate-200 bg-slate-100/80 px-4 py-2 dark:border-slate-700 dark:bg-slate-800/50">
-                                            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
-                                                👁️ Live Preview
-                                            </span>
+                            {(previewMode === "preview" || previewMode === "split") && (
+                                <div className={`w-full ${previewMode === "split" ? "lg:w-1/2 mt-5 lg:mt-0" : ""}`}>
+                                    <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+                                        <div className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 px-4 py-2 dark:bg-slate-950/20 rounded-t-xl">
+                                            <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">👁️ Live Compiled Preview</span>
                                         </div>
-                                        <div className="custom-scrollbar h-[360px] overflow-auto p-5">
+                                        <div className="custom-scrollbar h-[380px] overflow-auto p-5 bg-white dark:bg-slate-950 rounded-b-xl">
                                             <style>{previewStyles}</style>
                                             <style>{scrollbarStyles}</style>
                                             <div className="markdown-body">
                                                 {text ? (
-                                                    <ReactMarkdown
-                                                        remarkPlugins={[
-                                                            remarkGfm,
-                                                        ]}
-                                                    >
+                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                                         {text}
                                                     </ReactMarkdown>
                                                 ) : (
-                                                    <p className="text-slate-400 italic">
-                                                        Nothing to preview yet
-                                                    </p>
+                                                    <p className="text-slate-400 italic text-xs">Nothing to preview yet</p>
                                                 )}
                                             </div>
                                         </div>
@@ -492,56 +321,20 @@ const WordCounterEditor: React.FC = () => {
                             )}
                         </div>
 
-                        {/* Statistics cards */}
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                            <div className="rounded-lg border border-slate-200/80 bg-white/50 px-3 py-2 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
-                                <div className="text-[9px] font-semibold tracking-wider text-slate-400 uppercase">
-                                    Words
+                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 pt-2">
+                            {[
+                                { label: "Words", val: stats.words },
+                                { label: "Characters", val: stats.charsWithSpaces },
+                                { label: "No Spaces", val: stats.charsNoSpaces },
+                                { label: "Sentences", val: stats.sentences },
+                                { label: "Paragraphs", val: stats.paragraphs },
+                                { label: "Reading Time", val: `${stats.readingTime} min` }
+                            ].map((card, idx) => (
+                                <div key={idx} className="rounded-xl border border-slate-200/80 bg-slate-50/40 p-3 shadow-sm dark:border-slate-800/80 dark:bg-slate-950/40">
+                                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{card.label}</div>
+                                    <div className="text-sm font-extrabold font-mono mt-1 text-slate-700 dark:text-slate-200">{card.val}</div>
                                 </div>
-                                <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                    {stats.words}
-                                </div>
-                            </div>
-                            <div className="rounded-lg border border-slate-200/80 bg-white/50 px-3 py-2 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
-                                <div className="text-[9px] font-semibold tracking-wider text-slate-400 uppercase">
-                                    Characters
-                                </div>
-                                <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                    {stats.charsWithSpaces}
-                                </div>
-                            </div>
-                            <div className="rounded-lg border border-slate-200/80 bg-white/50 px-3 py-2 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
-                                <div className="text-[9px] font-semibold tracking-wider text-slate-400 uppercase">
-                                    No spaces
-                                </div>
-                                <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                    {stats.charsNoSpaces}
-                                </div>
-                            </div>
-                            <div className="rounded-lg border border-slate-200/80 bg-white/50 px-3 py-2 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
-                                <div className="text-[9px] font-semibold tracking-wider text-slate-400 uppercase">
-                                    Sentences
-                                </div>
-                                <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                    {stats.sentences}
-                                </div>
-                            </div>
-                            <div className="rounded-lg border border-slate-200/80 bg-white/50 px-3 py-2 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
-                                <div className="text-[9px] font-semibold tracking-wider text-slate-400 uppercase">
-                                    Paragraphs
-                                </div>
-                                <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                    {stats.paragraphs}
-                                </div>
-                            </div>
-                            <div className="rounded-lg border border-slate-200/80 bg-white/50 px-3 py-2 shadow-sm dark:border-slate-800/60 dark:bg-slate-900/50">
-                                <div className="text-[9px] font-semibold tracking-wider text-slate-400 uppercase">
-                                    Reading time
-                                </div>
-                                <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                                    {stats.readingTime} min
-                                </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -549,5 +342,3 @@ const WordCounterEditor: React.FC = () => {
         </div>
     )
 }
-
-export default WordCounterEditor
