@@ -284,7 +284,7 @@ const features: Feature[] = [
 
 export default function Features() {
     return (
-        <section className="relative overflow-hidden bg-background mt-4">
+        <section className="relative overflow-hidden mt-4">
             <div className="mx-auto max-w-[1260px] px-3 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="mx-auto max-w-2xl text-center">

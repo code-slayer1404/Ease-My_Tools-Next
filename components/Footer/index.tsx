@@ -121,6 +121,267 @@
 
 
 
+// "use client"
+
+// import Link from "next/link"
+// import {
+//     FaTwitter,
+//     FaFacebook,
+//     FaLinkedinIn,
+//     FaInstagram,
+// } from "react-icons/fa"
+// import { FaTiktok } from "react-icons/fa6"
+
+// const Footer = () => {
+//     const currentYear = new Date().getFullYear()
+
+//     return (
+//         <footer className="border-t border-border bg-background py-12">
+//             <div className="mx-auto max-w-[340px] px-3 sm:max-w-screen-2xl sm:px-6 lg:px-8">
+//                 {/* Links Grid */}
+//                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+//                     {/* Removed sm:text-left and sm:items-start to keep it perfectly centered on all screen sizes */}
+//                     <div className="flex flex-col items-center gap-3 text-center">
+//                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
+//                             Product
+//                         </h4>
+//                         <ul className="flex flex-col gap-2.5">
+//                             <li>
+//                                 <Link
+//                                     href="/"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Home
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/features"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Features
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/tools"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Tools
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/faq"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     FAQ
+//                                 </Link>
+//                             </li>
+//                         </ul>
+//                     </div>
+
+//                     <div className="flex flex-col items-center gap-3 text-center">
+//                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
+//                             Resources
+//                         </h4>
+//                         <ul className="flex flex-col gap-2.5">
+//                             <li>
+//                                 <Link
+//                                     href="/desktop"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     EaseMyTools Desktop
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/mobile"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     EaseMyTools Mobile
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/docs"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Documentation
+//                                 </Link>
+//                             </li>
+//                         </ul>
+//                     </div>
+
+//                     <div className="flex flex-col items-center gap-3 text-center">
+//                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
+//                             Solutions
+//                         </h4>
+//                         <ul className="flex flex-col gap-2.5">
+//                             <li>
+//                                 <Link
+//                                     href="/business"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Business
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/education"
+//                                     onClick={() =>
+//                                         window.scrollTo({
+//                                             top: 0,
+//                                             behavior: "smooth",
+//                                         })
+//                                     }
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Education
+//                                 </Link>
+//                             </li>
+//                         </ul>
+//                     </div>
+
+//                     <div className="flex flex-col items-center gap-3 text-center">
+//                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
+//                             Legal
+//                         </h4>
+//                         <ul className="flex flex-col gap-2.5">
+//                             <li>
+//                                 <Link
+//                                     href="/security"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Security
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/privacy-policy"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Privacy Policy
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/terms-conditions"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Terms &amp; Conditions
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/cookie-policy"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Cookie Policy
+//                                 </Link>
+//                             </li>
+//                         </ul>
+//                     </div>
+
+//                     <div className="flex flex-col items-center gap-3 text-center">
+//                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
+//                             Company
+//                         </h4>
+//                         <ul className="flex flex-col gap-2.5">
+//                             <li>
+//                                 <Link
+//                                     href="/about"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     About Us
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/contact"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Contact Us
+//                                 </Link>
+//                             </li>
+//                             <li>
+//                                 <Link
+//                                     href="/blog"
+//                                     className="text-base text-muted-foreground transition-colors hover:text-primary"
+//                                 >
+//                                     Blog
+//                                 </Link>
+//                             </li>
+//                         </ul>
+//                     </div>
+//                 </div>
+
+//                 {/* Lean Tailwind divider */}
+//                 <div className="my-10 h-px w-full bg-border" />
+
+//                 {/* Bottom Section - Now fully centered on desktop as well */}
+//                 <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
+//                     <div className="flex gap-4">
+//                         <Link
+//                             href="https://twitter.com/easemytools"
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                             aria-label="Twitter"
+//                         >
+//                             <FaTwitter className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
+//                         </Link>
+//                         <Link
+//                             href="https://facebook.com/easemytools"
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                             aria-label="Facebook"
+//                         >
+//                             <FaFacebook className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
+//                         </Link>
+//                         <Link
+//                             href="https://linkedin.com/company/easemytools"
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                             aria-label="LinkedIn"
+//                         >
+//                             <FaLinkedinIn className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
+//                         </Link>
+//                         <Link
+//                             href="https://instagram.com/easemytools"
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                             aria-label="Instagram"
+//                         >
+//                             <FaInstagram className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
+//                         </Link>
+//                         {/* <Link
+//                             href="https://tiktok.com/@easemytools"
+//                             target="_blank"
+//                             rel="noopener noreferrer"
+//                             aria-label="TikTok"
+//                         >
+//                             <FaTiktok className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
+//                         </Link> */}
+//                     </div>
+
+//                     <p className="text-sm text-muted-foreground">
+//                         &copy; {currentYear} EaseMyTools &mdash; All Rights
+//                         Reserved
+//                     </p>
+//                 </div>
+//             </div>
+//         </footer>
+//     )
+// }
+
+// export default Footer
+
+
+
+
+
+
+
 "use client"
 
 import Link from "next/link"
@@ -130,18 +391,17 @@ import {
     FaLinkedinIn,
     FaInstagram,
 } from "react-icons/fa"
-import { FaTiktok } from "react-icons/fa6"
 
 const Footer = () => {
     const currentYear = new Date().getFullYear()
 
     return (
         <footer className="border-t border-border bg-background py-12">
-            <div className="mx-auto max-w-[340px] px-3 sm:max-w-screen-2xl sm:px-6 lg:px-8">
-                {/* Links Grid */}
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-                    {/* Removed sm:text-left and sm:items-start to keep it perfectly centered on all screen sizes */}
-                    <div className="flex flex-col items-center gap-3 text-center">
+            <div className="mx-auto max-w-[1260px] px-6 sm:px-8">
+                {/* Links Grid: Clean 2-column layout on mobile */}
+                <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 md:grid-cols-5 lg:gap-8">
+                    {/* Product */}
+                    <div className="flex flex-col items-start text-left gap-3">
                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
                             Product
                         </h4>
@@ -181,7 +441,8 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="flex flex-col items-center gap-3 text-center">
+                    {/* Resources */}
+                    <div className="flex flex-col items-start text-left gap-3">
                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
                             Resources
                         </h4>
@@ -213,7 +474,8 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="flex flex-col items-center gap-3 text-center">
+                    {/* Solutions */}
+                    <div className="flex flex-col items-start text-left gap-3">
                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
                             Solutions
                         </h4>
@@ -243,7 +505,8 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="flex flex-col items-center gap-3 text-center">
+                    {/* Legal */}
+                    <div className="flex flex-col items-start text-left gap-3">
                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
                             Legal
                         </h4>
@@ -283,7 +546,8 @@ const Footer = () => {
                         </ul>
                     </div>
 
-                    <div className="flex flex-col items-center gap-3 text-center">
+                    {/* Company */}
+                    <div className="flex flex-col items-start text-left gap-3">
                         <h4 className="text-sm font-semibold tracking-wider text-foreground uppercase">
                             Company
                         </h4>
@@ -319,9 +583,9 @@ const Footer = () => {
                 {/* Lean Tailwind divider */}
                 <div className="my-10 h-px w-full bg-border" />
 
-                {/* Bottom Section - Now fully centered on desktop as well */}
-                <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-center">
-                    <div className="flex gap-4">
+                {/* Bottom Section: Icons & Copyright side-by-side in one row */}
+                <div className="flex flex-wrap items-center justify-center gap-6">
+                    <div className="flex items-center gap-4">
                         <Link
                             href="https://twitter.com/easemytools"
                             target="_blank"
@@ -354,19 +618,10 @@ const Footer = () => {
                         >
                             <FaInstagram className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
                         </Link>
-                        {/* <Link
-                            href="https://tiktok.com/@easemytools"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label="TikTok"
-                        >
-                            <FaTiktok className="h-5 w-5 text-muted-foreground transition-colors hover:-translate-y-0.5 hover:text-primary" />
-                        </Link> */}
                     </div>
 
                     <p className="text-sm text-muted-foreground">
-                        &copy; {currentYear} EaseMyTools &mdash; All Rights
-                        Reserved
+                        &copy; {currentYear}EaseMyTools &mdash; All Rights Reserved
                     </p>
                 </div>
             </div>
@@ -375,3 +630,6 @@ const Footer = () => {
 }
 
 export default Footer
+
+
+

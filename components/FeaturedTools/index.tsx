@@ -521,7 +521,7 @@ const featuredTools: FeaturedTool[] = [
         color: "text-purple-400",
         bgColor: "bg-purple-500/10",
         categoryColor: "text-purple-400/90",
-        slug: "qr-code-generator",
+        slug: "qr-code-tool",
     },
     {
         icon: Code2,
@@ -541,7 +541,7 @@ const featuredTools: FeaturedTool[] = [
         color: "text-rose-400",
         bgColor: "bg-rose-500/10",
         categoryColor: "text-rose-400/90",
-        slug: "color-palette-generator",
+        slug: "color-picker",
     },
     {
         icon: ArrowRightLeft,

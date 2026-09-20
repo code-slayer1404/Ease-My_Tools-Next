@@ -5,7 +5,8 @@ export interface Tool {
     slug: string
     icon: any
     tags: string[]
-    primaryCategory: SpecialTag
+    primaryCategory: SpecialTag,
+    color? : string,
     component: () => Promise<any>
 
     seo: {
